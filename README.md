@@ -1,3 +1,10 @@
+### 👩‍👧‍👧 Our Team
+
+|        **🍀 [최승빈](https://github.com/csb9427)**  |    **🍀 [김수영](https://github.com/sootudio)**                 |**🍀 [김아영](https://github.com/a-young-kim)**                 |
+  |:-----------------------------------:|:-----------------------------------:|:-----------------------------------:|
+|   Server Developer  |    Server Developer     |   Server Developer |
+|        프로젝트 세팅<br />    |       프로젝트 셋팅<br/>      |   프로젝트 세팅<br />    |  
+
 ### 📑 Architecture
 
 ### 📋 Model Diagram
@@ -54,7 +61,23 @@
 
 ### ✍🏻 Code Convention
 
-[에어비앤비 코드 컨벤션](https://github.com/airbnb/javascript)
+#### Code
+하나의 메서드(method) 길이 12줄, 깊이(depth) 3 이내로 작성합니다.
+Lombok의 val을 사용합니다.
+#### Entity
+id 자동 생성 전략은 IDENTITY를 사용합니다.
+@NoArgsConstructor 사용 시 access를 PROTECTED로 제한합니다.
+
+#### 네이밍은 아래와 같이 정의합니다.
+Controller DTO: ${Entity명}${복수형일 경우 List 추가}${행위 또는 상태}${Request/Response}<br>
+Service DTO: ${Entity명}${복수형일 경우 List 추가}${행위 또는 상태}Service${Request/Response}
+#### Response
+요청 성공 시, BaseResponse와 SuccessCode(인터페이스)의 구현체를 사용합니다.
+예외 발생 시, Exception과 FailureCode(인터페이스)의 구현체를 사용합니다.
+#### Service, Repository
+DB를 호출하는 경우 메서드명에 save, find, update, delete 용어를 사용합니다.
+비즈니스 로직일 경우 메서드명에 create, get, update, delete, 그 외 용어를 사용합니다.
+복수형은 ${Entity명}s로 표현합니다.
 
 ### 📍 Gitflow 규칙
 
@@ -95,10 +118,3 @@
 2. 테스트 메서드명은 다음과 같이 작성한다. -> 메서드명_테스트하고자하는상태_예상되는결과 (ex. giveCotton_CottonCountIs0_NotEnoughCotton)
 3. 설마 이런 거까지 생각해야하나싶은 거까지 작성한다. (ex. 솜뭉치를 여러 개 줄 수 있다.)
 4. 다수의 값을 다룰 때는 @ParameterizedTest를 활용한다.
-
-### 👩‍👧‍👧 Our Team
-
-|        **🍀 [최승빈](https://github.com/csb9427)**  |    **🍀 [김수영](https://github.com/sootudio)**                 |**🍀 [김아영](https://github.com/a-young-kim)**                 |
-  |:-----------------------------------:|:-----------------------------------:|:-----------------------------------:|
-|   Server Developer  |    Server Developer     |   Server Developer |
-|        프로젝트 세팅<br />    |       프로젝트 셋팅<br/>      |   프로젝트 세팅<br />    |  
