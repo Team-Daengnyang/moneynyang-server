@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CreateMemberBankResponseDto {
+public class MemberBankResponse {
 
     private String userId;
     private String username;
@@ -17,7 +17,7 @@ public class CreateMemberBankResponseDto {
     private String modified;
 
     @Builder
-    private CreateMemberBankResponseDto(String userId, String username, String institutionCode, String userKey, String created, String modified){
+    private MemberBankResponse(String userId, String username, String institutionCode, String userKey, String created, String modified){
         this.userId = userId;
         this.username = username;
         this.institutionCode = institutionCode;
@@ -26,8 +26,8 @@ public class CreateMemberBankResponseDto {
         this.modified = modified;
     }
 
-    public static CreateMemberBankResponseDto createResponseDto(String userId, String username, String institutionCode, String userKey, String created, String modified){
-        return CreateMemberBankResponseDto.builder()
+    public static MemberBankResponse createResponse(String userId, String username, String institutionCode, String userKey, String created, String modified){
+        return MemberBankResponse.builder()
                 .userId(userId)
                 .username(username)
                 .institutionCode(institutionCode)
