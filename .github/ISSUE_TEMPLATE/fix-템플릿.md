@@ -1,8 +1,8 @@
 ---
 name: fix 템플릿
 about: bug fix 시에 사용하는 템플릿입니다.
-title: 'fix: 작업 내용'
-labels: fix
+title: '[FIX] 작업 내용'
+labels: FIX
 assignees: ''
 
 ---
