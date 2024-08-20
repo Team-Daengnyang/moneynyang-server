@@ -1,8 +1,7 @@
 package com.fav.daengnyang.global.auth.utils;
 
-import com.fav.daengnyang.domain.member.service.dto.response.MemberBankResponse;
+import com.fav.daengnyang.global.auth.dto.MemberAuthority;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +26,7 @@ public class JWTProvider implements InitializingBean {
 
     // JWT 키 값
     private static final String USER_KEY = "userKey";
-    private static final String EMAIL = "email";
+    private static final String USER_ID = "userId";
 
     // 외부 설정 파일에서 주입되는 JWT 키 값
     @Value("${jwt.key}")
@@ -47,18 +46,19 @@ public class JWTProvider implements InitializingBean {
 
     // 디코딩하여 SecretKey를 생성하는 메서드
     private SecretKey buildKey(){
+        log.debug("encodedKeyValue = " + encodedKeyValue);
         byte[] decodedKeyValue = Base64.getDecoder().decode(encodedKeyValue);
         return Keys.hmacShaKeyFor(decodedKeyValue);
     }
 
     // JWT 토큰 생성
-    public String buildAccessToken(MemberBankResponse authority){
+    public String buildAccessToken(MemberAuthority authority){
         // 현재 시각
         Instant now = clock.instant();
 
         return Jwts.builder()
                 .claim(USER_KEY, authority.getUserKey())
-                .claim(EMAIL, authority.getUserId())
+                .claim(USER_ID, authority.getUserId())
                 .signWith(key)
                 .setIssuedAt(Date.from(now))
                 .setExpiration(Date.from(now.plusSeconds(ACCESS_TOKEN_EXPIRATION_PERIOD)))
@@ -93,12 +93,12 @@ public class JWTProvider implements InitializingBean {
     }
 
     // JWT 토큰 파싱 후 객체 변환
-    public MemberBankResponse parseAccessToken(String token){
+    public MemberAuthority parseAccessToken(String token){
         Claims payload = parsePayload(token);
 
-        return MemberBankResponse.builder()
+        return MemberAuthority.builder()
                 .userKey(parsePayload(payload.get(USER_KEY), String.class, USER_KEY))
-                .userId(parsePayload(payload.get(EMAIL), String.class, EMAIL))
+                .userId(parsePayload(payload.get(USER_ID), String.class, USER_ID))
                 .build();
     }
 }

@@ -10,26 +10,26 @@ import lombok.NoArgsConstructor;
 public class MemberBankResponse {
 
     private String userId;
-    private String username;
+    private String userName;
     private String institutionCode;
     private String userKey;
     private String created;
     private String modified;
 
     @Builder
-    private MemberBankResponse(String userId, String username, String institutionCode, String userKey, String created, String modified){
+    private MemberBankResponse(String userId, String userName, String institutionCode, String userKey, String created, String modified){
         this.userId = userId;
-        this.username = username;
+        this.userName = userName;
         this.institutionCode = institutionCode;
         this.userKey = userKey;
         this.created = created;
         this.modified = modified;
     }
 
-    public static MemberBankResponse createResponse(String userId, String username, String institutionCode, String userKey, String created, String modified){
+    public static MemberBankResponse createResponse(String userId, String userName, String institutionCode, String userKey, String created, String modified){
         return MemberBankResponse.builder()
                 .userId(userId)
-                .username(username)
+                .userName(userName)
                 .institutionCode(institutionCode)
                 .userKey(userKey)
                 .created(created)
