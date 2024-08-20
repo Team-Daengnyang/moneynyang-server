@@ -29,6 +29,7 @@ dependencies {
 	// https://mvnrepository.com/artifact/com.mysql/mysql-connector-j
 	implementation group: 'com.mysql', name: 'mysql-connector-j', version: '8.4.0'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
 
 	//test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
