@@ -31,4 +31,7 @@ public class Member {
 
     @Column(name = "my_password")
     private String myPassword;
+
+    @Column(name = "phone")
+    private String phone;
 }
