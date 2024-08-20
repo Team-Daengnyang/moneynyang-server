@@ -23,7 +23,9 @@ public class MemberService {
     /*
         금융 API
     */
-    public RestTemplate createMemberAPI(){
+    // 회원가입 API
+    public CreateMemberBankResponseDto createMemberBank(Member member){
+        //String url = "/member";
 
     }
 }
