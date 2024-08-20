@@ -21,6 +21,9 @@ public class MemberController {
    @PostMapping
     public ResponseEntity<?> createMember(@RequestBody Member member) {
 
-       return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.CREATED, "회원가입에 성공했습니다.", null));
+       // 1. 금융 API 연결
+       // 2. DB에 회원 정보 저장
+       // 3. 결과 리턴
+       return ResponseEntity.status(HttpStatus.OK);
    }
 }
