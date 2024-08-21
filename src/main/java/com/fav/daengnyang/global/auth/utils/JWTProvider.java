@@ -57,7 +57,7 @@ public class JWTProvider implements InitializingBean {
 
         return Jwts.builder()
                 .claim(USER_KEY, authority.getUserKey())
-                .claim(USER_ID, authority.getUserId())
+                .claim(USER_ID, authority.getMemberId())
                 .signWith(key)
                 .setIssuedAt(Date.from(now))
                 .setExpiration(Date.from(now.plusSeconds(ACCESS_TOKEN_EXPIRATION_PERIOD)))
@@ -96,7 +96,7 @@ public class JWTProvider implements InitializingBean {
         Claims payload = parsePayload(token);
 
         String userKey = parsePayload(payload.get(USER_KEY), String.class, USER_KEY);
-        String userId = parsePayload(payload.get(USER_ID), String.class, USER_ID);
+        Long userId = parsePayload(payload.get(USER_ID), Long.class, USER_ID);
 
         return MemberAuthority.createMemberAuthority(userKey, userId);
     }

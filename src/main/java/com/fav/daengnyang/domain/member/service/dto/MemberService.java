@@ -39,11 +39,11 @@ public class MemberService {
         // 1. 금융 API 연결
         MemberBankRequest memberBankResponse = createMemberBank(createdRequest);
         // 2. DB에 회원 정보 저장
-        save(createdRequest);
+        Member member = save(createdRequest);
         // 3. 예금 계좌 개설
 
         // 4. accessToken 생성
-        return createAccessToken(memberBankResponse);
+        return createAccessToken(memberBankResponse, member);
     }
 
     // Member 저장
@@ -53,10 +53,10 @@ public class MemberService {
         return memberRepository.save(member);
     }
 
-    private LoginResponse createAccessToken(MemberBankRequest memberBankResponse){
+    private LoginResponse createAccessToken(MemberBankRequest memberBankResponse, Member member){
         String accessToken = jwtProvider.buildAccessToken(
                 MemberAuthority.builder()
-                        .userId(memberBankResponse.getUserId())
+                        .memberId(member.getMemberId())
                         .userKey(memberBankResponse.getUserKey())
                         .build()
         );
