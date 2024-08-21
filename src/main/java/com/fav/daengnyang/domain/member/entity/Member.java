@@ -2,10 +2,7 @@ package com.fav.daengnyang.domain.member.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Generated;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -42,4 +39,15 @@ public class Member {
     @Column(name = "modified")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime modified;
+
+    @Builder
+    public Member(String email, String password, String myPassword, String depositAccount, String name, LocalDateTime created, LocalDateTime modified) {
+        this.email = email;
+        this.password = password;
+        this.myPassword = myPassword;
+        this.name = name;
+        this.depositAccount = depositAccount;
+        this.created = created;
+        this.modified = modified;
+    }
 }

@@ -23,7 +23,7 @@ public class MemberController {
     public SuccessResponse<?> createMember(@RequestBody Member member) {
 
        try{
-           log.debug(" // 1. 금융 API 연결");
+
            // 1. 금융 API 연결
            MemberBankResponse memberBankResponse = memberService.createMemberBank(member);
            // 2. DB에 회원 정보 저장

@@ -46,7 +46,6 @@ public class JWTProvider implements InitializingBean {
 
     // 디코딩하여 SecretKey를 생성하는 메서드
     private SecretKey buildKey(){
-        log.debug("encodedKeyValue = " + encodedKeyValue);
         byte[] decodedKeyValue = Base64.getDecoder().decode(encodedKeyValue);
         return Keys.hmacShaKeyFor(decodedKeyValue);
     }
@@ -87,6 +86,7 @@ public class JWTProvider implements InitializingBean {
     @SuppressWarnings("unchecked")
     private <T> T parsePayload(Object raw, Class<T> targetClass, String key){
         if(raw == null){
+
             log.debug("토큰이 완전하지 않습니다.");
         }
         return (T) raw;
