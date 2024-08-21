@@ -1,6 +1,7 @@
 package com.fav.daengnyang.domain.member.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fav.daengnyang.domain.member.service.dto.request.CreatedRequest;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -41,7 +42,7 @@ public class Member {
     private LocalDateTime modified;
 
     @Builder
-    public Member(String email, String password, String myPassword, String depositAccount, String name, LocalDateTime created, LocalDateTime modified) {
+    private Member(String email, String password, String myPassword, String depositAccount, String name, LocalDateTime created, LocalDateTime modified) {
         this.email = email;
         this.password = password;
         this.myPassword = myPassword;
@@ -49,5 +50,13 @@ public class Member {
         this.depositAccount = depositAccount;
         this.created = created;
         this.modified = modified;
+    }
+
+    public static Member createMember(CreatedRequest createdRequest) {
+        return Member.builder()
+                .email(createdRequest.getEmail())
+                .name(createdRequest.getName())
+                .password(createdRequest.getPassword())
+                .build();
     }
 }

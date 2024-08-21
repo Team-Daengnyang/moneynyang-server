@@ -3,6 +3,7 @@ package com.fav.daengnyang.domain.member.service.dto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fav.daengnyang.domain.member.entity.Member;
 import com.fav.daengnyang.domain.member.repository.MemberRepository;
+import com.fav.daengnyang.domain.member.service.dto.request.CreatedRequest;
 import com.fav.daengnyang.domain.member.service.dto.response.MemberBankResponse;
 import com.fav.daengnyang.domain.member.service.dto.response.LoginResponse;
 import com.fav.daengnyang.global.auth.dto.MemberAuthority;
@@ -35,11 +36,13 @@ public class MemberService {
     private String apiKey;
 
     // Member 저장
-    public Member save(Member member){
+    public Member save(CreatedRequest createdRequest){
+
+        Member member = Member.createMember(createdRequest);
         return memberRepository.save(member);
     }
 
-    // accessToken 생성
+    // accessToken 생성 -> created로 수정
     public LoginResponse createAccessToken(MemberBankResponse memberBankResponse){
         return LoginResponse.builder()
                 .accessToken(
@@ -54,14 +57,14 @@ public class MemberService {
         금융 API
     */
     // 회원가입 API
-    public MemberBankResponse createMemberBank(Member member) throws JsonProcessingException {
+    public MemberBankResponse createMemberBank(CreatedRequest createdRequest) throws JsonProcessingException {
 
 
         // 1. body 객체 생성
         log.debug("1. body 객체 생성 ");
         HashMap<String, String> body = new HashMap<>();
         body.put("apiKey", apiKey);
-        body.put("userId", member.getEmail());
+        body.put("userId", createdRequest.getEmail());
 
         // 2. HttpHeaders 설정
         log.debug("2. HttpHeaders 설정");
