@@ -99,7 +99,7 @@ public class BankbookService {
         HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
         // 외부 API 호출
-        String url = "https://finopenapi.ssafy.io/ssafy/api/v1/edu/demandDeposit/createDemandDepositAccount";
+        String url = "/edu/demandDeposit/createDemandDepositAccount";
         ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
 
         // API 응답 처리
@@ -126,7 +126,7 @@ public class BankbookService {
         HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
         // 외부 API 호출
-        String url = "https://finopenapi.ssafy.io/ssafy/api/v1/edu/demandDeposit/inquireDemandDepositAccount";
+        String url = "/edu/demandDeposit/inquireDemandDepositAccount";
         ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
 
         // 응답 처리
