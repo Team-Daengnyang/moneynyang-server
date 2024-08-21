@@ -21,4 +21,10 @@ public class BankbookController {
         BankbookResponse response = bankbookService.createBankbook(request);
         return ResponseEntity.ok(SuccessResponse.ok(response));
     }
+
+    @PostMapping("/inquire")
+    public ResponseEntity<SuccessResponse<BankbookResponse>> inquireBankbook(@RequestBody String accountNo) throws JsonProcessingException {
+        BankbookResponse response = bankbookService.inquireBankbook(accountNo);
+        return ResponseEntity.ok(SuccessResponse.ok(response));
+    }
 }
