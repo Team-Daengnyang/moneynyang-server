@@ -7,6 +7,7 @@ import static org.springframework.http.HttpStatus.NOT_ACCEPTABLE;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.UNSUPPORTED_MEDIA_TYPE;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fav.daengnyang.global.dto.response.ExceptionResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.ConversionNotSupportedException;
@@ -15,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
+import org.springframework.stereotype.Repository;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.NoHandlerFoundException;
@@ -136,5 +139,17 @@ public class ApiExceptionHandler {
         return ResponseEntity
                 .status(BAD_REQUEST)
                 .body(buildResponse(BAD_REQUEST, exception));
+    }
+
+    // 금융 API 호출 시 해당 API에서 발생하는 예외를 처리
+    @ExceptionHandler(HttpClientErrorException.class)
+    public ResponseEntity<ExceptionResponse> handleHttpClientErrorException(HttpClientErrorException exception) {
+        HttpStatus status = (HttpStatus) exception.getStatusCode();
+
+        return ResponseEntity.status(status)
+                .body(ExceptionResponse.builder()
+                        .status(status.value())
+                        .message(exception.getResponseBodyAsString())
+                        .build());
     }
 }
