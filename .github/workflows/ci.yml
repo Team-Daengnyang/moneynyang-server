@@ -27,6 +27,6 @@ jobs:
       - name: build
         run: |
           chmod +x gradlew
-          ./gradlew build test
+          ./gradlew build
         working-directory: ${{ env.working-directory }}
         shell: bash
