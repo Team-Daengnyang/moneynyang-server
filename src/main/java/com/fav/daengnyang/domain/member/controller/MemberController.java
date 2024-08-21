@@ -3,6 +3,7 @@ package com.fav.daengnyang.domain.member.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fav.daengnyang.domain.member.service.dto.MemberService;
 import com.fav.daengnyang.domain.member.service.dto.request.CreatedRequest;
+import com.fav.daengnyang.domain.member.service.dto.request.LoginRequest;
 import com.fav.daengnyang.domain.member.service.dto.response.LoginResponse;
 import com.fav.daengnyang.global.web.dto.response.SuccessResponse;
 import jakarta.validation.Valid;
@@ -26,4 +27,12 @@ public class MemberController {
            LoginResponse loginResponse = memberService.createMember(createdRequest);
            return SuccessResponse.ok(loginResponse);
    }
+
+   // 로그인
+    @PostMapping("/search")
+    public SuccessResponse<?> login(@RequestBody @Valid LoginRequest loginRequest) throws JsonProcessingException {
+       LoginResponse loginResponse = memberService.login(loginRequest);
+       return SuccessResponse.ok(loginResponse);
+    }
+
 }

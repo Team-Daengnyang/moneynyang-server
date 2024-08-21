@@ -33,7 +33,8 @@ dependencies {
 	// MySQL
 	implementation group: 'com.mysql', name: 'mysql-connector-j', version: '8.4.0'
 
-	// Spring Security OAuth2 Jose
+	// Spring Security
+	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.security:spring-security-oauth2-jose'
 
 	// JJWT (Java JSON Web Token)
