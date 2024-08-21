@@ -41,13 +41,13 @@ public class MemberService {
 
     public LoginResponse createMember(CreatedRequest createdRequest) throws JsonProcessingException {
         // 1. 금융 API 연결
-        MemberBankResponse memberBankResponse = createMemberBank(createdRequest);
+        MemberBankRequest memberBankRequest = createMemberBank(createdRequest);
         // 2. 예금 계좌 개설
-        String depositAccount = createMemberAccount(memberBankResponse);
+        String depositAccount = createMemberAccount(memberBankRequest);
         // 3. DB에 회원 정보 저장
-        save(createdRequest, depositAccount);
+        Member member = save(createdRequest, depositAccount);
         // 4. accessToken 생성
-        return createAccessToken(memberBankResponse);
+        return createAccessToken(memberBankRequest, member);
     }
 
     // Member 저장
@@ -57,11 +57,12 @@ public class MemberService {
         return memberRepository.save(member);
     }
 
-    private LoginResponse createAccessToken(MemberBankResponse memberBankResponse){
+
+    private LoginResponse createAccessToken(MemberBankRequest memberBankRequest, Member member){
         String accessToken = jwtProvider.buildAccessToken(
                 MemberAuthority.builder()
-                        .userId(memberBankResponse.getUserId())
-                        .userKey(memberBankResponse.getUserKey())
+                        .memberId(member.getMemberId())
+                        .userKey(memberBankRequest.getUserKey())
                         .build()
         );
 
@@ -72,18 +73,19 @@ public class MemberService {
         금융 API
     */
     // 회원가입 API
-    private MemberBankResponse createMemberBank(CreatedRequest createdRequest) throws JsonProcessingException {
+    private MemberBankRequest createMemberBank(CreatedRequest createdRequest) throws JsonProcessingException {
 
         // 1. body 객체 생성
-        MemberBankRequest body = MemberBankRequest
-                .createMemberBankBodyRequest(apiKey, createdRequest.getEmail());
+        HashMap<String, String> body = new HashMap<>();
+        body.put("apiKey", apiKey);
+        body.put("userId", createdRequest.getEmail());
 
         // 2. HttpHeaders 설정
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         // 3. HttpEntity 객체 생성
-        HttpEntity<MemberBankRequest> requestEntity = new HttpEntity<>(body, headers);
+        HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(body, headers);
 
         // 4. 외부 API 호출
         String url = "/member";
@@ -92,7 +94,7 @@ public class MemberService {
         // 5. 외부 API 응답 처리
         if (response.getStatusCode().is2xxSuccessful()) {
             log.info("회원 가입 API 결과: " + response.getBody());
-            return objectMapper.readValue(response.getBody(), MemberBankResponse.class);
+            return objectMapper.readValue(response.getBody(), MemberBankRequest.class);
         } else {
             // 응답 상태가 2xx가 아닌 경우, 오류 처리
             throw new RuntimeException("API 호출 오류: " + response.getBody());
@@ -100,7 +102,7 @@ public class MemberService {
     }
 
     // 계좌 생성 API
-    private String createMemberAccount(MemberBankResponse memberBankResponse) throws JsonProcessingException {
+    private String createMemberAccount(MemberBankRequest memberBankResponse) throws JsonProcessingException {
         String accountTypeUniqueNo = "001-1-82fe5fa7eca441";
 
         log.info("계좌 생성 API 시작 " );

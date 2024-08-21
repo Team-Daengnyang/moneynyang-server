@@ -9,15 +9,15 @@ import lombok.NoArgsConstructor;
 @Getter
 public class MemberAuthority {
     private String userKey;
-    private String userId;
+    private Long memberId;
 
     @Builder
-    private MemberAuthority(String userKey, String userId) {
+    private MemberAuthority(String userKey, Long memberId) {
         this.userKey = userKey;
-        this.userId = userId;
+        this.memberId = memberId;
     }
 
-    public static MemberAuthority createMemberAuthority(String userKey, String userId) {
-        return builder().userKey(userKey).userId(userId).build();
+    public static MemberAuthority createMemberAuthority(String userKey, Long memberId) {
+        return builder().userKey(userKey).memberId(memberId).build();
     }
 }
