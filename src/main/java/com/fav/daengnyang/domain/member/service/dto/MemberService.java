@@ -3,6 +3,7 @@ package com.fav.daengnyang.domain.member.service.dto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fav.daengnyang.domain.member.entity.Member;
 import com.fav.daengnyang.domain.member.repository.MemberRepository;
+import com.fav.daengnyang.domain.member.service.dto.request.AccountCreationHeaderRequest;
 import com.fav.daengnyang.domain.member.service.dto.request.CreatedRequest;
 import com.fav.daengnyang.domain.member.service.dto.response.MemberBankResponse;
 import com.fav.daengnyang.domain.member.service.dto.response.LoginResponse;
@@ -92,7 +93,7 @@ public class MemberService {
     }
 
 //    // 계좌 생성 API
-    private AccountCreationRequest createMemberAccount(CreatedRequest createdRequest){
+    private AccountCreationHeaderRequest createMemberAccount(CreatedRequest createdRequest){
         // 1. body 객체 생성
         HashMap<String, String> body = new HashMap<>();
         body.put("apiKey", apiKey);
