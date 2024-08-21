@@ -22,11 +22,8 @@ public class MemberController {
     // 회원 가입
    @PostMapping
     public SuccessResponse<?> createMember(@RequestBody @Valid CreatedRequest createdRequest) {
-
        try{
-
            LoginResponse loginResponse = memberService.createMember(createdRequest);
-
            return SuccessResponse.ok(loginResponse);
        } catch (Exception e){
            log.debug(e.getMessage());
