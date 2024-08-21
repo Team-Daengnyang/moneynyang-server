@@ -96,7 +96,7 @@ public class JWTProvider implements InitializingBean {
         Claims payload = parsePayload(token);
 
         String userKey = parsePayload(payload.get(USER_KEY), String.class, USER_KEY);
-        String userId = parsePayload(payload.get(USER_ID), String.class, USER_ID);
+        Long userId = parsePayload(payload.get(USER_ID), Long.class, USER_ID);
 
         return MemberAuthority.createMemberAuthority(userKey, userId);
     }
