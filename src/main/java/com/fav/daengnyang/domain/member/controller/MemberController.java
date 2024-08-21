@@ -3,7 +3,7 @@ package com.fav.daengnyang.domain.member.controller;
 import com.fav.daengnyang.domain.member.service.dto.MemberService;
 import com.fav.daengnyang.domain.member.service.dto.request.CreatedRequest;
 import com.fav.daengnyang.domain.member.service.dto.response.LoginResponse;
-import com.fav.daengnyang.domain.member.service.dto.response.MemberBankResponse;
+import com.fav.daengnyang.domain.member.service.dto.request.MemberBankRequest;
 import com.fav.daengnyang.global.web.dto.response.SuccessResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public class MemberController {
        try{
 
            // 1. 금융 API 연결
-           MemberBankResponse memberBankResponse = memberService.createMemberBank(createdRequest);
+           MemberBankRequest memberBankResponse = memberService.createMemberBank(createdRequest);
            // 2. DB에 회원 정보 저장 --> service 단으로
            memberService.save(createdRequest);
            // 3. 예금 계좌 개설

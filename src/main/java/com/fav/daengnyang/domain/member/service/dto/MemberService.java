@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fav.daengnyang.domain.member.entity.Member;
 import com.fav.daengnyang.domain.member.repository.MemberRepository;
 import com.fav.daengnyang.domain.member.service.dto.request.CreatedRequest;
-import com.fav.daengnyang.domain.member.service.dto.response.MemberBankResponse;
+import com.fav.daengnyang.domain.member.service.dto.request.MemberBankRequest;
 import com.fav.daengnyang.domain.member.service.dto.response.LoginResponse;
 import com.fav.daengnyang.global.auth.dto.MemberAuthority;
 import com.fav.daengnyang.global.auth.utils.JWTProvider;
@@ -43,7 +43,7 @@ public class MemberService {
     }
 
     // accessToken 생성 -> created로 수정
-    public LoginResponse createAccessToken(MemberBankResponse memberBankResponse){
+    public LoginResponse createAccessToken(MemberBankRequest memberBankResponse){
         return LoginResponse.builder()
                 .accessToken(
                         jwtProvider.buildAccessToken(MemberAuthority.builder()
@@ -57,7 +57,7 @@ public class MemberService {
         금융 API
     */
     // 회원가입 API
-    public MemberBankResponse createMemberBank(CreatedRequest createdRequest) throws JsonProcessingException {
+    public MemberBankRequest createMemberBank(CreatedRequest createdRequest) throws JsonProcessingException {
 
 
         // 1. body 객체 생성
@@ -81,6 +81,6 @@ public class MemberService {
         ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
 
         log.debug("회원 가입 API 결과: ", response);
-        return objectMapper.readValue(response.getBody(), MemberBankResponse.class);
+        return objectMapper.readValue(response.getBody(), MemberBankRequest.class);
     }
 }
