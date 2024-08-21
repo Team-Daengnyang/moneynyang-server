@@ -42,15 +42,15 @@ public class MemberService {
         return memberRepository.save(member);
     }
 
-    // accessToken 생성 -> created로 수정
     private LoginResponse createAccessToken(MemberBankRequest memberBankResponse){
-        return LoginResponse.builder()
-                .accessToken(
-                        jwtProvider.buildAccessToken(MemberAuthority.builder()
-                                .userId(memberBankResponse.getUserId())
-                                .userKey(memberBankResponse.getUserKey())
-                                .build())
-                ).build();
+        String accessToken = jwtProvider.buildAccessToken(
+                MemberAuthority.builder()
+                        .userId(memberBankResponse.getUserId())
+                        .userKey(memberBankResponse.getUserKey())
+                        .build()
+        );
+
+        return LoginResponse.createLoginResponse(accessToken);
     }
 
     /*
@@ -60,22 +60,18 @@ public class MemberService {
     private MemberBankRequest createMemberBank(CreatedRequest createdRequest) throws JsonProcessingException {
 
         // 1. body 객체 생성
-        log.debug("1. body 객체 생성 ");
         HashMap<String, String> body = new HashMap<>();
         body.put("apiKey", apiKey);
         body.put("userId", createdRequest.getEmail());
 
         // 2. HttpHeaders 설정
-        log.debug("2. HttpHeaders 설정");
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         // 3. HttpEntity 객체 생성
-        log.debug("// 3. HttpEntity 객체 생성");
         HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(body, headers);
 
         // 4. 외부 API 호출, rootUri를 config에 이미 선언
-        log.debug("// 4. 외부 API 호출");
         String url = "/member";
         ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
 
@@ -86,7 +82,7 @@ public class MemberService {
     public LoginResponse createMember(CreatedRequest createdRequest) throws JsonProcessingException {
         // 1. 금융 API 연결
         MemberBankRequest memberBankResponse = createMemberBank(createdRequest);
-        // 2. DB에 회원 정보 저장 --> service 단으로
+        // 2. DB에 회원 정보 저장
         save(createdRequest);
         // 3. 예금 계좌 개설
 
