@@ -79,7 +79,7 @@ public class JWTProvider implements InitializingBean {
                     .parseClaimsJws(token)
                     .getBody();
         } catch (ExpiredJwtException exception) {
-            throw new InvalidJWTException("만료된 token 입니다.", exception);
+            throw new InvalidJWTException("유효하지 않은 token 입니다.", exception);
         } catch (JwtException exception) {
             throw new InvalidJWTException("유효하지 않은 token 입니다.", exception);
         }
