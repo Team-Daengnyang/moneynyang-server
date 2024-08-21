@@ -20,22 +20,41 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	// https://mvnrepository.com/artifact/org.projectlombok/lombok
-	compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.34'
-	// https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core
-	implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.23.1'
-	// https://mvnrepository.com/artifact/com.mysql/mysql-connector-j
-	implementation group: 'com.mysql', name: 'mysql-connector-j', version: '8.4.0'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
-	//test
+	// Lombok
+	compileOnly 'org.projectlombok:lombok:1.18.34'
+	annotationProcessor 'org.projectlombok:lombok:1.18.34'
+
+	// Log4j
+	implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.23.1'
+
+	// MySQL
+	implementation group: 'com.mysql', name: 'mysql-connector-j', version: '8.4.0'
+
+	// Spring Security OAuth2 Jose
+	implementation 'org.springframework.security:spring-security-oauth2-jose'
+
+	// JJWT (Java JSON Web Token)
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.2'
+
+	// Jakarta Validation API
+	implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
+
+	// Hibernate Validator (Reference Implementation)
+	implementation 'org.hibernate.validator:hibernate-validator:7.0.4.Final'
+
+	// Test dependencies
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	// Lombok in tests
 	testCompileOnly 'org.projectlombok:lombok'
 	testAnnotationProcessor 'org.projectlombok:lombok'
-
 }
 
 tasks.named('test') {

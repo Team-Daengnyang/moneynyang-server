@@ -75,4 +75,5 @@ gradle-app.setting
 .project
 .classpath
 
+application-*.properties
 ### End of the .gitignore ###
