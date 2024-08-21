@@ -57,7 +57,7 @@ public class JWTProvider implements InitializingBean {
 
         return Jwts.builder()
                 .claim(USER_KEY, authority.getUserKey())
-                .claim(USER_ID, authority.getUserId())
+                .claim(USER_ID, authority.getMemberId())
                 .signWith(key)
                 .setIssuedAt(Date.from(now))
                 .setExpiration(Date.from(now.plusSeconds(ACCESS_TOKEN_EXPIRATION_PERIOD)))
