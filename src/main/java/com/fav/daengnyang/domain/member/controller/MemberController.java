@@ -1,9 +1,9 @@
 package com.fav.daengnyang.domain.member.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fav.daengnyang.domain.member.service.dto.MemberService;
 import com.fav.daengnyang.domain.member.service.dto.request.CreatedRequest;
 import com.fav.daengnyang.domain.member.service.dto.response.LoginResponse;
-import com.fav.daengnyang.domain.member.service.dto.request.MemberBankRequest;
 import com.fav.daengnyang.global.web.dto.response.SuccessResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,13 +21,9 @@ public class MemberController {
 
     // 회원 가입
    @PostMapping
-    public SuccessResponse<?> createMember(@RequestBody @Valid CreatedRequest createdRequest) {
-       try{
+    public SuccessResponse<?> createMember(@RequestBody @Valid CreatedRequest createdRequest) throws JsonProcessingException {
+
            LoginResponse loginResponse = memberService.createMember(createdRequest);
            return SuccessResponse.ok(loginResponse);
-       } catch (Exception e){
-           log.debug(e.getMessage());
-           return null;
-       }
    }
 }

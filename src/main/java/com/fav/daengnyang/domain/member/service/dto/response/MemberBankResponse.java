@@ -1,11 +1,12 @@
-package com.fav.daengnyang.domain.member.service.dto.request;
+package com.fav.daengnyang.domain.member.service.dto.response;
 
 import lombok.*;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class MemberBankRequest {
+@ToString
+public class MemberBankResponse {
 
     private String userId;
     private String userName;
