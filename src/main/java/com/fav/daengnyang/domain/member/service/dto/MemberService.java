@@ -36,14 +36,14 @@ public class MemberService {
     private String apiKey;
 
     // Member 저장
-    public Member save(CreatedRequest createdRequest){
+    private Member save(CreatedRequest createdRequest){
 
         Member member = Member.createMember(createdRequest);
         return memberRepository.save(member);
     }
 
     // accessToken 생성 -> created로 수정
-    public LoginResponse createAccessToken(MemberBankRequest memberBankResponse){
+    private LoginResponse createAccessToken(MemberBankRequest memberBankResponse){
         return LoginResponse.builder()
                 .accessToken(
                         jwtProvider.buildAccessToken(MemberAuthority.builder()
@@ -57,8 +57,7 @@ public class MemberService {
         금융 API
     */
     // 회원가입 API
-    public MemberBankRequest createMemberBank(CreatedRequest createdRequest) throws JsonProcessingException {
-
+    private MemberBankRequest createMemberBank(CreatedRequest createdRequest) throws JsonProcessingException {
 
         // 1. body 객체 생성
         log.debug("1. body 객체 생성 ");
@@ -82,5 +81,16 @@ public class MemberService {
 
         log.debug("회원 가입 API 결과: ", response);
         return objectMapper.readValue(response.getBody(), MemberBankRequest.class);
+    }
+
+    public LoginResponse createMember(CreatedRequest createdRequest) throws JsonProcessingException {
+        // 1. 금융 API 연결
+        MemberBankRequest memberBankResponse = createMemberBank(createdRequest);
+        // 2. DB에 회원 정보 저장 --> service 단으로
+        save(createdRequest);
+        // 3. 예금 계좌 개설
+
+        // 4. accessToken 생성
+        return createAccessToken(memberBankResponse);
     }
 }

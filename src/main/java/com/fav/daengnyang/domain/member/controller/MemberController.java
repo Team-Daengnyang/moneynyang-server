@@ -25,15 +25,8 @@ public class MemberController {
 
        try{
 
-           // 1. 금융 API 연결
-           MemberBankRequest memberBankResponse = memberService.createMemberBank(createdRequest);
-           // 2. DB에 회원 정보 저장 --> service 단으로
-           memberService.save(createdRequest);
-           // 3. 예금 계좌 개설
+           LoginResponse loginResponse = memberService.createMember(createdRequest);
 
-           // 4. accessToken 생성
-           LoginResponse loginResponse = memberService.createAccessToken(memberBankResponse);
-           // 5. 결과 return
            return SuccessResponse.ok(loginResponse);
        } catch (Exception e){
            log.debug(e.getMessage());
