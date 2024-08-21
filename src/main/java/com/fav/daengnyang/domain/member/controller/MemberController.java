@@ -3,7 +3,6 @@ package com.fav.daengnyang.domain.member.controller;
 import com.fav.daengnyang.domain.member.service.dto.MemberService;
 import com.fav.daengnyang.domain.member.service.dto.request.CreatedRequest;
 import com.fav.daengnyang.domain.member.service.dto.response.LoginResponse;
-import com.fav.daengnyang.domain.member.service.dto.request.MemberBankRequest;
 import com.fav.daengnyang.global.web.dto.response.SuccessResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

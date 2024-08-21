@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fav.daengnyang.domain.member.entity.Member;
 import com.fav.daengnyang.domain.member.repository.MemberRepository;
 import com.fav.daengnyang.domain.member.service.dto.request.CreatedRequest;
-import com.fav.daengnyang.domain.member.service.dto.request.MemberBankRequest;
+import com.fav.daengnyang.domain.member.service.dto.response.MemberBankResponse;
 import com.fav.daengnyang.domain.member.service.dto.response.LoginResponse;
 import com.fav.daengnyang.global.auth.dto.MemberAuthority;
 import com.fav.daengnyang.global.auth.utils.JWTProvider;
@@ -37,7 +37,8 @@ public class MemberService {
 
     public LoginResponse createMember(CreatedRequest createdRequest) throws JsonProcessingException {
         // 1. 금융 API 연결
-        MemberBankRequest memberBankResponse = createMemberBank(createdRequest);
+        MemberBankResponse memberBankResponse = createMemberBank(createdRequest);
+        log.debug("memberBankResponse: {}", memberBankResponse);
         // 2. DB에 회원 정보 저장
         save(createdRequest);
         // 3. 예금 계좌 개설
@@ -53,7 +54,7 @@ public class MemberService {
         return memberRepository.save(member);
     }
 
-    private LoginResponse createAccessToken(MemberBankRequest memberBankResponse){
+    private LoginResponse createAccessToken(MemberBankResponse memberBankResponse){
         String accessToken = jwtProvider.buildAccessToken(
                 MemberAuthority.builder()
                         .userId(memberBankResponse.getUserId())
@@ -68,7 +69,7 @@ public class MemberService {
         금융 API
     */
     // 회원가입 API
-    private MemberBankRequest createMemberBank(CreatedRequest createdRequest) throws JsonProcessingException {
+    private MemberBankResponse createMemberBank(CreatedRequest createdRequest) throws JsonProcessingException {
 
         // 1. body 객체 생성
         HashMap<String, String> body = new HashMap<>();
@@ -87,6 +88,28 @@ public class MemberService {
         ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
 
         log.debug("회원 가입 API 결과: ", response);
-        return objectMapper.readValue(response.getBody(), MemberBankRequest.class);
+        return objectMapper.readValue(response.getBody(), MemberBankResponse.class);
+    }
+
+//    // 계좌 생성 API
+    private AccountCreationRequest createMemberAccount(CreatedRequest createdRequest){
+        // 1. body 객체 생성
+        HashMap<String, String> body = new HashMap<>();
+        body.put("apiKey", apiKey);
+        body.put("userId", createdRequest.getEmail());
+
+        // 2. HttpHeaders 설정
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        // 3. HttpEntity 객체 생성
+        HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(body, headers);
+
+        // 4. 외부 API 호출, rootUri를 config에 이미 선언
+        String url = "/member";
+        ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
+
+        log.debug("회원 가입 API 결과: ", response);
+
     }
 }
