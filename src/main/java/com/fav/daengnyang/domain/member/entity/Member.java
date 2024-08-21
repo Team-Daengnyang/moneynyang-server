@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fav.daengnyang.domain.member.service.dto.request.CreatedRequest;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 
@@ -44,12 +46,23 @@ public class Member {
     @Builder
     private Member(String email, String password, String myPassword, String depositAccount, String name, LocalDateTime created, LocalDateTime modified) {
         this.email = email;
-        this.password = password;
+        this.password = encodePassword(password);
         this.myPassword = myPassword;
         this.name = name;
         this.depositAccount = depositAccount;
         this.created = created;
         this.modified = modified;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        this.created = LocalDateTime.now();
+        this.modified = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.modified = LocalDateTime.now();
     }
 
     public static Member createMember(CreatedRequest createdRequest, String depositAccount) {
@@ -59,5 +72,10 @@ public class Member {
                 .password(createdRequest.getPassword())
                 .depositAccount(depositAccount)
                 .build();
+    }
+
+    private String encodePassword(String rawPassword) {
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        return passwordEncoder.encode(rawPassword);
     }
 }
