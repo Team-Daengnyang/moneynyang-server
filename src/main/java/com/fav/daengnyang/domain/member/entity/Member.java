@@ -52,11 +52,12 @@ public class Member {
         this.modified = modified;
     }
 
-    public static Member createMember(CreatedRequest createdRequest) {
+    public static Member createMember(CreatedRequest createdRequest, String depositAccount) {
         return Member.builder()
                 .email(createdRequest.getEmail())
                 .name(createdRequest.getName())
                 .password(createdRequest.getPassword())
+                .depositAccount(depositAccount)
                 .build();
     }
 }

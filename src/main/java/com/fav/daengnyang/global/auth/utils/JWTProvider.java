@@ -76,7 +76,7 @@ public class JWTProvider implements InitializingBean {
                     .parseClaimsJws(token)
                     .getBody();
         } catch (Exception exception){
-            log.debug("JWT 오류");
+            log.info("JWT 오류");
             return null;
         }
 
@@ -87,7 +87,7 @@ public class JWTProvider implements InitializingBean {
     private <T> T parsePayload(Object raw, Class<T> targetClass, String key){
         if(raw == null){
 
-            log.debug("토큰이 완전하지 않습니다.");
+            log.info("토큰이 완전하지 않습니다.");
         }
         return (T) raw;
     }

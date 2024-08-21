@@ -7,19 +7,19 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MemberBankBodyRequest {
+public class MemberBankRequest {
 
     private String apiKey;
     private String userId;
 
     @Builder
-    private MemberBankBodyRequest(String apiKey, String userId) {
+    private MemberBankRequest(String apiKey, String userId) {
         this.apiKey = apiKey;
         this.userId = userId;
     }
 
-    public static MemberBankBodyRequest createMemberBankBodyRequest(String apiKey, String userId) {
-        return MemberBankBodyRequest.builder()
+    public static MemberBankRequest createMemberBankBodyRequest(String apiKey, String userId) {
+        return MemberBankRequest.builder()
                 .apiKey(apiKey)
                 .userId(userId)
                 .build();

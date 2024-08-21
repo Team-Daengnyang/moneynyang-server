@@ -1,56 +1,65 @@
 package com.fav.daengnyang.domain.member.service.dto.request;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Random;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AccountCreationHeaderRequest {
-
-    // api 이름
-    private String apiName = "createDemandDepositAccount";
-    // api 전송일자
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyyMMdd")
-    private LocalDate transmissionDate;
-    // api 전송 시각
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HHmmss")
-    private LocalDateTime transmissionTime;
-    // 기관코드 - 항상 고정
-    private String institutionCode = "00100";
-    // 핀테크 앱 일련번호 - 항상 고정
-    private String fintechAppNo = "001";
-    // 상품 코드
+    private String apiName;
+    private String transmissionDate;
+    private String transmissionTime;
+    private String institutionCode;
+    private String fintechAppNo;
     private String apiServiceCode;
-    // 기관거래 고유번호
     private String institutionTransactionUniqueNo;
-    // 앱 관리자 key
     private String apiKey;
-    // 앱 사용자 key
     private String userKey;
 
     @Builder
-    private AccountCreationHeaderRequest(String apiServiceCode, String institutionTransactionUniqueNo, String apiKey, String userKey){
+    private AccountCreationHeaderRequest(String apiName, String transmissionDate, String transmissionTime,
+                                         String institutionCode, String fintechAppNo,String institutionTransactionUniqueNo, String apiServiceCode,
+                                         String apiKey, String userKey) {
+        this.apiName = apiName;
+        this.transmissionDate = transmissionDate;
+        this.transmissionTime = transmissionTime;
+        this.institutionCode = institutionCode;
+        this.fintechAppNo = fintechAppNo;
         this.apiServiceCode = apiServiceCode;
         this.institutionTransactionUniqueNo = institutionTransactionUniqueNo;
         this.apiKey = apiKey;
         this.userKey = userKey;
-
-        this.transmissionDate = LocalDate.now();
-        this.transmissionTime = LocalDateTime.now();
     }
 
-    public static AccountCreationHeaderRequest createAccountCreationHeaderRequest(String apiServiceCode, String institutionTransactionUniqueNo, String apiKey, String userKey){
+    public static AccountCreationHeaderRequest createAccountCreationHeaderRequest(String apiKey, String userKey) {
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HHmmss");
+
+
         return AccountCreationHeaderRequest.builder()
-                .apiServiceCode(apiServiceCode)
-                .institutionTransactionUniqueNo(institutionTransactionUniqueNo)
+                .apiName("createDemandDepositAccount")
+                .transmissionDate(now.format(dateFormatter))
+                .transmissionTime(now.format(timeFormatter))
+                .institutionCode("00100")
+                .fintechAppNo("001")
+                .apiServiceCode("createDemandDepositAccount")
+                .institutionTransactionUniqueNo(generateUniqueTransactionNo(now))
                 .apiKey(apiKey)
                 .userKey(userKey)
                 .build();
     }
+
+    private static String generateUniqueTransactionNo(LocalDateTime dateTime) {
+        String dateTimePrefix = dateTime.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        String randomSuffix = String.format("%06d", new Random().nextInt(1000000)); // 6자리 난수 생성
+        return dateTimePrefix + randomSuffix;
+    }
 }
+
