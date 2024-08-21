@@ -1,7 +1,10 @@
 package com.fav.daengnyang.global.auth.utils;
 
 import com.fav.daengnyang.global.auth.dto.MemberAuthority;
+import com.fav.daengnyang.global.auth.exception.InvalidJWTException;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -75,9 +78,10 @@ public class JWTProvider implements InitializingBean {
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
-        } catch (Exception exception){
-            log.info("JWT 오류");
-            return null;
+        } catch (ExpiredJwtException exception) {
+            throw new InvalidJWTException("만료된 token 입니다.", exception);
+        } catch (JwtException exception) {
+            throw new InvalidJWTException("유효하지 않은 token 입니다.", exception);
         }
 
         return payload;
@@ -86,8 +90,7 @@ public class JWTProvider implements InitializingBean {
     @SuppressWarnings("unchecked")
     private <T> T parsePayload(Object raw, Class<T> targetClass, String key){
         if(raw == null){
-
-            log.info("토큰이 완전하지 않습니다.");
+            throw new IllegalArgumentException(String.format("token에 %s가 존재하지 않습니다.", key));
         }
         return (T) raw;
     }
