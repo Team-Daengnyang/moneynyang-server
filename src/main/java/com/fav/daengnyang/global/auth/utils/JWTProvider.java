@@ -92,13 +92,12 @@ public class JWTProvider implements InitializingBean {
         return (T) raw;
     }
 
-    // JWT 토큰 파싱 후 객체 변환
     public MemberAuthority parseAccessToken(String token){
         Claims payload = parsePayload(token);
 
-        return MemberAuthority.builder()
-                .userKey(parsePayload(payload.get(USER_KEY), String.class, USER_KEY))
-                .userId(parsePayload(payload.get(USER_ID), String.class, USER_ID))
-                .build();
+        String userKey = parsePayload(payload.get(USER_KEY), String.class, USER_KEY);
+        String userId = parsePayload(payload.get(USER_ID), String.class, USER_ID);
+
+        return MemberAuthority.createMemberAuthority(userKey, userId);
     }
 }

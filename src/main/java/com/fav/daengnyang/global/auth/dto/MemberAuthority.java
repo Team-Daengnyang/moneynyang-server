@@ -17,7 +17,7 @@ public class MemberAuthority {
         this.userId = userId;
     }
 
-    public static MemberAuthority of(String userKey, String userId) {
+    public static MemberAuthority createMemberAuthority(String userKey, String userId) {
         return builder().userKey(userKey).userId(userId).build();
     }
 }
