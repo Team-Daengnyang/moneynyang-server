@@ -22,6 +22,6 @@ public class BankbookDetail {
     private LocalDateTime createdDate;
 
     @ManyToOne
-    @JoinColumn(name = "bankbook_id")  // 외래 키 컬럼
-    private Bankbook bankbook;  // Bankbook과의 관계 설정
+    @JoinColumn(name = "bankbook_id")
+    private Bankbook bankbook;
 }
