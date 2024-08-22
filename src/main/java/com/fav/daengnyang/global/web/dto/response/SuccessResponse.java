@@ -14,7 +14,7 @@ import org.springframework.http.HttpStatus;
 public class SuccessResponse<D> {
     private static final String DEFAULT_SUCCESS_MESSAGE = "요청을 성공했습니다.";
 
-    private int statue;
+    private int status;
     private String message;
     private D data;
 
@@ -40,14 +40,14 @@ public class SuccessResponse<D> {
 
     @Builder
     public SuccessResponse(HttpStatus status, String message, D data) {
-        this.statue = status.value();
+        this.status = status.value();
         this.message = message;
         this.data = data;
     }
 
     @Builder
     public SuccessResponse(HttpStatus status, String message) {
-        this.statue = status.value();
+        this.status = status.value();
         this.message = message;
     }
 }
