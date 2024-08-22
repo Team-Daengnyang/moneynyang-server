@@ -110,16 +110,12 @@ public class MemberService {
 
         // 4. 외부 API 호출
         String url = "/member";
+
         ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
 
-        // 5. 외부 API 응답 처리
-        if (response.getStatusCode().is2xxSuccessful()) {
-            log.info("회원 가입 API 결과: " + response.getBody());
-            return objectMapper.readValue(response.getBody(), MemberBankResponse.class);
-        } else {
-            // 응답 상태가 2xx가 아닌 경우, 오류 처리
-            throw new RuntimeException("API 호출 오류: " + response.getBody());
-        }
+        log.info("회원 가입 API 결과: " + response.getBody());
+        return objectMapper.readValue(response.getBody(), MemberBankResponse.class);
+
     }
 
     // 계좌 생성 API
@@ -147,13 +143,8 @@ public class MemberService {
         ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
 
         // 5. 외부 API 응답 처리
-        if (response.getStatusCode().is2xxSuccessful()) {
-            log.info("계좌 생성 API 결과: " + response.getBody());
-            return objectMapper.readValue(response.getBody(), AccountCreationResponse.class).getAccountNo();
-        } else {
-            // 응답 상태가 2xx가 아닌 경우, 오류 처리
-            throw new RuntimeException("API 호출 오류: " + response.getBody());
-        }
+        log.info("계좌 생성 API 결과: " + response.getBody());
+        return objectMapper.readValue(response.getBody(), AccountCreationResponse.class).getAccountNo();
     }
 
     // 로그인 API
