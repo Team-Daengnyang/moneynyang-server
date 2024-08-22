@@ -36,10 +36,4 @@ public class MemberController {
        return SuccessResponse.ok(loginResponse);
     }
 
-    // 로그인 테스트
-    @GetMapping("/login/test")
-    public SuccessResponse<?> test(@AuthenticationPrincipal MemberPrincipal memberPrincipal) {
-       return SuccessResponse.ok(memberPrincipal);
-    }
-
 }
