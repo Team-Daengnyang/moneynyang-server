@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -64,6 +65,26 @@ public class BankbookService {
                 .userKey((String) responseMap.get("userKey"))
                 .customImageUrl((String) responseMap.get("customImageUrl"))
                 .customColor((String) responseMap.get("customColor"))
+                .build();
+    }
+
+    // 커스텀 색상 업데이트
+    public BankbookResponse updateBankbookColor(String userKey, String newColor) {
+        Optional<Bankbook> optionalBankbook = bankbookRepository.findByUserKey(userKey);
+
+        if (!optionalBankbook.isPresent()) {
+            throw new RuntimeException("해당 userKey를 가진 계좌를 찾을 수 없습니다.");
+        }
+
+        Bankbook bankbook = optionalBankbook.get();
+        bankbook.setCustomColor(newColor);
+        bankbookRepository.save(bankbook);
+
+        return BankbookResponse.builder()
+                .accountTypeUniqueNo(bankbook.getAccountTypeUniqueNo())
+                .userKey(bankbook.getUserKey())
+                .customImageUrl(bankbook.getCustomImageUrl())
+                .customColor(bankbook.getCustomColor())
                 .build();
     }
 
