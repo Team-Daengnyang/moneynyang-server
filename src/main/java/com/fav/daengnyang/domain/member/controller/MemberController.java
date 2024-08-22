@@ -5,6 +5,7 @@ import com.fav.daengnyang.domain.member.service.MemberService;
 import com.fav.daengnyang.domain.member.service.dto.request.CreatedRequest;
 import com.fav.daengnyang.domain.member.service.dto.request.LoginRequest;
 import com.fav.daengnyang.domain.member.service.dto.response.LoginResponse;
+import com.fav.daengnyang.global.auth.AuthService;
 import com.fav.daengnyang.global.auth.dto.MemberPrincipal;
 import com.fav.daengnyang.global.web.dto.response.SuccessResponse;
 import jakarta.validation.Valid;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class MemberController {
 
     private final MemberService memberService;
+    private final AuthService authService;
 
     // 회원 가입
    @PostMapping
@@ -31,9 +33,9 @@ public class MemberController {
 
    // 로그인
     @PostMapping("/login")
-    public SuccessResponse<?> login(@RequestBody @Valid LoginRequest loginRequest) throws JsonProcessingException {
-       LoginResponse loginResponse = memberService.login(loginRequest);
+    public SuccessResponse<?> login(@RequestBody @Valid LoginRequest loginRequest){
+        LoginResponse loginResponse = authService.login(loginRequest);
        return SuccessResponse.ok(loginResponse);
     }
-
+    
 }
