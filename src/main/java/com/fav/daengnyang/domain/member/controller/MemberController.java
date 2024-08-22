@@ -23,13 +23,12 @@ public class MemberController {
     // 회원 가입
    @PostMapping
     public SuccessResponse<?> createMember(@RequestBody @Valid CreatedRequest createdRequest) throws JsonProcessingException {
-
            LoginResponse loginResponse = memberService.createMember(createdRequest);
            return SuccessResponse.ok(loginResponse);
    }
 
    // 로그인
-    @PostMapping("/search")
+    @PostMapping("/login")
     public SuccessResponse<?> login(@RequestBody @Valid LoginRequest loginRequest) throws JsonProcessingException {
        LoginResponse loginResponse = memberService.login(loginRequest);
        return SuccessResponse.ok(loginResponse);
