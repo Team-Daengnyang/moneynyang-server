@@ -27,4 +27,8 @@ public class Bankbook {
         this.customImageUrl = customImageUrl;
         this.customColor = customColor;
     }
+
+    public void setCustomColor(String customColor) {
+        this.customColor = customColor;
+    }
 }
