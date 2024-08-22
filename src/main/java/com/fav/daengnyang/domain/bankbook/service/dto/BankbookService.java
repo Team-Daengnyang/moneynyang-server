@@ -1,10 +1,11 @@
-package com.fav.daengnyang.domain.bankbook.service.dto;
+package com.fav.daengnyang.domain.bankbook.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fav.daengnyang.domain.bankbook.entity.Bankbook;
 import com.fav.daengnyang.domain.bankbook.repository.BankbookRepository;
 import com.fav.daengnyang.domain.bankbook.service.dto.request.BankbookRequest;
+import com.fav.daengnyang.domain.bankbook.service.dto.response.BankbookCreateResponse;
 import com.fav.daengnyang.domain.bankbook.service.dto.response.BankbookResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,58 +34,57 @@ public class BankbookService {
     private String apiKey;
 
     // 계좌 생성 메서드
-    public BankbookResponse createBankbook(BankbookRequest request) throws JsonProcessingException {
+    public BankbookCreateResponse createBankbook(BankbookRequest request) throws JsonProcessingException {
         // 외부 API를 통해 userKey를 가져옴
-        String userKey = callCreateBankbookApi(request);
+        String bankbookNumber = callCreateBankbookApi(request);
 
         // DB에 계좌 정보 저장
-        Bankbook bankbook = new Bankbook(
-                request.getAccountTypeUniqueNo(),
-                userKey,
-                request.getCustomImageUrl(),
-                request.getCustomColor()
-        );
+        Bankbook bankbook = new Bankbook();
+        bankbook.setBankbookTitle(request.getBankbookTitle());
+        bankbook.setBankbookNumber(bankbookNumber);
+        bankbook.setBankbookImage(request.getBankbookImage());
+        bankbook.setBankbookColor(request.getBankbookColor());
 
         bankbookRepository.save(bankbook);
 
         // 응답 데이터 생성
-        return BankbookResponse.builder()
-                .accountTypeUniqueNo(bankbook.getAccountTypeUniqueNo())
-                .userKey(bankbook.getUserKey())
-                .customImageUrl(bankbook.getCustomImageUrl())
-                .customColor(bankbook.getCustomColor())
+        return BankbookCreateResponse.builder()
+                .bankbookNumber(bankbook.getBankbookNumber())
+                .bankbookTitle(bankbook.getBankbookTitle())
+                .bankbookImage(bankbook.getBankbookImage())
+                .bankbookColor(bankbook.getBankbookColor())
                 .build();
     }
 
     // 계좌 조회 메서드
-    public BankbookResponse inquireBankbook(String accountNo) throws JsonProcessingException {
-        Map<String, Object> responseMap = callInquireBankbookApi(accountNo);
+    public BankbookResponse inquireBankbook(String bankbookNumber) throws JsonProcessingException {
+        Map<String, Object> responseMap = callInquireBankbookApi(bankbookNumber);
 
         return BankbookResponse.builder()
-                .accountTypeUniqueNo((String) responseMap.get("accountTypeUniqueNo"))
-                .userKey((String) responseMap.get("userKey"))
-                .customImageUrl((String) responseMap.get("customImageUrl"))
-                .customColor((String) responseMap.get("customColor"))
+                .bankbookTitle((String) responseMap.get("bankbookTitle"))
+                .bankbookNumber((String) responseMap.get("bankbookNumber"))
+                .bankbookImage((String) responseMap.get("bankbookImage"))
+                .bankbookColor((String) responseMap.get("bankbookColor"))
                 .build();
     }
 
     // 커스텀 색상 업데이트
-    public BankbookResponse updateBankbookColor(String userKey, String newColor) {
-        Optional<Bankbook> optionalBankbook = bankbookRepository.findByUserKey(userKey);
+    public BankbookResponse updateBankbookColor(String bankbookNumber, String newColor) {
+        Optional<Bankbook> optionalBankbook = bankbookRepository.findByBankbookNumber(bankbookNumber);
 
         if (!optionalBankbook.isPresent()) {
-            throw new RuntimeException("해당 userKey를 가진 계좌를 찾을 수 없습니다.");
+            throw new RuntimeException("해당 계좌 번호를 가진 계좌를 찾을 수 없습니다.");
         }
 
         Bankbook bankbook = optionalBankbook.get();
-        bankbook.setCustomColor(newColor);
+        bankbook.setBankbookColor(newColor);
         bankbookRepository.save(bankbook);
 
         return BankbookResponse.builder()
-                .accountTypeUniqueNo(bankbook.getAccountTypeUniqueNo())
-                .userKey(bankbook.getUserKey())
-                .customImageUrl(bankbook.getCustomImageUrl())
-                .customColor(bankbook.getCustomColor())
+                .bankbookTitle(bankbook.getBankbookTitle())
+                .bankbookNumber(bankbook.getBankbookNumber())
+                .bankbookImage(bankbook.getBankbookImage())
+                .bankbookColor(bankbook.getBankbookColor())
                 .build();
     }
 
@@ -105,12 +105,11 @@ public class BankbookService {
         header.put("apiServiceCode", "createDemandDepositAccount");
         header.put("institutionTransactionUniqueNo", "20240215121212123562");
         header.put("apiKey", apiKey);
-        header.put("userKey", "4f0f63c9-667b-4006-b0b2-2179b7c630d5");
 
         // Body 생성
         Map<String, Object> body = new HashMap<>();
         body.put("Header", header);
-        body.put("accountTypeUniqueNo", request.getAccountTypeUniqueNo());
+        body.put("bankbookTitle", request.getBankbookTitle());
 
         // HttpHeaders 설정
         HttpHeaders headers = new HttpHeaders();
@@ -126,17 +125,17 @@ public class BankbookService {
         // API 응답 처리
         if (response.getStatusCode().is2xxSuccessful()) {
             Map<String, Object> responseMap = objectMapper.readValue(response.getBody(), Map.class);
-            return (String) responseMap.get("userKey");
+            return (String) responseMap.get("bankbookNumber");
         } else {
             throw new RuntimeException("API 호출 오류: " + response.getBody());
         }
     }
 
     // 외부 금융 API 호출 (계좌 조회)
-    private Map<String, Object> callInquireBankbookApi(String accountNo) throws JsonProcessingException {
+    private Map<String, Object> callInquireBankbookApi(String bankbookNumber) throws JsonProcessingException {
         // Header 및 Body 생성
         Map<String, Object> body = new HashMap<>();
-        body.put("accountNo", accountNo);
+        body.put("bankbookNumber", bankbookNumber);
         body.put("Header", createHeader());
 
         // HttpHeaders 설정
@@ -173,7 +172,6 @@ public class BankbookService {
         header.put("apiServiceCode", "inquireDemandDepositAccount");
         header.put("institutionTransactionUniqueNo", "20240215121212123562");
         header.put("apiKey", apiKey);
-        header.put("userKey", "4f0f63c9-667b-4006-b0b2-2179b7c630d5");
 
         return header;
     }
