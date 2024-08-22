@@ -1,11 +1,7 @@
 package com.fav.daengnyang.global.auth.utils;
 
-import com.fav.daengnyang.global.auth.dto.MemberAuthority;
 import com.fav.daengnyang.global.auth.exception.InvalidJWTException;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
@@ -18,6 +14,8 @@ import java.time.Clock;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @Component
@@ -29,7 +27,7 @@ public class JWTProvider implements InitializingBean {
 
     // JWT 키 값
     private static final String USER_KEY = "userKey";
-    private static final String USER_ID = "userId";
+    private static final String MEMBER_ID = "memberId";
 
     // 외부 설정 파일에서 주입되는 JWT 키 값
     @Value("${jwt.key}")
@@ -54,20 +52,27 @@ public class JWTProvider implements InitializingBean {
     }
 
     // JWT 토큰 생성
-    public String buildAccessToken(MemberAuthority authority){
+    public String buildAccessToken(String userKey, Long memberId){
         // 현재 시각
         Instant now = clock.instant();
 
         return Jwts.builder()
-                .claim(USER_KEY, authority.getUserKey())
-                .claim(USER_ID, authority.getMemberId())
+                .claim(USER_KEY, userKey)
+                .claim(MEMBER_ID, memberId)
                 .signWith(key)
                 .setIssuedAt(Date.from(now))
                 .setExpiration(Date.from(now.plusSeconds(ACCESS_TOKEN_EXPIRATION_PERIOD)))
                 .compact();
     }
 
-    // JWT 토큰 파싱 후 클레임 반환
+    public boolean validateToken(String token){
+        Jws<Claims> claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token);
+        return !claims.getBody().getExpiration().before(new Date());
+    }
+
     private Claims parsePayload(String token){
         Claims payload;
         try{
@@ -95,12 +100,18 @@ public class JWTProvider implements InitializingBean {
         return (T) raw;
     }
 
-    public MemberAuthority parseAccessToken(String token){
+    public String getUserKey(String token) {
         Claims payload = parsePayload(token);
-
-        String userKey = parsePayload(payload.get(USER_KEY), String.class, USER_KEY);
-        Long userId = parsePayload(payload.get(USER_ID), Long.class, USER_ID);
-
-        return MemberAuthority.createMemberAuthority(userKey, userId);
+        return parsePayload(payload.get(USER_KEY), String.class, USER_KEY);
     }
+
+    public Long getMemberId(String token) {
+        // 1. token을 payload로 파싱
+        Claims payload = parsePayload(token);
+        // 2. MEMBER_ID를 Number 타입으로 받음 (ClassCastException 발생 제어)
+        Number memberId = (Number) payload.get(MEMBER_ID);
+        // 3. Long 타입으로 변환 후 리턴
+        return memberId.longValue();
+    }
+
 }
