@@ -9,6 +9,7 @@ import static org.springframework.http.HttpStatus.UNSUPPORTED_MEDIA_TYPE;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fav.daengnyang.global.dto.response.ExceptionResponse;
+import com.fav.daengnyang.global.exception.CustomException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.ConversionNotSupportedException;
 import org.springframework.beans.TypeMismatchException;
@@ -36,6 +37,13 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 @Slf4j
 @RestControllerAdvice
 public class ApiExceptionHandler {
+
+    @ExceptionHandler(CustomException.class)
+    public ResponseEntity<ExceptionResponse> handleCustomException(CustomException ex) {
+        ExceptionResponse response = buildResponse(ex.getErrorCode().getHttpStatus(), ex);
+        return new ResponseEntity<>(response, ex.getErrorCode().getHttpStatus());
+    }
+
 
     // 클라이언트의 잘못된 요청으로 발생하는 예외 처리
     @ExceptionHandler({
