@@ -2,14 +2,14 @@ package com.fav.daengnyang.domain.bankbook.service.dto.response;
 
 import lombok.Builder;
 import lombok.Data;
-
-import java.util.Map;
+import lombok.Getter;
 
 @Data
+@Getter
 @Builder
 public class BankbookCreateResponse {
-    private String accountNo;
-    private String bankCode;
-    private Map<String, String> currency;
-
+    private String bankbookNumber;
+    private String bankbookTitle;
+    private String bankbookImage;
+    private String bankbookColor;
 }
