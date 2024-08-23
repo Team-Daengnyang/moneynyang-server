@@ -18,7 +18,7 @@ public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
-    private long memberId;
+    private Long memberId;
 
     @Column(name = "email")
     private String email;
@@ -46,7 +46,7 @@ public class Member {
     @Builder
     private Member(String email, String password, String myPassword, String depositAccount, String name, LocalDateTime created, LocalDateTime modified) {
         this.email = email;
-        this.password = encodePassword(password);
+        this.password = password;
         this.myPassword = myPassword;
         this.name = name;
         this.depositAccount = depositAccount;
@@ -65,17 +65,12 @@ public class Member {
         this.modified = LocalDateTime.now();
     }
 
-    public static Member createMember(CreatedRequest createdRequest, String depositAccount) {
+    public static Member createMember(CreatedRequest createdRequest, String depositAccount, String encodedPassword) {
         return Member.builder()
                 .email(createdRequest.getEmail())
                 .name(createdRequest.getName())
-                .password(createdRequest.getPassword())
+                .password(encodedPassword)
                 .depositAccount(depositAccount)
                 .build();
-    }
-
-    private String encodePassword(String rawPassword) {
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        return passwordEncoder.encode(rawPassword);
     }
 }
