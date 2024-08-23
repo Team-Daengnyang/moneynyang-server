@@ -2,6 +2,7 @@ package com.fav.daengnyang.domain.pet.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fav.daengnyang.domain.member.entity.Member;
+import com.fav.daengnyang.domain.pet.service.dto.request.CreatedPetRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -33,25 +34,30 @@ public class Pet {
     @Column(name = "pet_birth")
     private String petBirth;
 
-    @Column(name = "spiece")
-    private String spiece;
+    @Column(name = "specie")
+    private String specie;
 
     @OneToOne
     @JoinColumn(name = "member_id")
     private Member member;
 
     @Builder
-    private Pet(String petName, String petSex, String petType, String petBirth, String spiece, Member member) {
+    private Pet(String petName, String petSex, String petType, String petBirth, String specie, Member member) {
         this.petName = petName;
         this.petSex = petSex;
         this.petType = petType;
         this.petBirth = petBirth;
-        this.spiece = spiece;
+        this.specie = specie;
     }
 
-//    public static Pet createPet(CreatedPetRequest createdPetRequest) {
-//        return Pet.builder()
-//                .petName()
-//    }
+    public static Pet createPet(CreatedPetRequest createdPetRequest) {
+        return Pet.builder()
+                .petName(createdPetRequest.getPetName())
+                .petSex(createdPetRequest.getPetSex())
+                .petType(createdPetRequest.getPetType())
+                .petBirth(createdPetRequest.getPetBirth())
+                .specie(createdPetRequest.getSpecie())
+                .build();
+    }
 
 }
