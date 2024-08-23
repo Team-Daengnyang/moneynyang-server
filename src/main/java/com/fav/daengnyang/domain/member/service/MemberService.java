@@ -1,4 +1,4 @@
-package com.fav.daengnyang.domain.member.service.dto;
+package com.fav.daengnyang.domain.member.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fav.daengnyang.domain.member.entity.Member;
@@ -9,7 +9,7 @@ import com.fav.daengnyang.domain.member.service.dto.request.LoginRequest;
 import com.fav.daengnyang.domain.member.service.dto.response.AccountCreationResponse;
 import com.fav.daengnyang.domain.member.service.dto.response.LoginResponse;
 import com.fav.daengnyang.domain.member.service.dto.response.MemberBankResponse;
-import com.fav.daengnyang.global.auth.dto.MemberAuthority;
+import com.fav.daengnyang.global.auth.dto.MemberPrincipal;
 import com.fav.daengnyang.global.auth.utils.JWTProvider;
 import com.fav.daengnyang.global.exception.CustomException;
 import com.fav.daengnyang.global.exception.ErrorCode;
@@ -19,6 +19,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -33,61 +36,70 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class MemberService {
+public class MemberService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
+    private final PasswordEncoder passwordEncoder;
     private final JWTProvider jwtProvider;
 
     @Value("${api.key}")
     private String apiKey;
 
     public LoginResponse createMember(CreatedRequest createdRequest) throws JsonProcessingException {
-        // 1. 금융 API 연결
+        // 1. 금융 API 회원가입
         MemberBankResponse memberBankResponse = createMemberBank(createdRequest);
         // 2. 예금 계좌 개설
         String depositAccount = createMemberAccount(memberBankResponse);
-        // 3. DB에 회원 정보 저장
-        Member member = save(createdRequest, depositAccount);
-        // 4. accessToken 생성
-        return createAccessToken(memberBankResponse, member);
+        // 3. 비밀번호 인코딩
+        String encodedPassword = passwordEncoder.encode(createdRequest.getPassword());
+        // 4. DB에 회원 정보 저장
+        Member member = save(createdRequest, depositAccount, encodedPassword);
+        // 5. accessToken 생성
+        String accessToken = jwtProvider.buildAccessToken(memberBankResponse.getUserKey(), member.getMemberId());
+        // 6. LoginResponse DTO 생성
+        return LoginResponse.createLoginResponse(accessToken);
     }
 
     public LoginResponse login(LoginRequest loginRequest) throws JsonProcessingException {
-        // 1. 아이디 존재 확인
+        // 1. 사용자 확인
         Member member = memberRepository.findByEmail(loginRequest.getEmail())
-                .orElseThrow(() -> new CustomException(ErrorCode.USERNOTFOUND));
-
-        // 2. 비밀번호 일치 확인
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        if (!passwordEncoder.matches(loginRequest.getPassword(), member.getPassword())) {
-            throw new CustomException(ErrorCode.INVALIDPASSWORD);
-        }
-
-        // 3. 신한 API에서 userKey 가져오기
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        // 2. 금융 API에서 userKey 가져오기
         MemberBankResponse memberBankResponse = loginMemberBank(member);
-
-        // 4. accessToken 생성
-        return createAccessToken(memberBankResponse, member);
+        // 3. accessToken 생성
+        String accessToken = jwtProvider.buildAccessToken(memberBankResponse.getUserKey(), member.getMemberId());
+        // 4. LoginResponse DTO 생성
+        return LoginResponse.createLoginResponse(accessToken);
     }
 
     // Member 저장
-    private Member save(CreatedRequest createdRequest, String depositAccount){
-
-        Member member = Member.createMember(createdRequest, depositAccount);
+    private Member save(CreatedRequest createdRequest, String depositAccount, String encodedPassword){
+        Member member = Member.createMember(createdRequest, depositAccount, encodedPassword);
         return memberRepository.save(member);
     }
 
-    private LoginResponse createAccessToken(MemberBankResponse memberBankResponse, Member member){
-        String accessToken = jwtProvider.buildAccessToken(
-                MemberAuthority.builder()
-                        .memberId(member.getMemberId())
-                        .userKey(memberBankResponse.getUserKey())
-                        .build()
-        );
+    // memberId로 DB에서 정보 가져오기
+    public Member findByMemberId(Long id) {
+        return memberRepository.findByMemberId(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+    }
 
-        return LoginResponse.createLoginResponse(accessToken);
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+
+        try {
+            // 1. 사용자 확인
+            Member member = memberRepository.findByEmail(email)
+                    .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+            // 2. 금융 API 연결
+            MemberBankResponse memberBankResponse = loginMemberBank(member);
+            return MemberPrincipal.createMemberAuthority(member, memberBankResponse.getUserKey());
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.JSON_PROCESSING_ERROR);
+        }
     }
 
     /*
@@ -110,7 +122,6 @@ public class MemberService {
 
         // 4. 외부 API 호출
         String url = "/member";
-
         ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
 
         log.info("회원 가입 API 결과: " + response.getBody());
