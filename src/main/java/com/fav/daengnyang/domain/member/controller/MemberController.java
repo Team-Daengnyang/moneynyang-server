@@ -6,7 +6,6 @@ import com.fav.daengnyang.domain.member.service.dto.request.CreatedRequest;
 import com.fav.daengnyang.domain.member.service.dto.request.LoginRequest;
 import com.fav.daengnyang.domain.member.service.dto.response.LoginResponse;
 import com.fav.daengnyang.global.auth.AuthService;
-import com.fav.daengnyang.global.auth.dto.MemberPrincipal;
 import com.fav.daengnyang.global.web.dto.response.SuccessResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

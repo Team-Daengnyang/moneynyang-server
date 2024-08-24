@@ -17,13 +17,13 @@ public class Insurance {
     @Column(name = "insurance_id")
     private Long insuranceId;
 
-    @Column(name = "petType")
+    @Column(name = "pet_type")
     private String petType;
 
     @Column(name = "title")
     private String title;
 
-    @Column(name = "companyImage")
+    @Column(name = "company_image")
     private String companyImage;
 
     @Column(name = "url")
