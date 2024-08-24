@@ -61,18 +61,6 @@ public class MemberService implements UserDetailsService {
         return LoginResponse.createLoginResponse(accessToken);
     }
 
-    public LoginResponse login(LoginRequest loginRequest) throws JsonProcessingException {
-        // 1. 사용자 확인
-        Member member = memberRepository.findByEmail(loginRequest.getEmail())
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        // 2. 금융 API에서 userKey 가져오기
-        MemberBankResponse memberBankResponse = loginMemberBank(member);
-        // 3. accessToken 생성
-        String accessToken = jwtProvider.buildAccessToken(memberBankResponse.getUserKey(), member.getMemberId());
-        // 4. LoginResponse DTO 생성
-        return LoginResponse.createLoginResponse(accessToken);
-    }
-
     // Member 저장
     private Member save(CreatedRequest createdRequest, String depositAccount, String encodedPassword){
         Member member = Member.createMember(createdRequest, depositAccount, encodedPassword);
