@@ -48,15 +48,17 @@ public class Pet {
         this.petType = petType;
         this.petBirth = petBirth;
         this.specie = specie;
+        this.member = member;
     }
 
-    public static Pet createPet(CreatedPetRequest createdPetRequest) {
+    public static Pet createPet(CreatedPetRequest createdPetRequest, Member member) {
         return Pet.builder()
                 .petName(createdPetRequest.getPetName())
                 .petSex(createdPetRequest.getPetSex())
                 .petType(createdPetRequest.getPetType())
                 .petBirth(createdPetRequest.getPetBirth())
                 .specie(createdPetRequest.getSpecie())
+                .member(member)
                 .build();
     }
 
