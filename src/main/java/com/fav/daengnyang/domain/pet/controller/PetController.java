@@ -25,4 +25,11 @@ public class PetController {
         Long petId = petService.createPet(createdPetRequest, memberPrincipal.getMemberId());
         return SuccessResponse.created(petId);
     }
+
+    // 반려동물 정보 조회
+    @GetMapping
+    public SuccessResponse<?> getPet(@AuthenticationPrincipal MemberPrincipal memberPrincipal, @RequestParam Long petId) {
+
+    }
+
 }
