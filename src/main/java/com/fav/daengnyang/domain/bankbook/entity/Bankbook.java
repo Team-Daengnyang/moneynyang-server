@@ -24,7 +24,7 @@ public class Bankbook {
     private String bankbookImage;
     private String bankbookColor;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "member_id")
     private Member member;
 
