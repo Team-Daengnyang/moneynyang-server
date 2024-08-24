@@ -58,8 +58,17 @@ public class BankbookService {
     }
 
     // 계좌 조회 메서드
-    public BankbookResponse inquireBankbook(String bankbookNumber) throws JsonProcessingException {
-        // 외부 API를 통해 계좌 정보 조회
+    public BankbookResponse inquireBankbook(Long memberId) throws JsonProcessingException {
+        // 1. 계좌번호 가져오기
+        Optional<Bankbook> optionalBankbook = bankbookRepository.findByMemberMemberId(memberId);
+
+        if (!optionalBankbook.isPresent()) {
+            throw new RuntimeException("해당 회원의 계좌를 찾을 수 없습니다.");
+        }
+
+        String bankbookNumber = optionalBankbook.get().getBankbookNumber();
+
+        // 2. 외부 API를 통해 계좌 정보 조회
         Map<String, Object> responseMap = callInquireBankbookApi(bankbookNumber);
 
         return BankbookResponse.builder()
@@ -138,7 +147,7 @@ public class BankbookService {
     }
 
     // 외부 금융 API 호출 (계좌 조회)
-    private Map<String, Object> callInquireBankbookApi(String bankbookNumber) throws JsonProcessingException {
+    private Map<String, Object> callInquireBankbookApi(String accountNo) throws JsonProcessingException {
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HHmmss");
@@ -152,11 +161,12 @@ public class BankbookService {
         header.put("fintechAppNo", "001");
         header.put("apiServiceCode", "inquireDemandDepositAccount");
         header.put("apiKey", apiKey);
+        header.put("userKey", "YOUR_USER_KEY_HERE");
 
         // Body 생성
         Map<String, Object> body = new HashMap<>();
         body.put("Header", header);
-        body.put("bankbookNumber", bankbookNumber);
+        body.put("accountNo", accountNo);
 
         // HttpHeaders 설정
         HttpHeaders headers = new HttpHeaders();

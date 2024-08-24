@@ -28,8 +28,10 @@ public class BankbookController {
         return ResponseEntity.ok(SuccessResponse.ok(response));
     }
     @PostMapping("/inquire")
-    public ResponseEntity<SuccessResponse<BankbookResponse>> inquireBankbook(@RequestParam String bankbookNumber) throws JsonProcessingException {
-        BankbookResponse response = bankbookService.inquireBankbook(bankbookNumber);
+    public ResponseEntity<SuccessResponse<BankbookResponse>> inquireBankbook(
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal) throws JsonProcessingException {
+
+        BankbookResponse response = bankbookService.inquireBankbook(memberPrincipal.getMemberId());
         return ResponseEntity.ok(SuccessResponse.ok(response));
     }
 
