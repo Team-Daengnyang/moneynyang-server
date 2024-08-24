@@ -1,14 +1,16 @@
 package com.fav.daengnyang.domain.bankbook.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fav.daengnyang.domain.bankbook.service.BankbookService;
+import com.fav.daengnyang.domain.bankbook.service.dto.BankbookService;
 import com.fav.daengnyang.domain.bankbook.service.dto.request.BankbookRequest;
 import com.fav.daengnyang.domain.bankbook.service.dto.request.ColorUpdateRequest;
 import com.fav.daengnyang.domain.bankbook.service.dto.response.BankbookCreateResponse;
 import com.fav.daengnyang.domain.bankbook.service.dto.response.BankbookResponse;
+import com.fav.daengnyang.global.auth.dto.MemberPrincipal;
 import com.fav.daengnyang.global.web.dto.response.SuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,11 +21,12 @@ public class BankbookController {
     private final BankbookService bankbookService;
 
     @PostMapping("/create")
-    public ResponseEntity<SuccessResponse<BankbookCreateResponse>> createBankbook(@RequestBody BankbookRequest request) throws JsonProcessingException {
-        BankbookCreateResponse response = bankbookService.createBankbook(request);
+    public ResponseEntity<SuccessResponse<BankbookCreateResponse>> createBankbook(
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal,
+            @RequestBody BankbookRequest request) throws JsonProcessingException {
+        BankbookCreateResponse response = bankbookService.createBankbook(request, memberPrincipal.getUserKey());
         return ResponseEntity.ok(SuccessResponse.ok(response));
     }
-
     @PostMapping("/inquire")
     public ResponseEntity<SuccessResponse<BankbookResponse>> inquireBankbook(@RequestParam String bankbookNumber) throws JsonProcessingException {
         BankbookResponse response = bankbookService.inquireBankbook(bankbookNumber);
