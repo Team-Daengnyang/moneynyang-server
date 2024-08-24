@@ -2,10 +2,9 @@ package com.fav.daengnyang.domain.member.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fav.daengnyang.domain.member.service.dto.request.CreatedRequest;
+import com.fav.daengnyang.domain.pet.entity.Pet;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 
@@ -42,6 +41,9 @@ public class Member {
     @Column(name = "modified")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime modified;
+
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Pet pet;
 
     @Builder
     private Member(String email, String password, String myPassword, String depositAccount, String name, LocalDateTime created, LocalDateTime modified) {
