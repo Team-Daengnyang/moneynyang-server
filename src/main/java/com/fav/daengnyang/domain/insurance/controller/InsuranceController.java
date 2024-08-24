@@ -25,7 +25,7 @@ public class InsuranceController {
         return SuccessResponse.ok(response);
     }
 
-    @GetMapping("/{insuranceId")
+    @GetMapping("/{insuranceId}")
     public SuccessResponse<?> getInsuranceById(@PathVariable("insuranceId") Long insuranceId) {
         InsuranceDetailResponse response = insuranceService.getInsurance(insuranceId);
         return SuccessResponse.ok(response);
