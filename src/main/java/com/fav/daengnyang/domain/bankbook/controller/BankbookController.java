@@ -27,7 +27,7 @@ public class BankbookController {
         BankbookCreateResponse response = bankbookService.createBankbook(request, memberPrincipal.getUserKey());
         return ResponseEntity.ok(SuccessResponse.ok(response));
     }
-    @PostMapping("/inquire")
+    @GetMapping("/inquire")
     public ResponseEntity<SuccessResponse<BankbookResponse>> inquireBankbook(
             @AuthenticationPrincipal MemberPrincipal memberPrincipal) throws JsonProcessingException {
 
