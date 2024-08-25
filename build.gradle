@@ -56,6 +56,9 @@ dependencies {
 	// Lombok in tests
 	testCompileOnly 'org.projectlombok:lombok'
 	testAnnotationProcessor 'org.projectlombok:lombok'
+
+	// Jackson module (for using 'LocalDateTime')
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 }
 
 tasks.named('test') {
