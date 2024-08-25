@@ -171,9 +171,7 @@ public class MemberService implements UserDetailsService {
 
     }
 
-    public MemberInfoResponse getMemberInfo(String token) {
-        // 1. 토큰에서 memberId 추출
-        Long memberId = jwtProvider.getMemberId(token);
+    public MemberInfoResponse getMemberInfo(Long memberId) {
         // 2. Member 가져오기
         Member member = findByMemberId(memberId);
         // 3. 서비스 이용 시작일과 현재일의 차이 계산
