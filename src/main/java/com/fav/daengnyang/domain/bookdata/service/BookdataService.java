@@ -2,7 +2,7 @@ package com.fav.daengnyang.domain.bookdata.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fav.daengnyang.domain.bookdata.repository.BankbookDetailRepository;
+import com.fav.daengnyang.domain.bookdata.repository.BookdataRepository;
 import com.fav.daengnyang.domain.bookdata.service.dto.response.BookdataSummaryResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,7 +22,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class BookdataService {
 
-    private final BankbookDetailRepository bankbookDetailRepository;
+    private final BookdataRepository bookdataRepository;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
@@ -31,8 +31,8 @@ public class BookdataService {
 
     // Bookdata 요약 정보 가져오기 메서드
     public BookdataSummaryResponse getBookdataSummary(Long bankbookId, String accountNo) throws JsonProcessingException {
-        Integer totalAmount = bankbookDetailRepository.findTotalAmountByBankbookId(bankbookId);
-        Long transactionCount = bankbookDetailRepository.countTransactionsByBankbookId(bankbookId);
+        Integer totalAmount = bookdataRepository.findTotalAmountByBankbookId(bankbookId);
+        Long transactionCount = bookdataRepository.countTransactionsByBankbookId(bankbookId);
 
         // 금융 API 호출 예시
         Map<String, Object> balanceResponse = callInquireAccountBalanceApi(accountNo);
