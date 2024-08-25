@@ -8,6 +8,7 @@ import com.fav.daengnyang.domain.bankbook.repository.BankbookRepository;
 import com.fav.daengnyang.domain.bankbook.service.dto.request.BankbookRequest;
 import com.fav.daengnyang.domain.bankbook.service.dto.response.BankbookCreateResponse;
 import com.fav.daengnyang.domain.bankbook.service.dto.response.BankbookResponse;
+import com.fav.daengnyang.domain.bookdata.service.dto.response.BankbookHistoryResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -20,8 +21,10 @@ import org.springframework.web.client.RestTemplate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -184,5 +187,83 @@ public class BankbookService {
         } else {
             throw new RuntimeException("API 호출 오류: " + response.getBody());
         }
+    }
+    public List<BankbookHistoryResponse> getBankbookHistory(String userKey) throws JsonProcessingException {
+        // 외부 API 호출 후 데이터 처리
+        Map<String, Object> historyData = callInquireTransactionHistoryApi(userKey);
+
+        // API로부터 받은 데이터를 DTO로 매핑
+        return mapToBankbookHistoryResponse(historyData);
+    }
+
+    // 금융 API 호출 (거래 내역 조회)
+    private Map<String, Object> callInquireTransactionHistoryApi(String userKey) throws JsonProcessingException {
+        // Header 및 Body 생성
+        Map<String, Object> body = createTransactionHistoryRequest(userKey);
+
+        // HttpHeaders 설정
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        // HttpEntity 생성
+        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+
+        // 외부 API 호출
+        String url = "https://finopenapi.ssafy.io/ssafy/api/v1/edu/demandDeposit/inquireTransactionHistory";
+        ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
+
+        // 응답 처리
+        if (response.getStatusCode().is2xxSuccessful()) {
+            return objectMapper.readValue(response.getBody(), Map.class);
+        } else {
+            throw new RuntimeException("API 호출 오류: " + response.getBody());
+        }
+    }
+
+    // 거래 내역 조회 요청 생성
+    private Map<String, Object> createTransactionHistoryRequest(String userKey) {
+        return Map.of(
+                "Header", createHeader("inquireTransactionHistory"),
+                "userKey", userKey,
+                "startDate", "20240101",
+                "endDate", "20240331",
+                "transactionType", "A",
+                "orderByType", "ASC"
+        );
+    }
+
+    // 공통 Header 생성
+    private Map<String, String> createHeader(String apiName) {
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HHmmss");
+
+        Map<String, String> header = new HashMap<>();
+        header.put("apiName", apiName);
+        header.put("transmissionDate", now.format(dateFormatter));
+        header.put("transmissionTime", now.format(timeFormatter));
+        header.put("institutionCode", "00100");
+        header.put("fintechAppNo", "001");
+        header.put("apiKey", apiKey);
+
+        return header;
+    }
+
+    private List<BankbookHistoryResponse> mapToBankbookHistoryResponse(Map<String, Object> historyData) {
+        // "history" 리스트를 가져와서 매핑
+        List<Map<String, Object>> bankbookHistories = (List<Map<String, Object>>) historyData.get("history");
+
+        return bankbookHistories.stream()
+                .map(this::mapBankbookHistory)
+                .collect(Collectors.toList());
+    }
+
+    private BankbookHistoryResponse mapBankbookHistory(Map<String, Object> bankbookData) {
+        // 데이터 매핑
+        return BankbookHistoryResponse.builder()
+                .date((String) bankbookData.get("date"))
+                .name((String) bankbookData.get("name"))
+                .amount((Integer) bankbookData.get("amount"))
+                .build();
     }
 }
