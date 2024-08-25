@@ -1,4 +1,4 @@
-package com.fav.daengnyang.domain.target.service.dto;
+package com.fav.daengnyang.domain.target.service;
 
 import com.fav.daengnyang.domain.bankbook.entity.Bankbook;
 import com.fav.daengnyang.domain.bankbook.repository.BankbookRepository;
@@ -63,4 +63,6 @@ public class TargetService {
                         .build())
                 .toList();
     }
+
+
 }
