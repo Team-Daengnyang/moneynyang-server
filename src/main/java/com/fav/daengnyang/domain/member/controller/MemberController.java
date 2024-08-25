@@ -41,7 +41,6 @@ public class MemberController {
     }
 
     // 사용자 정보 조회
-    // 사용자 정보 조회
     @GetMapping("/info")
     public SuccessResponse<MemberInfoResponse> getMemberInfo(@AuthenticationPrincipal MemberPrincipal memberPrincipal) throws JsonProcessingException {
         MemberInfoResponse memberInfoResponse = memberService.getMemberInfo(memberPrincipal.getMemberId());
