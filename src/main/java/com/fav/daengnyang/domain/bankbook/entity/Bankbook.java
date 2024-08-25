@@ -1,6 +1,6 @@
 package com.fav.daengnyang.domain.bankbook.entity;
 
-import com.fav.daengnyang.domain.bookdata.entity.BankbookDetail;
+import com.fav.daengnyang.domain.bookdata.entity.BookdataDetail;
 import com.fav.daengnyang.domain.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -29,5 +29,5 @@ public class Bankbook {
     private Member member;
 
     @OneToMany(mappedBy = "bankbook", cascade = CascadeType.ALL)
-    private List<BankbookDetail> bankbookDetails;  // 'mappedBy' 속성을 'bankbook'으로 설정
+    private List<BookdataDetail> bookdataDetails;  // 'mappedBy' 속성을 'bankbook'으로 설정
 }
