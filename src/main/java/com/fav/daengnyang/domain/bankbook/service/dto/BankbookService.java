@@ -209,7 +209,7 @@ public class BankbookService {
         HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
         // 외부 API 호출
-        String url = "https://finopenapi.ssafy.io/ssafy/api/v1/edu/demandDeposit/inquireTransactionHistory";
+        String url = "/edu/demandDeposit/inquireTransactionHistory";
         ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
 
         // 응답 처리
