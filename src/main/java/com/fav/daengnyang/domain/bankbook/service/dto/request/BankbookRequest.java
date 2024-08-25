@@ -9,7 +9,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class BankbookRequest {
     private String bankbookTitle;
-    private String bankbookNumber;
     private String bankbookImage;
     private String bankbookColor;
+    private String accountTypeUniqueNo;
 }
