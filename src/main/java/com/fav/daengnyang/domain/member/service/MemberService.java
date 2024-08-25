@@ -5,10 +5,11 @@ import com.fav.daengnyang.domain.member.entity.Member;
 import com.fav.daengnyang.domain.member.repository.MemberRepository;
 import com.fav.daengnyang.domain.member.service.dto.request.AccountCreationHeaderRequest;
 import com.fav.daengnyang.domain.member.service.dto.request.CreatedRequest;
-import com.fav.daengnyang.domain.member.service.dto.request.LoginRequest;
 import com.fav.daengnyang.domain.member.service.dto.response.AccountCreationResponse;
 import com.fav.daengnyang.domain.member.service.dto.response.LoginResponse;
 import com.fav.daengnyang.domain.member.service.dto.response.MemberBankResponse;
+import com.fav.daengnyang.domain.member.service.dto.response.MemberInfoResponse;
+import com.fav.daengnyang.domain.target.repository.TargetRepository;
 import com.fav.daengnyang.global.auth.dto.MemberPrincipal;
 import com.fav.daengnyang.global.auth.utils.JWTProvider;
 import com.fav.daengnyang.global.exception.CustomException;
@@ -17,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,8 +29,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.springframework.http.HttpHeaders;
-
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,6 +40,7 @@ import java.util.Map;
 public class MemberService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
+    private final TargetRepository targetRepository;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
     private final PasswordEncoder passwordEncoder;
@@ -72,7 +75,6 @@ public class MemberService implements UserDetailsService {
         return memberRepository.findByMemberId(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
-
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -167,5 +169,23 @@ public class MemberService implements UserDetailsService {
         log.info("로그인 API 결과: " + response.getBody());
         return objectMapper.readValue(response.getBody(), MemberBankResponse.class);
 
+    }
+
+    public MemberInfoResponse getMemberInfo(Long memberId) {
+        // 2. Member 가져오기
+        Member member = findByMemberId(memberId);
+        // 3. 서비스 이용 시작일과 현재일의 차이 계산
+        Long daysUsingService = Duration.between(member.getCreated(), LocalDateTime.now()).toDays();
+        // 4. 현재 설정된 타겟의 총 개수 구하기
+        int totalTargets = targetRepository.findAllByMemberId(memberId).size();
+        // 5. 5일당 레벨 1씩 계산
+        int level = (int) (daysUsingService / 5);
+        // 6. MemberInfoResponse 생성 및 반환
+        return MemberInfoResponse.builder()
+                .memberId(member.getMemberId())
+                .memberLevel(level)
+                .memberDate(daysUsingService)
+                .memberTarget(totalTargets)
+                .build();
     }
 }
