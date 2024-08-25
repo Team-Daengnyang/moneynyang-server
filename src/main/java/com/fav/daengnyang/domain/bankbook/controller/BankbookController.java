@@ -6,12 +6,15 @@ import com.fav.daengnyang.domain.bankbook.service.dto.request.BankbookRequest;
 import com.fav.daengnyang.domain.bankbook.service.dto.request.ColorUpdateRequest;
 import com.fav.daengnyang.domain.bankbook.service.dto.response.BankbookCreateResponse;
 import com.fav.daengnyang.domain.bankbook.service.dto.response.BankbookResponse;
+import com.fav.daengnyang.domain.bookdata.service.dto.response.BankbookHistoryResponse;
 import com.fav.daengnyang.global.auth.dto.MemberPrincipal;
 import com.fav.daengnyang.global.web.dto.response.SuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/bankbook")
@@ -40,6 +43,13 @@ public class BankbookController {
             @RequestParam String bankbookNumber,
             @RequestBody ColorUpdateRequest request) {
         BankbookResponse response = bankbookService.updateBankbookColor(bankbookNumber, request.getNewColor());
+        return ResponseEntity.ok(SuccessResponse.ok(response));
+    }
+
+    @GetMapping("/history")
+    public ResponseEntity<SuccessResponse<List<BankbookHistoryResponse>>> getBankbookHistory(
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal) throws JsonProcessingException {
+        List<BankbookHistoryResponse> response = bankbookService.getBankbookHistory(memberPrincipal.getUserKey());
         return ResponseEntity.ok(SuccessResponse.ok(response));
     }
 }
