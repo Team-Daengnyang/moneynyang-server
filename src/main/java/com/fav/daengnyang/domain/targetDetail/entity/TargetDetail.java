@@ -1,5 +1,6 @@
 package com.fav.daengnyang.domain.targetDetail.entity;
 
+import com.fav.daengnyang.domain.target.entity.Target;
 import jakarta.persistence.*;
 import lombok.*;
 

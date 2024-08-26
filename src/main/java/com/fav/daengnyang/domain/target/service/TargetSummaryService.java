@@ -5,6 +5,8 @@ import com.fav.daengnyang.domain.target.entity.Target;
 import com.fav.daengnyang.domain.target.repository.TargetRepository;
 import com.fav.daengnyang.domain.target.service.dto.response.AchievedTargetInfoResponse;
 import com.fav.daengnyang.domain.target.service.dto.response.TargetSummaryResponse;
+import com.fav.daengnyang.domain.targetDetail.entity.TargetDetail;
+import com.fav.daengnyang.domain.targetDetail.repository.TargetDetailRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,11 +26,11 @@ public class TargetSummaryService {
     // 전체 목표 요약 메소드
     public TargetSummaryResponse getTargetSummary(Long memberId) {
         // 유저의 모든 BankbookDetail 조회
-        List<BankbookDetail> bankbookDetails = targetDetailRepository.findByMemberId(memberId);
+        List<TargetDetail> targetDetails = targetDetailRepository.findByMemberId(memberId);
 
         // 통계 값 계산
-        int totalDeposits = bankbookDetails.size();
-        int totalAmount = bankbookDetails.stream().mapToInt(BankbookDetail::getAmount).sum();
+        int totalDeposits = targetDetails.size();
+        int totalAmount = targetDetails.stream().mapToInt(targetDetail::getAmount).sum();
 
         // 달성한 목표 정보 계산
         List<Target> targets = targetRepository.findAllByMemberId(memberId);
@@ -41,9 +43,9 @@ public class TargetSummaryService {
                 AchievedTargetInfoResponse achievedTargetInfoResponse = AchievedTargetInfoResponse.builder()
                         .targetTitle(target.getTargetTitle())
                         .targetAmount(target.getTargetAmount())
-                        .completedDate(bankbookDetails.stream()
+                        .completedDate(targetDetails.stream()
                                 .filter(detail -> detail.getTarget().equals(target))
-                                .map(BankbookDetail::getCreatedDate)
+                                .map(targetDetails::getCreatedDate)
                                 .max(LocalDate::compareTo) // 가장 최근의 날짜를 선택
                                 .orElse(null))
                         .build();
