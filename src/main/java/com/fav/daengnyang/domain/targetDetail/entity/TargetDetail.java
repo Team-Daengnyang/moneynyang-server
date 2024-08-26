@@ -4,6 +4,7 @@ import com.fav.daengnyang.domain.target.entity.Target;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -21,14 +22,14 @@ public class TargetDetail {
     private Integer amount;
 
     @Column(name = "created_date")
-    private LocalDateTime createdDate;
+    private LocalDate createdDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "target_id", nullable = false)
     private Target target;
 
     @Builder
-    public TargetDetail(Integer amount, LocalDateTime createdDate, Target target) {
+    public TargetDetail(Integer amount, LocalDate createdDate, Target target) {
         this.amount = amount;
         this.createdDate = createdDate;
         this.target = target;

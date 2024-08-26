@@ -43,4 +43,8 @@ public class Target {
         this.isDone = isDone;
         this.account = account;
     }
+
+    public Boolean isDone() {
+        return isDone;
+    }
 }

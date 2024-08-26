@@ -1,6 +1,6 @@
 package com.fav.daengnyang.domain.target.service;
 
-import com.fav.daengnyang.domain.targetDetail.entity.BankbookDetail;
+import com.fav.daengnyang.domain.targetDetail.entity.TargetDetail;
 import com.fav.daengnyang.domain.target.entity.Target;
 import com.fav.daengnyang.domain.target.repository.TargetRepository;
 import com.fav.daengnyang.domain.target.service.dto.response.AchievedTargetInfoResponse;
@@ -30,7 +30,7 @@ public class TargetSummaryService {
 
         // 통계 값 계산
         int totalDeposits = targetDetails.size();
-        int totalAmount = targetDetails.stream().mapToInt(targetDetail::getAmount).sum();
+        int totalAmount = targetDetails.stream().mapToInt(TargetDetail::getAmount).sum();
 
         // 달성한 목표 정보 계산
         List<Target> targets = targetRepository.findAllByMemberId(memberId);
@@ -45,7 +45,7 @@ public class TargetSummaryService {
                         .targetAmount(target.getTargetAmount())
                         .completedDate(targetDetails.stream()
                                 .filter(detail -> detail.getTarget().equals(target))
-                                .map(targetDetails::getCreatedDate)
+                                .map(TargetDetail::getCreatedDate)
                                 .max(LocalDate::compareTo) // 가장 최근의 날짜를 선택
                                 .orElse(null))
                         .build();
