@@ -1,8 +1,8 @@
 package com.fav.daengnyang.domain.targetDetail.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fav.daengnyang.domain.targetDetail.service.dto.response.BookdataSummaryResponse;
-import com.fav.daengnyang.domain.targetDetail.service.BookdataService;
+import com.fav.daengnyang.domain.targetDetail.service.dto.response.TargetDetailSummaryResponse;
+import com.fav.daengnyang.domain.targetDetail.service.TargetDetailService;
 import com.fav.daengnyang.global.web.dto.response.SuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,14 +14,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/bookdata")
-public class BookdataController {
+public class TargetDetailController {
 
-    private final BookdataService bookdataService;
+    private final TargetDetailService bookdataService;
 
     @GetMapping("")
-    public ResponseEntity<SuccessResponse<BookdataSummaryResponse>> getBookdataSummary(
+    public ResponseEntity<SuccessResponse<TargetDetailSummaryResponse>> getBookdataSummary(
             @RequestParam Long bankbookId, @RequestParam String accountNo) throws JsonProcessingException {
-        BookdataSummaryResponse summary = bookdataService.getBookdataSummary(bankbookId, accountNo);
+        TargetDetailSummaryResponse summary = bookdataService.getBookdataSummary(bankbookId, accountNo);
         return ResponseEntity.ok(SuccessResponse.ok(summary));
     }
 }

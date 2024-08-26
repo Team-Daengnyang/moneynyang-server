@@ -2,8 +2,8 @@ package com.fav.daengnyang.domain.targetDetail.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fav.daengnyang.domain.targetDetail.repository.BookdataRepository;
-import com.fav.daengnyang.domain.targetDetail.service.dto.response.BookdataSummaryResponse;
+import com.fav.daengnyang.domain.targetDetail.repository.TargetDetailRepository;
+import com.fav.daengnyang.domain.targetDetail.service.dto.response.TargetDetailSummaryResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -20,9 +20,9 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class BookdataService {
+public class TargetDetailService {
 
-    private final BookdataRepository bookdataRepository;
+    private final TargetDetailRepository targetDetailRepository;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
@@ -30,15 +30,15 @@ public class BookdataService {
     private String apiKey;
 
     // Bookdata 요약 정보 가져오기 메서드
-    public BookdataSummaryResponse getBookdataSummary(Long bankbookId, String accountNo) throws JsonProcessingException {
-        Integer totalAmount = bookdataRepository.findTotalAmountByBankbookId(bankbookId);
-        Long transactionCount = bookdataRepository.countTransactionsByBankbookId(bankbookId);
+    public TargetDetailSummaryResponse getBookdataSummary(Long bankbookId, String accountNo) throws JsonProcessingException {
+        Integer totalAmount = targetDetailRepository.findTotalAmountByBankbookId(bankbookId);
+        Long transactionCount = targetDetailRepository.countTransactionsByBankbookId(bankbookId);
 
         // 금융 API 호출 예시
         Map<String, Object> balanceResponse = callInquireAccountBalanceApi(accountNo);
         Map<String, Object> historyResponse = callInquireTransactionHistoryApi(accountNo);
 
-        return BookdataSummaryResponse.builder()
+        return TargetDetailSummaryResponse.builder()
                 .totalAmount(totalAmount)
                 .transactionCount(transactionCount)
                 .apiBalance(balanceResponse.toString())

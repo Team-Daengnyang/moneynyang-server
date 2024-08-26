@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
-public interface BankbookRepository extends JpaRepository<Bankbook, Long> {
+public interface AccountRepository extends JpaRepository<Bankbook, Long> {
     Optional<Bankbook> findByBankbookNumber(String bankbookNumber);
     Optional<Bankbook> findByMemberMemberId(Long memberId);
 

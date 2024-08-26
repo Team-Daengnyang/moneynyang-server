@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class BankbookRequest {
+public class AccountRequest {
     private String bankbookTitle;
     private String bankbookImage;
     private String bankbookColor;

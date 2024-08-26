@@ -1,7 +1,7 @@
 package com.fav.daengnyang.domain.target.service;
 
 import com.fav.daengnyang.domain.account.entity.Bankbook;
-import com.fav.daengnyang.domain.account.repository.BankbookRepository;
+import com.fav.daengnyang.domain.account.repository.AccountRepository;
 import com.fav.daengnyang.domain.target.entity.Target;
 import com.fav.daengnyang.domain.target.repository.TargetRepository;
 import com.fav.daengnyang.domain.target.service.dto.request.CreateTargetRequest;
@@ -18,7 +18,7 @@ import java.util.List;
 public class TargetService {
 
     private final TargetRepository targetRepository;
-    private final BankbookRepository bankbookRepository;
+    private final AccountRepository bankbookRepository;
 
     // 목표 생성 메소드
     @Transactional

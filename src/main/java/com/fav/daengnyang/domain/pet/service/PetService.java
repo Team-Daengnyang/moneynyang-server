@@ -1,7 +1,7 @@
 package com.fav.daengnyang.domain.pet.service;
 
 import com.fav.daengnyang.domain.account.entity.Bankbook;
-import com.fav.daengnyang.domain.account.repository.BankbookRepository;
+import com.fav.daengnyang.domain.account.repository.AccountRepository;
 import com.fav.daengnyang.domain.member.entity.Member;
 import com.fav.daengnyang.domain.member.repository.MemberRepository;
 import com.fav.daengnyang.domain.pet.entity.Pet;
@@ -21,7 +21,7 @@ public class PetService {
 
     private final PetRepository petRepository;
     private final MemberRepository memberRepository;
-    private final BankbookRepository bankbookRepository;
+    private final AccountRepository bankbookRepository;
 
     public Long createPet(CreatedPetRequest createdPetRequest, Long memberId){
 

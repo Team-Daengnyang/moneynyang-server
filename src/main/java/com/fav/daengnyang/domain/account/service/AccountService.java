@@ -3,11 +3,11 @@ package com.fav.daengnyang.domain.account.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fav.daengnyang.domain.account.repository.BankbookRepository;
-import com.fav.daengnyang.domain.account.service.dto.request.BankbookRequest;
-import com.fav.daengnyang.domain.account.service.dto.response.BankbookCreateResponse;
-import com.fav.daengnyang.domain.account.service.dto.response.BankbookResponse;
-import com.fav.daengnyang.domain.targetDetail.service.dto.response.BankbookHistoryResponse;
+import com.fav.daengnyang.domain.account.repository.AccountRepository;
+import com.fav.daengnyang.domain.account.service.dto.request.AccountRequest;
+import com.fav.daengnyang.domain.account.service.dto.response.AccountCreateResponse;
+import com.fav.daengnyang.domain.account.service.dto.response.AccountResponse;
+import com.fav.daengnyang.domain.targetDetail.service.dto.response.AccountHistoryResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -27,9 +27,9 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class BankbookService {
+public class AccountService {
 
-    private final BankbookRepository bankbookRepository;
+    private final AccountRepository bankbookRepository;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
@@ -37,7 +37,7 @@ public class BankbookService {
     private String apiKey;
 
     // 계좌 생성 메서드
-    public BankbookCreateResponse createBankbook(BankbookRequest request, String userKey) throws JsonProcessingException {
+    public AccountCreateResponse createBankbook(AccountRequest request, String userKey) throws JsonProcessingException {
         // 외부 API를 통해 계좌를 생성
         String accountNo = callCreateBankbookApi(request, userKey);
 
@@ -51,7 +51,7 @@ public class BankbookService {
         Bankbook savedBankbook = bankbookRepository.save(bankbook);
 
         // 응답 데이터 생성
-        return BankbookCreateResponse.builder()
+        return AccountCreateResponse.builder()
                 .bankbookNumber(savedBankbook.getBankbookNumber())
                 .bankbookTitle(savedBankbook.getBankbookTitle())
                 .bankbookImage(savedBankbook.getBankbookImage())
@@ -60,7 +60,7 @@ public class BankbookService {
     }
 
     // 계좌 조회 메서드
-    public BankbookResponse inquireBankbook(Long memberId) throws JsonProcessingException {
+    public AccountResponse inquireBankbook(Long memberId) throws JsonProcessingException {
         // 1. 계좌번호 가져오기
         Optional<Bankbook> optionalBankbook = bankbookRepository.findByMemberMemberId(memberId);
 
@@ -73,7 +73,7 @@ public class BankbookService {
         // 2. 외부 API를 통해 계좌 정보 조회
         Map<String, Object> responseMap = callInquireBankbookApi(bankbookNumber);
 
-        return BankbookResponse.builder()
+        return AccountResponse.builder()
                 .bankbookTitle((String) responseMap.get("bankbookTitle"))
                 .bankbookNumber((String) responseMap.get("bankbookNumber"))
                 .bankbookImage((String) responseMap.get("bankbookImage"))
@@ -82,7 +82,7 @@ public class BankbookService {
     }
 
     // 커스텀 색상 업데이트
-    public BankbookResponse updateBankbookColor(String bankbookNumber, String newColor) {
+    public AccountResponse updateBankbookColor(String bankbookNumber, String newColor) {
         Optional<Bankbook> optionalBankbook = bankbookRepository.findByBankbookNumber(bankbookNumber);
 
         if (!optionalBankbook.isPresent()) {
@@ -93,7 +93,7 @@ public class BankbookService {
         bankbook.setBankbookColor(newColor);
         bankbookRepository.save(bankbook);
 
-        return BankbookResponse.builder()
+        return AccountResponse.builder()
                 .bankbookTitle(bankbook.getBankbookTitle())
                 .bankbookNumber(bankbook.getBankbookNumber())
                 .bankbookImage(bankbook.getBankbookImage())
@@ -102,7 +102,7 @@ public class BankbookService {
     }
 
     // 외부 금융 API 호출 (계좌 생성)
-    private String callCreateBankbookApi(BankbookRequest request, String userKey) throws JsonProcessingException {
+    private String callCreateBankbookApi(AccountRequest request, String userKey) throws JsonProcessingException {
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HHmmss");
@@ -187,7 +187,7 @@ public class BankbookService {
             throw new RuntimeException("API 호출 오류: " + response.getBody());
         }
     }
-    public List<BankbookHistoryResponse> getBankbookHistory(String userKey) throws JsonProcessingException {
+    public List<AccountHistoryResponse> getBankbookHistory(String userKey) throws JsonProcessingException {
         // 외부 API 호출 후 데이터 처리
         Map<String, Object> historyData = callInquireTransactionHistoryApi(userKey);
 
@@ -248,7 +248,7 @@ public class BankbookService {
         return header;
     }
 
-    private List<BankbookHistoryResponse> mapToBankbookHistoryResponse(Map<String, Object> historyData) {
+    private List<AccountHistoryResponse> mapToBankbookHistoryResponse(Map<String, Object> historyData) {
         // "history" 리스트를 가져와서 매핑
         List<Map<String, Object>> bankbookHistories = (List<Map<String, Object>>) historyData.get("history");
 
@@ -257,9 +257,9 @@ public class BankbookService {
                 .collect(Collectors.toList());
     }
 
-    private BankbookHistoryResponse mapBankbookHistory(Map<String, Object> bankbookData) {
+    private AccountHistoryResponse mapBankbookHistory(Map<String, Object> bankbookData) {
         // 데이터 매핑
-        return BankbookHistoryResponse.builder()
+        return AccountHistoryResponse.builder()
                 .date((String) bankbookData.get("date"))
                 .name((String) bankbookData.get("name"))
                 .amount((Integer) bankbookData.get("amount"))

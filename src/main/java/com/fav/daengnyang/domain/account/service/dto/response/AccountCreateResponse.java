@@ -7,7 +7,7 @@ import lombok.Getter;
 @Data
 @Getter
 @Builder
-public class BankbookCreateResponse {
+public class AccountCreateResponse {
     private String bankbookNumber;
     private String bankbookTitle;
     private String bankbookImage;

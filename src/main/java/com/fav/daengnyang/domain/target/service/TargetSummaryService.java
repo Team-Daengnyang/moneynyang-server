@@ -2,7 +2,7 @@ package com.fav.daengnyang.domain.target.service;
 
 import com.fav.daengnyang.domain.targetDetail.entity.BankbookDetail;
 import com.fav.daengnyang.domain.target.entity.Target;
-import com.fav.daengnyang.domain.target.repository.BankbookDetailRepository;
+import com.fav.daengnyang.domain.target.repository.TargetDetailRepository;
 import com.fav.daengnyang.domain.target.repository.TargetRepository;
 import com.fav.daengnyang.domain.target.service.dto.response.AchievedTargetInfoResponse;
 import com.fav.daengnyang.domain.target.service.dto.response.TargetSummaryResponse;
@@ -19,13 +19,13 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class TargetSummaryService {
 
-    private final BankbookDetailRepository bankbookDetailRepository;
+    private final TargetDetailRepository targetDetailRepository;
     private final TargetRepository targetRepository;
 
     // 전체 목표 요약 메소드
     public TargetSummaryResponse getTargetSummary(Long memberId) {
         // 유저의 모든 BankbookDetail 조회
-        List<BankbookDetail> bankbookDetails = bankbookDetailRepository.findByMemberId(memberId);
+        List<BankbookDetail> bankbookDetails = targetDetailRepository.findByMemberId(memberId);
 
         // 통계 값 계산
         int totalDeposits = bankbookDetails.size();

@@ -6,7 +6,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface BookdataRepository extends JpaRepository<BookdataDetail, Long> {
+public interface TargetDetailRepository extends JpaRepository<BookdataDetail, Long> {
 
     @Query("SELECT SUM(bd.amount) FROM BookdataDetail bd WHERE bd.bankbook.id = :bankbookId")
     Integer findTotalAmountByBankbookId(@Param("bankbookId") Long bankbookId);

@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 @Builder
 @AllArgsConstructor
-public class BookdataSummaryResponse {
+public class TargetDetailSummaryResponse {
     private Integer totalAmount;
     private Long transactionCount;
     private String apiBalance;

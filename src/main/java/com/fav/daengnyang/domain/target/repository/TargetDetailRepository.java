@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface BankbookDetailRepository extends JpaRepository<BankbookDetail, Long> {
+public interface TargetDetailRepository extends JpaRepository<BankbookDetail, Long> {
 
     // 특정 memberId에 해당하는 모든 BankbookDetail 조회
     @Query("SELECT bd FROM BankbookDetail bd JOIN bd.target t JOIN t.bankbook b WHERE b.member.memberId = :memberId")

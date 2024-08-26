@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class BankbookResponse {
+public class AccountResponse {
     private String bankbookTitle;
     private String bankbookNumber;
     private String bankbookImage;

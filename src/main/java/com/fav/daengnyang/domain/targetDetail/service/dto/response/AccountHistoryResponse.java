@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class BankbookHistoryResponse {
+public class AccountHistoryResponse {
     private String date;
     private String name;
     private int amount;
