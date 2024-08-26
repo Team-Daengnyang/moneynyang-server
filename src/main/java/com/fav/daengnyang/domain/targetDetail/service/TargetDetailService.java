@@ -29,10 +29,10 @@ public class TargetDetailService {
     @Value("${api.key}")
     private String apiKey;
 
-    // Bookdata 요약 정보 가져오기 메서드
-    public TargetDetailSummaryResponse getBookdataSummary(Long bankbookId, String accountNo) throws JsonProcessingException {
-        Integer totalAmount = targetDetailRepository.findTotalAmountByBankbookId(bankbookId);
-        Long transactionCount = targetDetailRepository.countTransactionsByBankbookId(bankbookId);
+    // Account 요약 정보 가져오기 메서드
+    public TargetDetailSummaryResponse getTargetDetailSummary(Long accountId, String accountNo) throws JsonProcessingException {
+        Integer totalAmount = targetDetailRepository.findTotalAmountByAccountId(accountId);
+        Long transactionCount = targetDetailRepository.countTransactionsByAccountId(accountId);
 
         // 금융 API 호출 예시
         Map<String, Object> balanceResponse = callInquireAccountBalanceApi(accountNo);

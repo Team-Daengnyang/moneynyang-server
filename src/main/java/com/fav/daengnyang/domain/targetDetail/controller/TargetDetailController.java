@@ -13,15 +13,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/bookdata")
+@RequestMapping("/target-detail")
 public class TargetDetailController {
 
-    private final TargetDetailService bookdataService;
+    private final TargetDetailService targetDetailService;
 
     @GetMapping("")
-    public ResponseEntity<SuccessResponse<TargetDetailSummaryResponse>> getBookdataSummary(
-            @RequestParam Long bankbookId, @RequestParam String accountNo) throws JsonProcessingException {
-        TargetDetailSummaryResponse summary = bookdataService.getBookdataSummary(bankbookId, accountNo);
+    public ResponseEntity<SuccessResponse<TargetDetailSummaryResponse>> getTargetDetailSummary(
+            @RequestParam Long accountId, @RequestParam String accountNo) throws JsonProcessingException {
+        TargetDetailSummaryResponse summary = targetDetailService.getTargetDetailSummary(accountId, accountNo);
         return ResponseEntity.ok(SuccessResponse.ok(summary));
     }
 }
