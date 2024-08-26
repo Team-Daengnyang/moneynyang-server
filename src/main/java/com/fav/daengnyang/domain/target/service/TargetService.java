@@ -1,7 +1,7 @@
 package com.fav.daengnyang.domain.target.service;
 
-import com.fav.daengnyang.domain.bankbook.entity.Bankbook;
-import com.fav.daengnyang.domain.bankbook.repository.BankbookRepository;
+import com.fav.daengnyang.domain.account.entity.Bankbook;
+import com.fav.daengnyang.domain.account.repository.BankbookRepository;
 import com.fav.daengnyang.domain.target.entity.Target;
 import com.fav.daengnyang.domain.target.repository.TargetRepository;
 import com.fav.daengnyang.domain.target.service.dto.request.CreateTargetRequest;

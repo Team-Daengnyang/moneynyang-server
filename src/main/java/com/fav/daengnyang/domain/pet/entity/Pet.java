@@ -1,13 +1,8 @@
 package com.fav.daengnyang.domain.pet.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fav.daengnyang.domain.member.entity.Member;
-import com.fav.daengnyang.domain.pet.service.dto.request.CreatedPetRequest;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "pet")
@@ -23,8 +18,8 @@ public class Pet {
     @Column(name = "pet_name")
     private String petName;
 
-    @Column(name = "pet_sex")
-    private String petSex;
+    @Column(name = "pet_gender")
+    private String petGender;
 
     @Column(name = "pet_type")
     private String petType;
@@ -35,29 +30,17 @@ public class Pet {
     @Column(name = "specie")
     private String specie;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
     @Builder
-    private Pet(String petName, String petSex, String petType, String petBirth, String specie, Member member) {
+    public Pet(String petName, String petGender, String petType, String petBirth, String specie, Member member) {
         this.petName = petName;
-        this.petSex = petSex;
+        this.petGender = petGender;
         this.petType = petType;
         this.petBirth = petBirth;
         this.specie = specie;
         this.member = member;
     }
-
-    public static Pet createPet(CreatedPetRequest createdPetRequest, Member member) {
-        return Pet.builder()
-                .petName(createdPetRequest.getPetName())
-                .petSex(createdPetRequest.getPetSex())
-                .petType(createdPetRequest.getPetType())
-                .petBirth(createdPetRequest.getPetBirth())
-                .specie(createdPetRequest.getSpecie())
-                .member(member)
-                .build();
-    }
-
 }

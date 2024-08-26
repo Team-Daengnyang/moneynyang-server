@@ -1,6 +1,6 @@
 package com.fav.daengnyang.domain.target.repository;
 
-import com.fav.daengnyang.domain.target.entity.BankbookDetail;
+import com.fav.daengnyang.domain.targetDetail.entity.BankbookDetail;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

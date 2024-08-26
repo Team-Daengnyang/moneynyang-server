@@ -1,6 +1,6 @@
 package com.fav.daengnyang.domain.target.service;
 
-import com.fav.daengnyang.domain.target.entity.BankbookDetail;
+import com.fav.daengnyang.domain.targetDetail.entity.BankbookDetail;
 import com.fav.daengnyang.domain.target.entity.Target;
 import com.fav.daengnyang.domain.target.repository.BankbookDetailRepository;
 import com.fav.daengnyang.domain.target.repository.TargetRepository;

@@ -1,10 +1,7 @@
 package com.fav.daengnyang.domain.insurance.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "insurance")
@@ -17,8 +14,17 @@ public class Insurance {
     @Column(name = "insurance_id")
     private Long insuranceId;
 
-    @Column(name = "pet_type")
-    private String petType;
+    @Column(name = "insurance_age")
+    private String insuranceAge;
+
+    @Column(name = "summary")
+    private String summary;
+
+    @Column(name = "comment")
+    private String comment;
+
+    @Column(name = "price")
+    private String price;
 
     @Column(name = "title")
     private String title;
@@ -26,26 +32,21 @@ public class Insurance {
     @Column(name = "company_image")
     private String companyImage;
 
+    @Column(name = "insurance_type")
+    private String insuranceType;
+
     @Column(name = "url")
     private String url;
 
-    @Column(name = "price")
-    private String price;
-
-    @Column(name = "comment")
-    private String comment;
-
-    @Column(name = "summary")
-    private String summary;
-
     @Builder
-    private Insurance(String petType, String title, String companyImage, String url, String price, String comment, String summary) {
-        this.petType = petType;
+    public Insurance(String insuranceAge, String summary, String comment, String price, String title, String companyImage, String insuranceType, String url) {
+        this.insuranceAge = insuranceAge;
+        this.summary = summary;
+        this.comment = comment;
+        this.price = price;
         this.title = title;
         this.companyImage = companyImage;
+        this.insuranceType = insuranceType;
         this.url = url;
-        this.price = price;
-        this.comment = comment;
-        this.summary = summary;
     }
 }
