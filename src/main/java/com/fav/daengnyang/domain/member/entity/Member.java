@@ -25,9 +25,6 @@ public class Member {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "my_password")
-    private String myPassword;
-
     @Column(name = "name")
     private String name;
 
@@ -46,10 +43,9 @@ public class Member {
     private Pet pet;
 
     @Builder
-    private Member(String email, String password, String myPassword, String depositAccount, String name, LocalDateTime created, LocalDateTime modified) {
+    private Member(String email, String password, String depositAccount, String name, LocalDateTime created, LocalDateTime modified) {
         this.email = email;
         this.password = password;
-        this.myPassword = myPassword;
         this.name = name;
         this.depositAccount = depositAccount;
         this.created = created;

@@ -1,6 +1,6 @@
 package com.fav.daengnyang.domain.pet.controller;
 
-import com.fav.daengnyang.domain.pet.service.dto.PetService;
+import com.fav.daengnyang.domain.pet.service.PetService;
 import com.fav.daengnyang.domain.pet.service.dto.request.CreatedPetRequest;
 import com.fav.daengnyang.domain.pet.service.dto.response.GetPetResponse;
 import com.fav.daengnyang.global.auth.dto.MemberPrincipal;
