@@ -14,7 +14,7 @@ public class CreatedPetRequest {
     @NotBlank
     private String petName;
     @NotBlank
-    private String petSex;
+    private String petGender;
     @NotBlank
     private String petType;
     private String petBirth;

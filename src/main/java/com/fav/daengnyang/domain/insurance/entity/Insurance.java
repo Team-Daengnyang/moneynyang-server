@@ -1,10 +1,7 @@
 package com.fav.daengnyang.domain.insurance.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "insurance")
@@ -20,6 +17,19 @@ public class Insurance {
     @Column(name = "insurance_type")
     private String insuranceType;
 
+    @Column(name = "insurance_age")
+    private String insuranceAge;
+
+    @Column(name = "summary")
+    private String summary;
+
+    @Column(name = "comment")
+    private String comment;
+
+    @Column(name = "price")
+    private String price;
+
+
     @Column(name = "title")
     private String title;
 
@@ -29,17 +39,10 @@ public class Insurance {
     @Column(name = "url")
     private String url;
 
-    @Column(name = "price")
-    private String price;
-
-    @Column(name = "comment")
-    private String comment;
-
-    @Column(name = "summary")
-    private String summary;
-
     @Builder
-    private Insurance(String title, String companyImage, String insuranceType, String url, String price, String comment, String summary) {
+
+    private Insurance(String insuranceAge, String summary, String comment, String price, String title, String companyImage, String insuranceType, String url) {
+        this.insuranceAge = insuranceAge;
         this.title = title;
         this.companyImage = companyImage;
         this.url = url;

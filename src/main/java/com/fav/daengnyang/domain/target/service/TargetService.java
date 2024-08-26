@@ -1,7 +1,7 @@
 package com.fav.daengnyang.domain.target.service;
 
-import com.fav.daengnyang.domain.bankbook.entity.Bankbook;
-import com.fav.daengnyang.domain.bankbook.repository.BankbookRepository;
+import com.fav.daengnyang.domain.account.entity.Account;
+import com.fav.daengnyang.domain.account.repository.AccountRepository;
 import com.fav.daengnyang.domain.target.entity.Target;
 import com.fav.daengnyang.domain.target.repository.TargetRepository;
 import com.fav.daengnyang.domain.target.service.dto.request.CreateTargetRequest;
@@ -18,13 +18,13 @@ import java.util.List;
 public class TargetService {
 
     private final TargetRepository targetRepository;
-    private final BankbookRepository bankbookRepository;
+    private final AccountRepository accountRepository;
 
     // 목표 생성 메소드
     @Transactional
     public Long createTarget(CreateTargetRequest request, Long memberId) {
-        // memberId로 유저의 Bankbook 조회
-        Bankbook bankbook = bankbookRepository.findByMemberId(memberId)
+        // memberId로 유저의 Account 조회
+        Account account = accountRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저에게 연동된 투자 계좌가 없습니다."));
 
         // Target 엔티티 생성
@@ -34,7 +34,7 @@ public class TargetService {
                 .targetAmount(request.getTargetAmount())
                 .currentAmount(0)
                 .isDone(false)
-                .bankbook(bankbook) // 연관된 Bankbook 설정
+                .account(account)
                 .build();
 
         // 엔티티를 데이터베이스에 저장
@@ -59,10 +59,8 @@ public class TargetService {
                         .targetTitle(target.getTargetTitle())
                         .currentAmount(target.getCurrentAmount())
                         .isDone(target.isDone())
-                        .bankbookId(target.getBankbook().getBankbookId())
+                        .accountId(target.getAccount().getAccountId()) // Account ID 반환
                         .build())
                 .toList();
     }
-
-
 }

@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 public class InsuranceDetailResponse {
 
     private Long insuranceId;
+    private String insuranceAge;
     private String insuranceType;
     private String title;
     private String companyImage;
@@ -20,8 +21,9 @@ public class InsuranceDetailResponse {
     private String summary;
 
     @Builder
-    private InsuranceDetailResponse(Long insuranceId, String insuranceType, String title, String companyImage, String url, String price, String comment, String summary) {
+    private InsuranceDetailResponse(Long insuranceId,String insuranceAge, String insuranceType, String title, String companyImage, String url, String price, String comment, String summary) {
         this.insuranceId = insuranceId;
+        this.insuranceAge = insuranceAge;
         this.insuranceType = insuranceType;
         this.title = title;
         this.companyImage = companyImage;
@@ -34,6 +36,7 @@ public class InsuranceDetailResponse {
     public static InsuranceDetailResponse createInsuranceResponse(Insurance insurance) {
         return InsuranceDetailResponse.builder()
                 .insuranceId(insurance.getInsuranceId())
+                .insuranceAge(insurance.getInsuranceAge())
                 .insuranceType(insurance.getInsuranceType())
                 .title(insurance.getTitle())
                 .companyImage(insurance.getCompanyImage())

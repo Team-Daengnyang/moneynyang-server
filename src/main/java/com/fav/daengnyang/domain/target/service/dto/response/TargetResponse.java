@@ -15,16 +15,16 @@ public class TargetResponse {
     private String targetTitle;
     private int currentAmount;
     private Boolean isDone;
-    private Long bankbookId;
+    private Long accountId;
 
     @Builder
-    public TargetResponse (Long targetId, String description, int targetAmount, String targetTitle, int currentAmount, Boolean isDone, Long bankbookId) {
+    public TargetResponse (Long targetId, String description, int targetAmount, String targetTitle, int currentAmount, Boolean isDone, Long accountId) {
         this.targetId = targetId;
         this.description = description;
         this.targetAmount = targetAmount;
         this.targetTitle = targetTitle;
         this.currentAmount = currentAmount;
         this.isDone = isDone;
-        this.bankbookId = bankbookId;
+        this.accountId = accountId;
     }
 }
