@@ -1,8 +1,11 @@
 package com.fav.daengnyang.domain.target.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fav.daengnyang.domain.target.service.TargetService;
 import com.fav.daengnyang.domain.target.service.TargetSummaryService;
+import com.fav.daengnyang.domain.target.service.TargetTransferService;
 import com.fav.daengnyang.domain.target.service.dto.request.CreateTargetRequest;
+import com.fav.daengnyang.domain.target.service.dto.request.TargetTransferRequest;
 import com.fav.daengnyang.domain.target.service.dto.response.TargetResponse;
 import com.fav.daengnyang.domain.target.service.dto.response.TargetSummaryResponse;
 import com.fav.daengnyang.global.auth.dto.MemberPrincipal;
@@ -10,6 +13,7 @@ import com.fav.daengnyang.global.web.dto.response.SuccessResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +26,7 @@ public class TargetController {
 
     private final TargetService targetService;
     private final TargetSummaryService targetSummaryService;
+    private final TargetTransferService targetTransferService;
 
     // 목표 등록
     // 성공, 실패 여부만 return
@@ -55,4 +60,16 @@ public class TargetController {
         return SuccessResponse.ok(summary);
     }
 
+    // 목표에 입금하기
+    @PostMapping("/{targetId}")
+    public SuccessResponse<?> transferToTarget(
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal,
+            @PathVariable Long targetId,
+            @RequestBody @Valid TargetTransferRequest request) throws JsonProcessingException {
+
+        // service 호출
+        targetTransferService.transferToTarget(memberPrincipal.getMemberId(), memberPrincipal.getUserKey(), targetId, request);
+
+        return SuccessResponse.ok("이체가 성공적으로 완료되었습니다.");
+    }
 }
