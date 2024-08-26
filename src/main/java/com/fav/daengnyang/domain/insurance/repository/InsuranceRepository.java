@@ -10,5 +10,5 @@ import java.util.Optional;
 @Repository
 public interface InsuranceRepository extends JpaRepository<Insurance, Long> {
     Optional<Insurance> findInsuranceByInsuranceId(Long insuranceId);
-    List<Insurance> findByPetType(String petType);
+    List<Insurance> findByInsuranceType(String insuranceType);
 }

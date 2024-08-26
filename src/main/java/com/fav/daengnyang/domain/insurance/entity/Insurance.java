@@ -17,8 +17,8 @@ public class Insurance {
     @Column(name = "insurance_id")
     private Long insuranceId;
 
-    @Column(name = "pet_type")
-    private String petType;
+    @Column(name = "insurance_type")
+    private String insuranceType;
 
     @Column(name = "title")
     private String title;
@@ -39,13 +39,13 @@ public class Insurance {
     private String summary;
 
     @Builder
-    private Insurance(String petType, String title, String companyImage, String url, String price, String comment, String summary) {
-        this.petType = petType;
+    private Insurance(String title, String companyImage, String insuranceType, String url, String price, String comment, String summary) {
         this.title = title;
         this.companyImage = companyImage;
         this.url = url;
         this.price = price;
         this.comment = comment;
         this.summary = summary;
+        this.insuranceType = insuranceType;
     }
 }
