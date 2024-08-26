@@ -4,9 +4,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fav.daengnyang.domain.account.entity.Account;
+import com.fav.daengnyang.domain.account.entity.AccountCode;
+import com.fav.daengnyang.domain.account.repository.AccountCodeRepository;
 import com.fav.daengnyang.domain.account.repository.AccountRepository;
 import com.fav.daengnyang.domain.account.service.dto.request.AccountRequest;
 import com.fav.daengnyang.domain.account.service.dto.response.AccountCreateResponse;
+import com.fav.daengnyang.domain.account.service.dto.response.AccountInfoResponse;
 import com.fav.daengnyang.domain.account.service.dto.response.AccountResponse;
 import com.fav.daengnyang.domain.targetDetail.service.dto.response.AccountHistoryResponse;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +34,7 @@ import java.util.stream.Collectors;
 public class AccountService {
 
     private final AccountRepository accountRepository;
+    private final AccountCodeRepository accountCodeRepository;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
@@ -62,7 +66,7 @@ public class AccountService {
     }
 
     // 계좌 조회 메서드
-    public AccountResponse inquireAccount(Long memberId) throws JsonProcessingException {
+    public AccountResponse inquireAccount(Long memberId, String userKey) throws JsonProcessingException {
         // 1. 계좌번호 가져오기
         Optional<Account> optionalAccount = accountRepository.findByMemberMemberId(memberId);
 
@@ -73,7 +77,7 @@ public class AccountService {
         String accountNumber = optionalAccount.get().getAccountNumber();
 
         // 2. 외부 API를 통해 계좌 정보 조회
-        Map<String, Object> responseMap = callInquireAccountApi(accountNumber);
+        Map<String, Object> responseMap = callInquireAccountApi(accountNumber, userKey);
 
         return AccountResponse.builder()
                 .accountTitle((String) responseMap.get("accountTitle"))
@@ -151,7 +155,7 @@ public class AccountService {
     }
 
     // 외부 금융 API 호출 (계좌 조회)
-    private Map<String, Object> callInquireAccountApi(String accountNo) throws JsonProcessingException {
+    private Map<String, Object> callInquireAccountApi(String accountNo, String userKey) throws JsonProcessingException {
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HHmmss");
@@ -165,7 +169,7 @@ public class AccountService {
         header.put("fintechAppNo", "001");
         header.put("apiServiceCode", "inquireDemandDepositAccount");
         header.put("apiKey", apiKey);
-        header.put("userKey", "userKey 받아와서 넣어야 하는데 내일 수정해봄");
+        header.put("userKey", userKey);
 
         // Body 생성
         Map<String, Object> body = new HashMap<>();
@@ -267,5 +271,80 @@ public class AccountService {
                 .name((String) accountData.get("name"))
                 .amount((Integer) accountData.get("amount"))
                 .build();
+    }
+
+    // 계좌 정보 조회 메서드
+    public AccountInfoResponse getAccountInfo(Long memberId, String userKey) throws JsonProcessingException {
+        // 1. 계좌번호 가져오기
+        Optional<Account> optionalAccount = accountRepository.findByMemberMemberId(memberId);
+
+        if (!optionalAccount.isPresent()) {
+            throw new RuntimeException("해당 회원의 계좌를 찾을 수 없습니다.");
+        }
+
+        String accountNumber = optionalAccount.get().getAccountNumber();
+
+        // 2. 외부 API를 통해 계좌 잔액 조회
+        Map<String, Object> responseMap = callInquireAccountBalanceApi(accountNumber, userKey);
+
+        String balance = (String) responseMap.get("accountBalance");
+        String accountCode = (String) responseMap.get("accountCode");
+
+        // 3. 계좌 코드와 매핑된 계좌 이름 가져오기
+        Optional<AccountCode> optionalAccountCode = accountCodeRepository.findByAccountCode(accountCode); // 메서드 이름 변경에 따라 수정
+
+        if (!optionalAccountCode.isPresent()) {
+            throw new RuntimeException("해당 계좌 코드를 찾을 수 없습니다.");
+        }
+
+        String accountName = optionalAccountCode.get().getAccountName();
+
+        // 4. 응답 데이터 생성
+        return AccountInfoResponse.builder()
+                .accountNumber(accountNumber)
+                .balance(balance)
+                .bankName(accountName)
+                .build();
+    }
+
+    // 외부 금융 API 호출 (계좌 잔액 조회)
+    private Map<String, Object> callInquireAccountBalanceApi(String accountNo, String userKey) throws JsonProcessingException {
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HHmmss");
+
+        // Header 생성
+        Map<String, String> header = new HashMap<>();
+        header.put("apiName", "inquireDemandDepositAccountBalance");
+        header.put("transmissionDate", now.format(dateFormatter));
+        header.put("transmissionTime", now.format(timeFormatter));
+        header.put("institutionCode", "00100");
+        header.put("fintechAppNo", "001");
+        header.put("apiServiceCode", "inquireDemandDepositAccountBalance");
+        header.put("institutionTransactionUniqueNo", now.format(dateFormatter) + now.format(timeFormatter) + userKey);
+        header.put("apiKey", apiKey);
+        header.put("userKey", userKey);
+
+        // Body 생성
+        Map<String, Object> body = new HashMap<>();
+        body.put("Header", header);
+        body.put("accountNo", accountNo);
+
+        // HttpHeaders 설정
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        // HttpEntity 객체 생성
+        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+
+        // 외부 API 호출
+        String url = "/edu/demandDeposit/inquireDemandDepositAccountBalance";
+        ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
+
+        if (response.getStatusCode().is2xxSuccessful()) {
+            return objectMapper.readValue(response.getBody(), Map.class);
+        } else {
+            throw new RuntimeException("API 호출 오류: " + response.getBody());
+        }
     }
 }
