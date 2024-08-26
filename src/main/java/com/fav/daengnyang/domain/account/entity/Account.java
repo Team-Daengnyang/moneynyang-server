@@ -24,6 +24,7 @@ public class Account {
     @Column(name = "account_image")
     private String accountImage;
 
+    @Setter
     @Column(name = "account_color")
     private String accountColor;
 
@@ -39,4 +40,5 @@ public class Account {
         this.accountColor = accountColor;
         this.member = member;
     }
+
 }

@@ -6,8 +6,8 @@ import lombok.Getter;
 @Getter
 @Builder
 public class AccountResponse {
-    private String bankbookTitle;
-    private String bankbookNumber;
-    private String bankbookImage;
-    private String bankbookColor;
+    private String accountTitle;
+    private String accountNumber;
+    private String accountImage;
+    private String accountColor;
 }

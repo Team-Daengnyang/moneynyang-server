@@ -8,8 +8,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class AccountRequest {
-    private String bankbookTitle;
-    private String bankbookImage;
-    private String bankbookColor;
+    private String accountTitle;
+    private String accountImage;
+    private String accountColor;
     private String accountTypeUniqueNo;
 }

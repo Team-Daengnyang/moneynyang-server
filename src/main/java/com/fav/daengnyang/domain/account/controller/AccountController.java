@@ -1,6 +1,7 @@
 package com.fav.daengnyang.domain.account.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fav.daengnyang.domain.account.service.AccountService;
 import com.fav.daengnyang.domain.account.service.dto.request.AccountRequest;
 import com.fav.daengnyang.domain.account.service.dto.request.ColorUpdateRequest;
 import com.fav.daengnyang.domain.account.service.dto.response.AccountCreateResponse;
@@ -16,39 +17,40 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/bankbook")
+@RequestMapping("/account")
 @RequiredArgsConstructor
 public class AccountController {
 
-    private final BankbookService bankbookService;
+    private final AccountService accountService;
 
     @PostMapping("/create")
-    public ResponseEntity<SuccessResponse<AccountCreateResponse>> createBankbook(
+    public ResponseEntity<SuccessResponse<AccountCreateResponse>> createAccount(
             @AuthenticationPrincipal MemberPrincipal memberPrincipal,
             @RequestBody AccountRequest request) throws JsonProcessingException {
-        AccountCreateResponse response = bankbookService.createBankbook(request, memberPrincipal.getUserKey());
+        AccountCreateResponse response = accountService.createAccount(request, memberPrincipal.getUserKey());
         return ResponseEntity.ok(SuccessResponse.ok(response));
     }
+
     @GetMapping("/inquire")
-    public ResponseEntity<SuccessResponse<AccountResponse>> inquireBankbook(
+    public ResponseEntity<SuccessResponse<AccountResponse>> inquireAccount(
             @AuthenticationPrincipal MemberPrincipal memberPrincipal) throws JsonProcessingException {
 
-        AccountResponse response = bankbookService.inquireBankbook(memberPrincipal.getMemberId());
+        AccountResponse response = accountService.inquireAccount(memberPrincipal.getMemberId());
         return ResponseEntity.ok(SuccessResponse.ok(response));
     }
 
     @PatchMapping("/update-color")
     public ResponseEntity<SuccessResponse<AccountResponse>> updateCustomColor(
-            @RequestParam String bankbookNumber,
+            @RequestParam String accountNumber,
             @RequestBody ColorUpdateRequest request) {
-        AccountResponse response = bankbookService.updateBankbookColor(bankbookNumber, request.getNewColor());
+        AccountResponse response = accountService.updateAccountColor(accountNumber, request.getNewColor());
         return ResponseEntity.ok(SuccessResponse.ok(response));
     }
 
     @GetMapping("/history")
-    public ResponseEntity<SuccessResponse<List<AccountHistoryResponse>>> getBankbookHistory(
+    public ResponseEntity<SuccessResponse<List<AccountHistoryResponse>>> getAccountHistory(
             @AuthenticationPrincipal MemberPrincipal memberPrincipal) throws JsonProcessingException {
-        List<AccountHistoryResponse> response = bankbookService.getBankbookHistory(memberPrincipal.getUserKey());
+        List<AccountHistoryResponse> response = accountService.getAccountHistory(memberPrincipal.getUserKey());
         return ResponseEntity.ok(SuccessResponse.ok(response));
     }
 }

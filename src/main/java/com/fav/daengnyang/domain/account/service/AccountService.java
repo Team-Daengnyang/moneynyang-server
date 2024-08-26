@@ -3,6 +3,7 @@ package com.fav.daengnyang.domain.account.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fav.daengnyang.domain.account.entity.Account;
 import com.fav.daengnyang.domain.account.repository.AccountRepository;
 import com.fav.daengnyang.domain.account.service.dto.request.AccountRequest;
 import com.fav.daengnyang.domain.account.service.dto.response.AccountCreateResponse;
@@ -29,7 +30,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AccountService {
 
-    private final AccountRepository bankbookRepository;
+    private final AccountRepository accountRepository;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
@@ -37,72 +38,73 @@ public class AccountService {
     private String apiKey;
 
     // 계좌 생성 메서드
-    public AccountCreateResponse createBankbook(AccountRequest request, String userKey) throws JsonProcessingException {
+    public AccountCreateResponse createAccount(AccountRequest request, String userKey) throws JsonProcessingException {
         // 외부 API를 통해 계좌를 생성
-        String accountNo = callCreateBankbookApi(request, userKey);
+        String accountNo = callCreateAccountApi(request, userKey);
 
         // DB에 계좌 정보 저장
-        Bankbook bankbook = new Bankbook();
-        bankbook.setBankbookTitle(request.getBankbookTitle());
-        bankbook.setBankbookNumber(accountNo);
-        bankbook.setBankbookImage(request.getBankbookImage());
-        bankbook.setBankbookColor(request.getBankbookColor());
+        Account account = Account.builder()
+                .accountTitle(request.getAccountTitle())
+                .accountNumber(accountNo)
+                .accountImage(request.getAccountImage())
+                .accountColor(request.getAccountColor())
+                .build();
 
-        Bankbook savedBankbook = bankbookRepository.save(bankbook);
+        Account savedAccount = accountRepository.save(account);
 
         // 응답 데이터 생성
         return AccountCreateResponse.builder()
-                .bankbookNumber(savedBankbook.getBankbookNumber())
-                .bankbookTitle(savedBankbook.getBankbookTitle())
-                .bankbookImage(savedBankbook.getBankbookImage())
-                .bankbookColor(savedBankbook.getBankbookColor())
+                .accountNumber(savedAccount.getAccountNumber())
+                .accountTitle(savedAccount.getAccountTitle())
+                .accountImage(savedAccount.getAccountImage())
+                .accountColor(savedAccount.getAccountColor())
                 .build();
     }
 
     // 계좌 조회 메서드
-    public AccountResponse inquireBankbook(Long memberId) throws JsonProcessingException {
+    public AccountResponse inquireAccount(Long memberId) throws JsonProcessingException {
         // 1. 계좌번호 가져오기
-        Optional<Bankbook> optionalBankbook = bankbookRepository.findByMemberMemberId(memberId);
+        Optional<Account> optionalAccount = accountRepository.findByMemberMemberId(memberId);
 
-        if (!optionalBankbook.isPresent()) {
+        if (!optionalAccount.isPresent()) {
             throw new RuntimeException("해당 회원의 계좌를 찾을 수 없습니다.");
         }
 
-        String bankbookNumber = optionalBankbook.get().getBankbookNumber();
+        String accountNumber = optionalAccount.get().getAccountNumber();
 
         // 2. 외부 API를 통해 계좌 정보 조회
-        Map<String, Object> responseMap = callInquireBankbookApi(bankbookNumber);
+        Map<String, Object> responseMap = callInquireAccountApi(accountNumber);
 
         return AccountResponse.builder()
-                .bankbookTitle((String) responseMap.get("bankbookTitle"))
-                .bankbookNumber((String) responseMap.get("bankbookNumber"))
-                .bankbookImage((String) responseMap.get("bankbookImage"))
-                .bankbookColor((String) responseMap.get("bankbookColor"))
+                .accountTitle((String) responseMap.get("accountTitle"))
+                .accountNumber((String) responseMap.get("accountNumber"))
+                .accountImage((String) responseMap.get("accountImage"))
+                .accountColor((String) responseMap.get("accountColor"))
                 .build();
     }
 
     // 커스텀 색상 업데이트
-    public AccountResponse updateBankbookColor(String bankbookNumber, String newColor) {
-        Optional<Bankbook> optionalBankbook = bankbookRepository.findByBankbookNumber(bankbookNumber);
+    public AccountResponse updateAccountColor(String accountNumber, String newColor) {
+        Optional<Account> optionalAccount = accountRepository.findByAccountNumber(accountNumber);
 
-        if (!optionalBankbook.isPresent()) {
+        if (!optionalAccount.isPresent()) {
             throw new RuntimeException("해당 계좌 번호를 가진 계좌를 찾을 수 없습니다.");
         }
 
-        Bankbook bankbook = optionalBankbook.get();
-        bankbook.setBankbookColor(newColor);
-        bankbookRepository.save(bankbook);
+        Account account = optionalAccount.get();
+        account.setAccountColor(newColor);
+        accountRepository.save(account);
 
         return AccountResponse.builder()
-                .bankbookTitle(bankbook.getBankbookTitle())
-                .bankbookNumber(bankbook.getBankbookNumber())
-                .bankbookImage(bankbook.getBankbookImage())
-                .bankbookColor(bankbook.getBankbookColor())
+                .accountTitle(account.getAccountTitle())
+                .accountNumber(account.getAccountNumber())
+                .accountImage(account.getAccountImage())
+                .accountColor(account.getAccountColor())
                 .build();
     }
 
     // 외부 금융 API 호출 (계좌 생성)
-    private String callCreateBankbookApi(AccountRequest request, String userKey) throws JsonProcessingException {
+    private String callCreateAccountApi(AccountRequest request, String userKey) throws JsonProcessingException {
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HHmmss");
@@ -122,9 +124,9 @@ public class AccountService {
         // Body 생성
         Map<String, Object> body = new HashMap<>();
         body.put("Header", header);
-        body.put("bankbookTitle", request.getBankbookTitle());
-        body.put("bankbookImage", request.getBankbookImage());
-        body.put("bankbookColor", request.getBankbookColor());
+        body.put("accountTitle", request.getAccountTitle());
+        body.put("accountImage", request.getAccountImage());
+        body.put("accountColor", request.getAccountColor());
         body.put("accountTypeUniqueNo", "001-1-ffa4253081d540");
 
         // HttpHeaders 설정
@@ -149,7 +151,7 @@ public class AccountService {
     }
 
     // 외부 금융 API 호출 (계좌 조회)
-    private Map<String, Object> callInquireBankbookApi(String accountNo) throws JsonProcessingException {
+    private Map<String, Object> callInquireAccountApi(String accountNo) throws JsonProcessingException {
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HHmmss");
@@ -187,12 +189,13 @@ public class AccountService {
             throw new RuntimeException("API 호출 오류: " + response.getBody());
         }
     }
-    public List<AccountHistoryResponse> getBankbookHistory(String userKey) throws JsonProcessingException {
+
+    public List<AccountHistoryResponse> getAccountHistory(String userKey) throws JsonProcessingException {
         // 외부 API 호출 후 데이터 처리
         Map<String, Object> historyData = callInquireTransactionHistoryApi(userKey);
 
         // API로부터 받은 데이터를 DTO로 매핑
-        return mapToBankbookHistoryResponse(historyData);
+        return mapToAccountHistoryResponse(historyData);
     }
 
     // 금융 API 호출 (거래 내역 조회)
@@ -248,21 +251,21 @@ public class AccountService {
         return header;
     }
 
-    private List<AccountHistoryResponse> mapToBankbookHistoryResponse(Map<String, Object> historyData) {
+    private List<AccountHistoryResponse> mapToAccountHistoryResponse(Map<String, Object> historyData) {
         // "history" 리스트를 가져와서 매핑
-        List<Map<String, Object>> bankbookHistories = (List<Map<String, Object>>) historyData.get("history");
+        List<Map<String, Object>> accountHistories = (List<Map<String, Object>>) historyData.get("history");
 
-        return bankbookHistories.stream()
-                .map(this::mapBankbookHistory)
+        return accountHistories.stream()
+                .map(this::mapAccountHistory)
                 .collect(Collectors.toList());
     }
 
-    private AccountHistoryResponse mapBankbookHistory(Map<String, Object> bankbookData) {
+    private AccountHistoryResponse mapAccountHistory(Map<String, Object> accountData) {
         // 데이터 매핑
         return AccountHistoryResponse.builder()
-                .date((String) bankbookData.get("date"))
-                .name((String) bankbookData.get("name"))
-                .amount((Integer) bankbookData.get("amount"))
+                .date((String) accountData.get("date"))
+                .name((String) accountData.get("name"))
+                .amount((Integer) accountData.get("amount"))
                 .build();
     }
 }
