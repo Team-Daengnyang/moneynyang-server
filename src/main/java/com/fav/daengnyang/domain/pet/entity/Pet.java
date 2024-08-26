@@ -1,6 +1,7 @@
 package com.fav.daengnyang.domain.pet.entity;
 
 import com.fav.daengnyang.domain.member.entity.Member;
+import com.fav.daengnyang.domain.pet.service.dto.request.CreatedPetRequest;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,17 +31,28 @@ public class Pet {
     @Column(name = "specie")
     private String specie;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
     @Builder
-    public Pet(String petName, String petGender, String petType, String petBirth, String specie, Member member) {
+    private Pet(String petName, String petGender, String petType, String petBirth, String specie, Member member) {
         this.petName = petName;
         this.petGender = petGender;
         this.petType = petType;
         this.petBirth = petBirth;
         this.specie = specie;
         this.member = member;
+    }
+
+    public static Pet createPet(CreatedPetRequest createdPetRequest, Member member) {
+        return Pet.builder()
+                .petName(createdPetRequest.getPetName())
+                .petGender(createdPetRequest.getPetGender())
+                .petType(createdPetRequest.getPetType())
+                .petBirth(createdPetRequest.getPetBirth())
+                .specie(createdPetRequest.getSpecie())
+                .member(member)
+                .build();
     }
 }

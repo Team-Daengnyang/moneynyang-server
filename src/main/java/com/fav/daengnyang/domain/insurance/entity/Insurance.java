@@ -39,7 +39,7 @@ public class Insurance {
     private String url;
 
     @Builder
-    public Insurance(String insuranceAge, String summary, String comment, String price, String title, String companyImage, String insuranceType, String url) {
+    private Insurance(String insuranceAge, String summary, String comment, String price, String title, String companyImage, String insuranceType, String url) {
         this.insuranceAge = insuranceAge;
         this.summary = summary;
         this.comment = comment;
