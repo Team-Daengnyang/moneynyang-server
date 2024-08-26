@@ -14,6 +14,9 @@ public class Insurance {
     @Column(name = "insurance_id")
     private Long insuranceId;
 
+    @Column(name = "insurance_type")
+    private String insuranceType;
+
     @Column(name = "insurance_age")
     private String insuranceAge;
 
@@ -26,27 +29,26 @@ public class Insurance {
     @Column(name = "price")
     private String price;
 
+
     @Column(name = "title")
     private String title;
 
     @Column(name = "company_image")
     private String companyImage;
 
-    @Column(name = "insurance_type")
-    private String insuranceType;
-
     @Column(name = "url")
     private String url;
 
     @Builder
+
     private Insurance(String insuranceAge, String summary, String comment, String price, String title, String companyImage, String insuranceType, String url) {
         this.insuranceAge = insuranceAge;
-        this.summary = summary;
-        this.comment = comment;
-        this.price = price;
         this.title = title;
         this.companyImage = companyImage;
-        this.insuranceType = insuranceType;
         this.url = url;
+        this.price = price;
+        this.comment = comment;
+        this.summary = summary;
+        this.insuranceType = insuranceType;
     }
 }

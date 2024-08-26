@@ -20,8 +20,8 @@ public class InsuranceController {
     private final InsuranceService insuranceService;
 
     @GetMapping
-    public SuccessResponse<?> getInsurances(@RequestParam("petType") String petType) {
-        List<InsuranceResponse> response = insuranceService.getListInsurance(petType);
+    public SuccessResponse<?> getInsurances(@RequestParam("insuranceType") String insuranceType) {
+        List<InsuranceResponse> response = insuranceService.getListInsurance(insuranceType);
         return SuccessResponse.ok(response);
     }
 

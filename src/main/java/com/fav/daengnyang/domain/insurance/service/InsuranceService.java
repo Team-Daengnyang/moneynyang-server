@@ -20,8 +20,8 @@ public class InsuranceService {
 
     private final InsuranceRepository insuranceRepository;
 
-    public List<InsuranceResponse> getListInsurance(String petType){
-        List<Insurance> insurances = insuranceRepository.findByPetType(petType);
+    public List<InsuranceResponse> getListInsurance(String insuranceType){
+        List<Insurance> insurances = insuranceRepository.findByInsuranceType(insuranceType);
         log.info("Number of insurances found: " + insurances.size());
         List<InsuranceResponse> response = new ArrayList<>();
         for (Insurance insurance : insurances) {
