@@ -5,11 +5,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fav.daengnyang.domain.member.entity.Member;
 import com.fav.daengnyang.domain.member.repository.MemberRepository;
-import com.fav.daengnyang.domain.target.entity.BankbookDetail;
 import com.fav.daengnyang.domain.target.entity.Target;
-import com.fav.daengnyang.domain.target.repository.BankbookDetailRepository;
 import com.fav.daengnyang.domain.target.repository.TargetRepository;
 import com.fav.daengnyang.domain.target.service.dto.request.TargetTransferRequest;
+import com.fav.daengnyang.domain.targetDetail.entity.TargetDetail;
+import com.fav.daengnyang.domain.targetDetail.repository.TargetDetailRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -32,7 +32,7 @@ import java.util.Map;
 public class TargetTransferService {
 
     private final TargetRepository targetRepository;
-    private final BankbookDetailRepository bankbookDetailRepository;
+    private final TargetDetailRepository targetDetailRepository;
     private final MemberRepository memberRepository;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
@@ -48,7 +48,7 @@ public class TargetTransferService {
         Target target = targetRepository.findById(targetId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 목표를 찾을 수 없습니다."));
 
-        String depositAccountNo = target.getBankbook().getBankbookNumber(); // 입금 계좌
+        String depositAccountNo = target.getAccount().getAccountNumber(); // 입금 계좌
         String withdrawalAccountNo = member.getDepositAccount(); // 출금 계좌
 
         int amount = request.getAmount();
@@ -60,17 +60,17 @@ public class TargetTransferService {
         int updatedAmount = target.getCurrentAmount() + amount;
         target.setCurrentAmount(updatedAmount);
         if (updatedAmount >= target.getTargetAmount()) {
-            target.setDone(true);
+            target.setIsDone(true);
         }
         targetRepository.save(target);
 
         // BankbookDetail에 새로운 이체 내역 추가
-        BankbookDetail detail = BankbookDetail.builder()
+        TargetDetail detail = TargetDetail.builder()
                 .amount(amount)
                 .createdDate(LocalDate.now())
                 .target(target)
                 .build();
-        bankbookDetailRepository.save(detail);
+        targetDetailRepository.save(detail);
     }
 
     // 계좌이체 금융 API
