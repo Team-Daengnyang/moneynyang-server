@@ -1,6 +1,6 @@
 package com.fav.daengnyang.domain.pet.service;
 
-import com.fav.daengnyang.domain.account.entity.Bankbook;
+import com.fav.daengnyang.domain.account.entity.Account;
 import com.fav.daengnyang.domain.account.repository.AccountRepository;
 import com.fav.daengnyang.domain.member.entity.Member;
 import com.fav.daengnyang.domain.member.repository.MemberRepository;
@@ -21,9 +21,9 @@ public class PetService {
 
     private final PetRepository petRepository;
     private final MemberRepository memberRepository;
-    private final AccountRepository bankbookRepository;
+    private final AccountRepository accountRepository;
 
-    public Long createPet(CreatedPetRequest createdPetRequest, Long memberId){
+    public Long createPet(CreatedPetRequest createdPetRequest, Long memberId) {
 
         Member member = memberRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
@@ -32,15 +32,16 @@ public class PetService {
         return pet.getPetId();
     }
 
-    public GetPetResponse getPet(Long memberId){
+    public GetPetResponse getPet(Long memberId) {
 
-        Pet pet = petRepository.findByMemberMemberId(memberId).orElseThrow(
-                () -> new CustomException(ErrorCode.PET_NOT_FOUND));
+        Pet pet = petRepository.findByMemberMemberId(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.PET_NOT_FOUND));
         log.info("pet 정보 불러오기");
-        Bankbook bankbook = bankbookRepository.findByMemberMemberId(memberId)
-                .orElseThrow(() -> new CustomException(ErrorCode.BANKBOOK_NOT_FOUND));
-        log.info("bankbook 정보 불러오기");
-        return GetPetResponse.createGetPetResponse(pet, bankbook.getBankbookImage());
-    }
 
+        Account account = accountRepository.findByMemberMemberId(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
+        log.info("account 정보 불러오기");
+
+        return GetPetResponse.createGetPetResponse(pet, account.getAccountImage());
+    }
 }

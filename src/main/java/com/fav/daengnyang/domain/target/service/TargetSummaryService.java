@@ -2,7 +2,6 @@ package com.fav.daengnyang.domain.target.service;
 
 import com.fav.daengnyang.domain.targetDetail.entity.BankbookDetail;
 import com.fav.daengnyang.domain.target.entity.Target;
-import com.fav.daengnyang.domain.target.repository.TargetDetailRepository;
 import com.fav.daengnyang.domain.target.repository.TargetRepository;
 import com.fav.daengnyang.domain.target.service.dto.response.AchievedTargetInfoResponse;
 import com.fav.daengnyang.domain.target.service.dto.response.TargetSummaryResponse;
