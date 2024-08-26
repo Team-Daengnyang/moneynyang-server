@@ -1,6 +1,6 @@
 package com.fav.daengnyang.domain.insurance.controller;
 
-import com.fav.daengnyang.domain.insurance.service.dto.InsuranceService;
+import com.fav.daengnyang.domain.insurance.service.InsuranceService;
 import com.fav.daengnyang.domain.insurance.service.dto.response.InsuranceDetailResponse;
 import com.fav.daengnyang.domain.insurance.service.dto.response.InsuranceResponse;
 import com.fav.daengnyang.global.web.dto.response.SuccessResponse;
