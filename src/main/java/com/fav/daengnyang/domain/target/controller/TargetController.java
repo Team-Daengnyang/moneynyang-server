@@ -6,6 +6,7 @@ import com.fav.daengnyang.domain.target.service.TargetSummaryService;
 import com.fav.daengnyang.domain.target.service.TargetTransferService;
 import com.fav.daengnyang.domain.target.service.dto.request.CreateTargetRequest;
 import com.fav.daengnyang.domain.target.service.dto.request.TargetTransferRequest;
+import com.fav.daengnyang.domain.target.service.dto.response.TargetDetailResponse;
 import com.fav.daengnyang.domain.target.service.dto.response.TargetResponse;
 import com.fav.daengnyang.domain.target.service.dto.response.TargetSummaryResponse;
 import com.fav.daengnyang.global.auth.dto.MemberPrincipal;
@@ -13,7 +14,6 @@ import com.fav.daengnyang.global.web.dto.response.SuccessResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -71,5 +71,14 @@ public class TargetController {
         targetTransferService.transferToTarget(memberPrincipal.getMemberId(), memberPrincipal.getUserKey(), targetId, request);
 
         return SuccessResponse.ok("이체가 성공적으로 완료되었습니다.");
+    }
+
+    // 저축 목표에 대한 저축내역 가져오기
+    @GetMapping("/{targetId}")
+    public SuccessResponse<List<TargetDetailResponse>> getTargetDetails(
+            @PathVariable Long targetId){
+        //service 호출
+        List<TargetDetailResponse> targetDetails = targetService.getTargetDetails(targetId);
+        return SuccessResponse.ok(targetDetails);
     }
 }
