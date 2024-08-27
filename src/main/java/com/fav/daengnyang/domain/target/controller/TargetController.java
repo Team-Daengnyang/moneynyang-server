@@ -72,4 +72,16 @@ public class TargetController {
 
         return SuccessResponse.ok("이체가 성공적으로 완료되었습니다.");
     }
+
+    // 목표 삭제하기
+    @DeleteMapping("/{targetId}")
+    public SuccessResponse<String> deleteTarget(
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal,
+            @PathVariable Long targetId) throws JsonProcessingException {
+
+        // Service 호출
+        targetService.deleteTarget(memberPrincipal.getMemberId(), targetId, memberPrincipal.getUserKey());
+
+        return SuccessResponse.ok("목표가 성공적으로 삭제되었습니다.");
+    }
 }
