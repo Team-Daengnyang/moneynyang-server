@@ -1,5 +1,6 @@
 package com.fav.daengnyang.domain.targetDetail.repository;
 
+import com.fav.daengnyang.domain.target.entity.Target;
 import com.fav.daengnyang.domain.targetDetail.entity.TargetDetail;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -20,4 +21,7 @@ public interface TargetDetailRepository extends JpaRepository<TargetDetail, Long
     // 특정 memberId에 해당하는 모든 TargetDetail 조회
     @Query("SELECT td FROM TargetDetail td JOIN td.target t JOIN t.account a WHERE a.member.memberId = :memberId")
     List<TargetDetail> findByMemberId(@Param("memberId") Long memberId);
+
+    // 특정 Target에 대한 모든 TargetDetail을 조회
+    List<TargetDetail> findByTarget(Target target);
 }
