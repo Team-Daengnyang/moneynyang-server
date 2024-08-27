@@ -5,6 +5,7 @@ import com.fav.daengnyang.domain.account.service.AccountService;
 import com.fav.daengnyang.domain.account.service.dto.request.AccountRequest;
 import com.fav.daengnyang.domain.account.service.dto.request.ColorUpdateRequest;
 import com.fav.daengnyang.domain.account.service.dto.response.AccountCreateResponse;
+import com.fav.daengnyang.domain.account.service.dto.response.AccountInfoResponse;
 import com.fav.daengnyang.domain.account.service.dto.response.AccountResponse;
 import com.fav.daengnyang.domain.targetDetail.service.dto.response.AccountHistoryResponse;
 import com.fav.daengnyang.global.auth.dto.MemberPrincipal;
@@ -35,7 +36,7 @@ public class AccountController {
     public ResponseEntity<SuccessResponse<AccountResponse>> inquireAccount(
             @AuthenticationPrincipal MemberPrincipal memberPrincipal) throws JsonProcessingException {
 
-        AccountResponse response = accountService.inquireAccount(memberPrincipal.getMemberId());
+        AccountResponse response = accountService.inquireAccount(memberPrincipal.getMemberId(), memberPrincipal.getUserKey());
         return ResponseEntity.ok(SuccessResponse.ok(response));
     }
 
@@ -51,6 +52,13 @@ public class AccountController {
     public ResponseEntity<SuccessResponse<List<AccountHistoryResponse>>> getAccountHistory(
             @AuthenticationPrincipal MemberPrincipal memberPrincipal) throws JsonProcessingException {
         List<AccountHistoryResponse> response = accountService.getAccountHistory(memberPrincipal.getUserKey());
+        return ResponseEntity.ok(SuccessResponse.ok(response));
+    }
+
+    @GetMapping("/info")
+    public ResponseEntity<SuccessResponse<AccountInfoResponse>> getAccountInfo(
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal) throws JsonProcessingException {
+        AccountInfoResponse response = accountService.getAccountInfo(memberPrincipal.getMemberId(), memberPrincipal.getUserKey());
         return ResponseEntity.ok(SuccessResponse.ok(response));
     }
 }

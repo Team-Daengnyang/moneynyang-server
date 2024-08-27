@@ -22,5 +22,6 @@ public interface TargetDetailRepository extends JpaRepository<TargetDetail, Long
     @Query("SELECT td FROM TargetDetail td JOIN td.target t JOIN t.account a WHERE a.member.memberId = :memberId")
     List<TargetDetail> findByMemberId(@Param("memberId") Long memberId);
 
+    // 특정 Target에 대한 모든 TargetDetail을 조회
     List<TargetDetail> findByTarget(Target target);
 }

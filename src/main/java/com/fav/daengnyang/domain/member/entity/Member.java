@@ -39,9 +39,6 @@ public class Member {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime modified;
 
-    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Pet pet;
-
     @Builder
     private Member(String email, String password, String depositAccount, String name, LocalDateTime created, LocalDateTime modified) {
         this.email = email;

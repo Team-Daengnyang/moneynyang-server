@@ -14,6 +14,7 @@ import com.fav.daengnyang.global.auth.dto.MemberPrincipal;
 import com.fav.daengnyang.global.auth.utils.JWTProvider;
 import com.fav.daengnyang.global.exception.CustomException;
 import com.fav.daengnyang.global.exception.ErrorCode;
+import com.fav.daengnyang.global.transaction.service.TransactionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,6 +47,8 @@ public class MemberService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final JWTProvider jwtProvider;
 
+    //private final TransactionService transactionService;
+
     @Value("${api.key}")
     private String apiKey;
 
@@ -58,6 +61,10 @@ public class MemberService implements UserDetailsService {
         String encodedPassword = passwordEncoder.encode(createdRequest.getPassword());
         // 4. DB에 회원 정보 저장
         Member member = save(createdRequest, depositAccount, encodedPassword);
+
+        // 송금하기 Test
+        //transactionService.makeDeposit(depositAccount, memberBankResponse.getUserKey());
+
         // 5. accessToken 생성
         String accessToken = jwtProvider.buildAccessToken(memberBankResponse.getUserKey(), member.getMemberId());
         // 6. LoginResponse DTO 생성

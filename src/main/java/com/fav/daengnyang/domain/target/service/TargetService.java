@@ -8,6 +8,7 @@ import com.fav.daengnyang.domain.member.repository.MemberRepository;
 import com.fav.daengnyang.domain.target.entity.Target;
 import com.fav.daengnyang.domain.target.repository.TargetRepository;
 import com.fav.daengnyang.domain.target.service.dto.request.CreateTargetRequest;
+import com.fav.daengnyang.domain.target.service.dto.response.TargetDetailResponse;
 import com.fav.daengnyang.domain.target.service.dto.response.TargetResponse;
 import com.fav.daengnyang.domain.targetDetail.entity.TargetDetail;
 import com.fav.daengnyang.domain.targetDetail.repository.TargetDetailRepository;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -72,12 +74,28 @@ public class TargetService {
                 .toList();
     }
 
-    // 목표 삭제 메소드
-    public void deleteTarget(Long memberId, Long targetId, String userKey) throws JsonProcessingException {
+
+    public List<TargetDetailResponse> getTargetDetails(Long targetId) {
         // Target 조회
         Target target = targetRepository.findById(targetId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 목표를 찾을 수 없습니다."));
+  
+      // 해당 Target에 대한 TargetDetail 리스트 조회
+        List<TargetDetail> targetDetails = targetDetailRepository.findByTarget(target);
 
+        // TargetDetail 리스트를 TargetDetailResponse로 변환하여 반환
+        return targetDetails.stream()
+                .map(detail -> TargetDetailResponse.builder()
+                        .detailId(detail.getDetailId())
+                        .amount(detail.getAmount())
+                        .createdDate(detail.getCreatedDate())
+                        .build())
+                .collect(Collectors.toList());
+}
+
+// 목표 삭제 메소드
+    public void deleteTarget(Long memberId, Long targetId, String userKey) throws JsonProcessingException {
+      
         // TargetDetail 리스트 조회 및 amount 합산
         List<TargetDetail> targetDetails = targetDetailRepository.findByTarget(target);
         int totalAmount = targetDetails.stream().mapToInt(TargetDetail::getAmount).sum();
