@@ -90,7 +90,6 @@ public class AccountService {
         return AccountResponse.builder()
                 .accountTitle((String) responseMap.get("accountTitle"))
                 .accountNumber((String) responseMap.get("accountNumber"))
-                .accountImage((String) responseMap.get("accountImage"))
                 .accountColor((String) responseMap.get("accountColor"))
                 .build();
     }
