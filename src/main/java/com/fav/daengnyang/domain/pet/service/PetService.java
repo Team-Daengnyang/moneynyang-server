@@ -8,6 +8,7 @@ import com.fav.daengnyang.domain.pet.entity.Pet;
 import com.fav.daengnyang.domain.pet.repository.PetRepository;
 import com.fav.daengnyang.domain.pet.service.dto.request.CreatedPetRequest;
 import com.fav.daengnyang.domain.pet.service.dto.response.GetPetResponse;
+import com.fav.daengnyang.global.aws.service.AwsService;
 import com.fav.daengnyang.global.exception.CustomException;
 import com.fav.daengnyang.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -22,11 +23,19 @@ public class PetService {
     private final PetRepository petRepository;
     private final MemberRepository memberRepository;
     private final AccountRepository accountRepository;
+    private final AwsService awsService;
 
     public Long createPet(CreatedPetRequest createdPetRequest, Long memberId) {
 
         Member member = memberRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        // S3에 이미지 업로드
+        String petImage = awsService.uploadFile(createdPetRequest.getPetImage(), memberId);
+
+        //url을 통해 S3에서 이미지 가져오기
+        String url = awsService.getImageUrl(imageUrl);
+
         Pet pet = Pet.createPet(createdPetRequest, member);
         pet = petRepository.save(pet);
         return pet.getPetId();
