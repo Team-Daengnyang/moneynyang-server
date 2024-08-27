@@ -11,7 +11,12 @@ import com.fav.daengnyang.domain.account.service.dto.request.AccountRequest;
 import com.fav.daengnyang.domain.account.service.dto.response.AccountCreateResponse;
 import com.fav.daengnyang.domain.account.service.dto.response.AccountInfoResponse;
 import com.fav.daengnyang.domain.account.service.dto.response.AccountResponse;
+import com.fav.daengnyang.domain.member.entity.Member;
+import com.fav.daengnyang.domain.member.repository.MemberRepository;
 import com.fav.daengnyang.domain.targetDetail.service.dto.response.AccountHistoryResponse;
+import com.fav.daengnyang.global.exception.CustomException;
+import com.fav.daengnyang.global.exception.ErrorCode;
+import com.fav.daengnyang.global.web.dto.response.TransactionUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -34,6 +39,7 @@ import java.util.stream.Collectors;
 public class AccountService {
 
     private final AccountRepository accountRepository;
+    private final MemberRepository memberRepository;
     private final AccountCodeRepository accountCodeRepository;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
@@ -42,15 +48,19 @@ public class AccountService {
     private String apiKey;
 
     // 계좌 생성 메서드
-    public AccountCreateResponse createAccount(AccountRequest request, String userKey) throws JsonProcessingException {
+    public AccountCreateResponse createAccount(AccountRequest request, String userKey, Long memberId) throws JsonProcessingException {
         // 외부 API를 통해 계좌를 생성
         String accountNo = callCreateAccountApi(request, userKey);
+
+        Member member = memberRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         // DB에 계좌 정보 저장
         Account account = Account.builder()
                 .accountTitle(request.getAccountTitle())
                 .accountNumber(accountNo)
                 .accountColor(request.getAccountColor())
+                .member(member)
                 .build();
 
         Account savedAccount = accountRepository.save(account);
@@ -110,6 +120,8 @@ public class AccountService {
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HHmmss");
 
+        String accountTypeUniqueNo = "001-1-82fe5fa7eca441";
+
         // Header 생성
         Map<String, String> header = new HashMap<>();
         header.put("apiName", "createDemandDepositAccount");
@@ -118,7 +130,7 @@ public class AccountService {
         header.put("institutionCode", "00100");
         header.put("fintechAppNo", "001");
         header.put("apiServiceCode", "createDemandDepositAccount");
-        header.put("institutionTransactionUniqueNo", now.format(dateFormatter) + now.format(timeFormatter) + userKey);
+        header.put("institutionTransactionUniqueNo", TransactionUtil.generateUniqueTransactionNo());
         header.put("apiKey", apiKey);
         header.put("userKey", userKey);
 
@@ -128,7 +140,7 @@ public class AccountService {
         body.put("accountTitle", request.getAccountTitle());
         body.put("accountImage", request.getAccountImage());
         body.put("accountColor", request.getAccountColor());
-        body.put("accountTypeUniqueNo", "001-1-ffa4253081d540");
+        body.put("accountTypeUniqueNo", accountTypeUniqueNo);
 
         // HttpHeaders 설정
         HttpHeaders headers = new HttpHeaders();
