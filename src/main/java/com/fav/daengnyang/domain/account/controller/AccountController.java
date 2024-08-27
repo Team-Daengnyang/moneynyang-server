@@ -35,7 +35,6 @@ public class AccountController {
     @GetMapping("/inquire")
     public ResponseEntity<SuccessResponse<AccountResponse>> inquireAccount(
             @AuthenticationPrincipal MemberPrincipal memberPrincipal) throws JsonProcessingException {
-
         AccountResponse response = accountService.inquireAccount(memberPrincipal.getMemberId(), memberPrincipal.getUserKey());
         return ResponseEntity.ok(SuccessResponse.ok(response));
     }
