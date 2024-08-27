@@ -74,9 +74,9 @@ public class TargetController {
     }
 
     // 저축 목표에 대한 저축내역 가져오기
-    @GetMapping("/{targetId}")
+    @GetMapping("/detail")
     public SuccessResponse<List<TargetDetailResponse>> getTargetDetails(
-            @PathVariable Long targetId){
+            @RequestParam(value = "targetId") Long targetId){
         //service 호출
         List<TargetDetailResponse> targetDetails = targetService.getTargetDetails(targetId);
         return SuccessResponse.ok(targetDetails);
