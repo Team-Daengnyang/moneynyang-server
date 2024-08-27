@@ -41,9 +41,9 @@ public class AccountController {
 
     @PatchMapping("/update-color")
     public ResponseEntity<SuccessResponse<AccountResponse>> updateCustomColor(
-            @RequestParam String accountNumber,
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal,
             @RequestBody ColorUpdateRequest request) {
-        AccountResponse response = accountService.updateAccountColor(accountNumber, request.getNewColor());
+        AccountResponse response = accountService.updateAccountColor(memberPrincipal.getMemberId(), request.getNewColor());
         return ResponseEntity.ok(SuccessResponse.ok(response));
     }
 

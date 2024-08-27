@@ -8,10 +8,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
 public interface AccountRepository extends JpaRepository<Account, Long> {
-    Optional<Account> findByAccountNumber(String bankbookNumber);
-
     // memberId로 Account 조회
     @Query("SELECT b FROM Account b WHERE b.member.memberId = :memberId")
     Optional<Account> findByMemberId(@Param("memberId")Long memberId);
-
 }

@@ -95,8 +95,9 @@ public class AccountService {
     }
 
     // 커스텀 색상 업데이트
-    public AccountResponse updateAccountColor(String accountNumber, String newColor) {
-        Optional<Account> optionalAccount = accountRepository.findByAccountNumber(accountNumber);
+    public AccountResponse updateAccountColor(Long memberId, String newColor) {
+
+        Optional<Account> optionalAccount = accountRepository.findByMemberId(memberId);
 
         if (!optionalAccount.isPresent()) {
             throw new RuntimeException("해당 계좌 번호를 가진 계좌를 찾을 수 없습니다.");
