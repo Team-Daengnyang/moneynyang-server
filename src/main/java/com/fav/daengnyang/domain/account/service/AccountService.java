@@ -50,7 +50,6 @@ public class AccountService {
         Account account = Account.builder()
                 .accountTitle(request.getAccountTitle())
                 .accountNumber(accountNo)
-                .accountImage(request.getAccountImage())
                 .accountColor(request.getAccountColor())
                 .build();
 
@@ -60,7 +59,6 @@ public class AccountService {
         return AccountCreateResponse.builder()
                 .accountNumber(savedAccount.getAccountNumber())
                 .accountTitle(savedAccount.getAccountTitle())
-                .accountImage(savedAccount.getAccountImage())
                 .accountColor(savedAccount.getAccountColor())
                 .build();
     }
@@ -102,7 +100,6 @@ public class AccountService {
         return AccountResponse.builder()
                 .accountTitle(account.getAccountTitle())
                 .accountNumber(account.getAccountNumber())
-                .accountImage(account.getAccountImage())
                 .accountColor(account.getAccountColor())
                 .build();
     }

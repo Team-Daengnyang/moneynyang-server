@@ -38,10 +38,6 @@ public class PetService {
                 .orElseThrow(() -> new CustomException(ErrorCode.PET_NOT_FOUND));
         log.info("pet 정보 불러오기");
 
-        Account account = accountRepository.findByMemberMemberId(memberId)
-                .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
-        log.info("account 정보 불러오기");
-
-        return GetPetResponse.createGetPetResponse(pet, account.getAccountImage());
+        return GetPetResponse.createGetPetResponse(pet);
     }
 }

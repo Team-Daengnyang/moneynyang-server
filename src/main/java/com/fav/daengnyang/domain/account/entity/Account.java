@@ -21,9 +21,6 @@ public class Account {
     @Column(name = "account_number")
     private String accountNumber;
 
-    @Column(name = "account_image")
-    private String accountImage;
-
     @Setter
     @Column(name = "account_color")
     private String accountColor;
@@ -33,10 +30,9 @@ public class Account {
     private Member member;
 
     @Builder
-    public Account(String accountTitle, String accountNumber, String accountImage, String accountColor, Member member) {
+    public Account(String accountTitle, String accountNumber, String accountColor, Member member) {
         this.accountTitle = accountTitle;
         this.accountNumber = accountNumber;
-        this.accountImage = accountImage;
         this.accountColor = accountColor;
         this.member = member;
     }
