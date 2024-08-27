@@ -33,29 +33,28 @@ public class TargetController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public SuccessResponse<?> createTarget(
-            @RequestParam(value = "memberId") Long memberId,
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal,
             @Valid @RequestBody CreateTargetRequest request){
 
-        Long targetId = targetService.createTarget(request, memberId);
+        Long targetId = targetService.createTarget(request, memberPrincipal.getMemberId());
 
         return SuccessResponse.created(targetId);
     }
 
     // 유저의 모든 목표 리스트로 조회하기
     @GetMapping
-    public SuccessResponse<List<TargetResponse>> getTargets(@RequestParam(value = "memberId") Long memberId){
+    public SuccessResponse<List<TargetResponse>> getTargets(@AuthenticationPrincipal MemberPrincipal memberPrincipal){
 
-        List<TargetResponse> targets = targetService.findTargets(memberId);
+        List<TargetResponse> targets = targetService.findTargets(memberPrincipal.getMemberId());
         return SuccessResponse.ok(targets);
     }
 
     // 지금까지의 덕질 정보 가져오기
     @GetMapping("/summary")
     public SuccessResponse<?> getTargetSummary(@AuthenticationPrincipal MemberPrincipal memberPrincipal){
-        Long memberId = memberPrincipal.getMemberId();
 
         // service 호출
-        TargetSummaryResponse summary = targetSummaryService.getTargetSummary(memberId);
+        TargetSummaryResponse summary = targetSummaryService.getTargetSummary(memberPrincipal.getMemberId());
 
         return SuccessResponse.ok(summary);
     }
