@@ -13,6 +13,7 @@ import com.fav.daengnyang.global.exception.ErrorCode;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URL;
 
 
 @RequiredArgsConstructor
@@ -24,7 +25,7 @@ public class AwsService {
 
     private final AmazonS3 s3Client;
 
-    public String uploadFile(MultipartFile file, String memberId) {
+    public String uploadFile(MultipartFile file, Long memberId) {
         try{
             File fileObj = convertMultiPartFileToFile(file);
             String originalFilename = file.getOriginalFilename();
@@ -48,6 +49,13 @@ public class AwsService {
             throw new CustomException(ErrorCode.FAILED_CONVERT_FILE);
         }
     }
+
+    public String getImageUrl(String userUrl) {
+        URL url = s3Client.getUrl(name, userUrl);
+        return "" + url;
+    }
+
+
 
     private File convertMultiPartFileToFile(MultipartFile file) throws IOException {
         File convFile = new File(file.getOriginalFilename());

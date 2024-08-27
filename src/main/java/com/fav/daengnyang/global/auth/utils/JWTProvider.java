@@ -23,7 +23,7 @@ import java.util.Map;
 public class JWTProvider implements InitializingBean {
 
     // 토큰 만료 시간 : 6시간
-    private static final int ACCESS_TOKEN_EXPIRATION_PERIOD  = 60 * 60 * 24;
+    private static final int ACCESS_TOKEN_EXPIRATION_PERIOD  = 60 * 60 * 6;
 
     // JWT 키 값
     private static final String USER_KEY = "userKey";

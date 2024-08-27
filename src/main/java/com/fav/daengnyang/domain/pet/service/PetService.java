@@ -34,9 +34,9 @@ public class PetService {
         String petImage = awsService.uploadFile(createdPetRequest.getPetImage(), memberId);
 
         //url을 통해 S3에서 이미지 가져오기
-        String url = awsService.getImageUrl(imageUrl);
+        String url = awsService.getImageUrl(petImage);
 
-        Pet pet = Pet.createPet(createdPetRequest, member);
+        Pet pet = Pet.createPet(createdPetRequest, member, url);
         pet = petRepository.save(pet);
         return pet.getPetId();
     }
