@@ -4,6 +4,8 @@ import com.fav.daengnyang.domain.account.entity.Account;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "target")
 @Getter
@@ -31,17 +33,25 @@ public class Target {
     @Column(name = "is_done")
     private Boolean isDone;
 
+    @Column(name = "start_date")
+    private LocalDate startDate;
+
+    @Column(name = "end_date")
+    private LocalDate endDate;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id", nullable = false)
     private Account account;
 
     @Builder
-    public Target(String description, Integer targetAmount, String targetTitle, Integer currentAmount, Boolean isDone, Account account) {
+    public Target(String description, Integer targetAmount, String targetTitle, Integer currentAmount, Boolean isDone, LocalDate startDate, LocalDate endDate, Account account) {
         this.description = description;
         this.targetAmount = targetAmount;
         this.targetTitle = targetTitle;
         this.currentAmount = currentAmount;
         this.isDone = isDone;
+        this.startDate = startDate;
+        this.endDate = endDate;
         this.account = account;
     }
 
