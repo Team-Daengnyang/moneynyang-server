@@ -44,6 +44,8 @@ public class TargetService {
                 .targetAmount(request.getTargetAmount())
                 .currentAmount(0)
                 .isDone(false)
+                .startDate(request.getStartDate())
+                .endDate(request.getEndDate())
                 .account(account)
                 .build();
 
@@ -69,6 +71,8 @@ public class TargetService {
                         .targetTitle(target.getTargetTitle())
                         .currentAmount(target.getCurrentAmount())
                         .isDone(target.isDone())
+                        .startDate(target.getStartDate())
+                        .endDate(target.getEndDate())
                         .accountId(target.getAccount().getAccountId()) // Account ID 반환
                         .build())
                 .toList();
