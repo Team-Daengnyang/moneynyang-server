@@ -74,7 +74,7 @@ public class TargetTransferService {
     }
 
     // 계좌이체 금융 API
-    private void callTransferApi(String depositAccountNo, String withdrawalAccountNo, int amount, String userKey) throws JsonProcessingException {
+    void callTransferApi(String depositAccountNo, String withdrawalAccountNo, int amount, String userKey) throws JsonProcessingException {
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HHmmss");
