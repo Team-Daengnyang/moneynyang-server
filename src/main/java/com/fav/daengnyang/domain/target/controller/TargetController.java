@@ -73,6 +73,16 @@ public class TargetController {
         return SuccessResponse.ok("이체가 성공적으로 완료되었습니다.");
     }
 
+    // 저축 목표에 대한 저축내역 가져오기
+    @GetMapping("/{targetId}")
+    public SuccessResponse<List<TargetDetailResponse>> getTargetDetails(
+            @PathVariable Long targetId){
+        //service 호출
+        List<TargetDetailResponse> targetDetails = targetService.getTargetDetails(targetId);
+        return SuccessResponse.ok(targetDetails);
+
+    }
+
     // 목표 삭제하기
     @DeleteMapping("/{targetId}")
     public SuccessResponse<String> deleteTarget(
@@ -83,15 +93,7 @@ public class TargetController {
         targetService.deleteTarget(memberPrincipal.getMemberId(), targetId, memberPrincipal.getUserKey());
 
         return SuccessResponse.ok("목표가 성공적으로 삭제되었습니다.");
-
-      
-    // 저축 목표에 대한 저축내역 가져오기
-    @GetMapping("/{targetId}")
-    public SuccessResponse<List<TargetDetailResponse>> getTargetDetails(
-            @PathVariable Long targetId){
-        //service 호출
-        List<TargetDetailResponse> targetDetails = targetService.getTargetDetails(targetId);
-        return SuccessResponse.ok(targetDetails);
-
     }
+      
+
 }

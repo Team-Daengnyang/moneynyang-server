@@ -75,6 +75,7 @@ public class TargetService {
     }
 
 
+    // 목표에 대한 세부정보(입금내역) 조회
     public List<TargetDetailResponse> getTargetDetails(Long targetId) {
         // Target 조회
         Target target = targetRepository.findById(targetId)
@@ -91,11 +92,16 @@ public class TargetService {
                         .createdDate(detail.getCreatedDate())
                         .build())
                 .collect(Collectors.toList());
-}
+    }
 
-// 목표 삭제 메소드
+    // 목표 삭제 메소드
+    @Transactional
     public void deleteTarget(Long memberId, Long targetId, String userKey) throws JsonProcessingException {
-      
+
+        // Target 조회
+        Target target = targetRepository.findById(targetId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 목표를 찾을 수 없습니다."));
+
         // TargetDetail 리스트 조회 및 amount 합산
         List<TargetDetail> targetDetails = targetDetailRepository.findByTarget(target);
         int totalAmount = targetDetails.stream().mapToInt(TargetDetail::getAmount).sum();
