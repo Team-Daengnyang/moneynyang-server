@@ -1,11 +1,13 @@
 package com.fav.daengnyang.global.transaction.service.dto.request;
 
+import com.fav.daengnyang.global.web.dto.response.TransactionUtil;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Getter
@@ -35,7 +37,7 @@ public class DepositHeaderRequest {
     }
 
     public static DepositHeaderRequest createDepositHeader(String apiKey, String userKey){
-        LocalDate today = LocalDate.now();
+        LocalDateTime today = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         String transmissionDate = today.format(formatter);
 
@@ -49,6 +51,7 @@ public class DepositHeaderRequest {
                 .institutionCode("00100")
                 .fintechAppNo("001")
                 .apiServiceCode("updateDemandDepositAccountDeposit")
+                .institutionTransactionUniqueNo(TransactionUtil.generateUniqueTransactionNo())
                 .apiKey(apiKey)
                 .userKey(userKey)
                 .build();

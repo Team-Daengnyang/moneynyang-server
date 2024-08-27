@@ -28,7 +28,7 @@ public class AccountController {
     public ResponseEntity<SuccessResponse<AccountCreateResponse>> createAccount(
             @AuthenticationPrincipal MemberPrincipal memberPrincipal,
             @RequestBody AccountRequest request) throws JsonProcessingException {
-        AccountCreateResponse response = accountService.createAccount(request, memberPrincipal.getUserKey());
+        AccountCreateResponse response = accountService.createAccount(request, memberPrincipal.getUserKey(), memberPrincipal.getMemberId());
         return ResponseEntity.ok(SuccessResponse.ok(response));
     }
 

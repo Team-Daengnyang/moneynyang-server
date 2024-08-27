@@ -11,5 +11,6 @@ public class AccountRequest {
     private String accountTitle;
     private String accountImage;
     private String accountColor;
+    private String accountNumber;
     private String accountTypeUniqueNo;
 }

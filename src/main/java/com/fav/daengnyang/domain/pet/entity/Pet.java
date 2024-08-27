@@ -28,6 +28,9 @@ public class Pet {
     @Column(name = "pet_birth")
     private String petBirth;
 
+    @Column(name = "pet_image")
+    private String petImage;
+
     @Column(name = "specie")
     private String specie;
 
@@ -36,12 +39,13 @@ public class Pet {
     private Member member;
 
     @Builder
-    private Pet(String petName, String petGender, String petType, String petBirth, String specie, Member member) {
+    private Pet(String petName, String petGender, String petType, String petBirth, String specie, String petImage, Member member) {
         this.petName = petName;
         this.petGender = petGender;
         this.petType = petType;
         this.petBirth = petBirth;
         this.specie = specie;
+        this.petImage = petImage;
         this.member = member;
     }
 
@@ -52,6 +56,7 @@ public class Pet {
                 .petType(createdPetRequest.getPetType())
                 .petBirth(createdPetRequest.getPetBirth())
                 .specie(createdPetRequest.getSpecie())
+                .petImage(createdPetRequest.getPetImage())
                 .member(member)
                 .build();
     }

@@ -45,7 +45,7 @@ public class TransactionService {
         HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
         // 4. 외부 API 호출
-        String url = "/edu/demandDeposit/updateDemandDepositAccoutnDeposit";
+        String url = "/edu/demandDeposit/updateDemandDepositAccountDeposit";
         ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
 
         log.info("송금하기 API 결과: " + response.getBody());

@@ -8,6 +8,5 @@ import lombok.Getter;
 public class AccountResponse {
     private String accountTitle;
     private String accountNumber;
-    private String accountImage;
     private String accountColor;
 }
