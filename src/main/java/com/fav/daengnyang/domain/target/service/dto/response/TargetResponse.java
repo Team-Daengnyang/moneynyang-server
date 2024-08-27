@@ -1,9 +1,12 @@
 package com.fav.daengnyang.domain.target.service.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDate;
 
 @NoArgsConstructor
 @Getter
@@ -15,16 +18,24 @@ public class TargetResponse {
     private String targetTitle;
     private int currentAmount;
     private Boolean isDone;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate startDate;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate endDate;
     private Long accountId;
 
     @Builder
-    public TargetResponse (Long targetId, String description, int targetAmount, String targetTitle, int currentAmount, Boolean isDone, Long accountId) {
+    public TargetResponse (Long targetId, String description, int targetAmount, String targetTitle, int currentAmount, Boolean isDone, LocalDate startDate, LocalDate endDate, Long accountId) {
         this.targetId = targetId;
         this.description = description;
         this.targetAmount = targetAmount;
         this.targetTitle = targetTitle;
         this.currentAmount = currentAmount;
         this.isDone = isDone;
+        this.startDate = startDate;
+        this.endDate = endDate;
         this.accountId = accountId;
     }
 }
