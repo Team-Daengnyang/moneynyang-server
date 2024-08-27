@@ -76,7 +76,7 @@ public class AccountService {
     // 계좌 조회 메서드
     public AccountResponse inquireAccount(Long memberId, String userKey) throws JsonProcessingException {
         // 1. 계좌번호 가져오기
-        Optional<Account> optionalAccount = accountRepository.findByMemberMemberId(memberId);
+        Optional<Account> optionalAccount = accountRepository.findByMemberId(memberId);
 
         if (!optionalAccount.isPresent()) {
             throw new RuntimeException("해당 회원의 계좌를 찾을 수 없습니다.");
@@ -95,8 +95,9 @@ public class AccountService {
     }
 
     // 커스텀 색상 업데이트
-    public AccountResponse updateAccountColor(String accountNumber, String newColor) {
-        Optional<Account> optionalAccount = accountRepository.findByAccountNumber(accountNumber);
+    public AccountResponse updateAccountColor(Long memberId, String newColor) {
+
+        Optional<Account> optionalAccount = accountRepository.findByMemberId(memberId);
 
         if (!optionalAccount.isPresent()) {
             throw new RuntimeException("해당 계좌 번호를 가진 계좌를 찾을 수 없습니다.");
@@ -176,6 +177,7 @@ public class AccountService {
         header.put("institutionCode", "00100");
         header.put("fintechAppNo", "001");
         header.put("apiServiceCode", "inquireDemandDepositAccount");
+        header.put("institutionTransactionUniqueNo", TransactionUtil.generateUniqueTransactionNo());
         header.put("apiKey", apiKey);
         header.put("userKey", userKey);
 
@@ -284,7 +286,7 @@ public class AccountService {
     // 계좌 정보 조회 메서드
     public AccountInfoResponse getAccountInfo(Long memberId, String userKey) throws JsonProcessingException {
         // 1. 계좌번호 가져오기
-        Optional<Account> optionalAccount = accountRepository.findByMemberMemberId(memberId);
+        Optional<Account> optionalAccount = accountRepository.findByMemberId(memberId);
 
         if (!optionalAccount.isPresent()) {
             throw new RuntimeException("해당 회원의 계좌를 찾을 수 없습니다.");
@@ -299,7 +301,7 @@ public class AccountService {
         String accountCode = (String) responseMap.get("accountCode");
 
         // 3. 계좌 코드와 매핑된 계좌 이름 가져오기
-        Optional<AccountCode> optionalAccountCode = accountCodeRepository.findByAccountCode(accountCode); // 메서드 이름 변경에 따라 수정
+        Optional<AccountCode> optionalAccountCode = accountCodeRepository.findByAccountCode(accountCode);
 
         if (!optionalAccountCode.isPresent()) {
             throw new RuntimeException("해당 계좌 코드를 찾을 수 없습니다.");
@@ -329,7 +331,7 @@ public class AccountService {
         header.put("institutionCode", "00100");
         header.put("fintechAppNo", "001");
         header.put("apiServiceCode", "inquireDemandDepositAccountBalance");
-        header.put("institutionTransactionUniqueNo", now.format(dateFormatter) + now.format(timeFormatter) + userKey);
+        header.put("institutionTransactionUniqueNo", TransactionUtil.generateUniqueTransactionNo());
         header.put("apiKey", apiKey);
         header.put("userKey", userKey);
 
