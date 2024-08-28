@@ -86,11 +86,24 @@ public class AccountService {
 
         // 2. 외부 API를 통해 계좌 정보 조회
         Map<String, Object> responseMap = callInquireAccountApi(accountNumber, userKey);
+        Map<String, Object> recData = (Map<String, Object>) responseMap.get("REC");
+
+        String bankCode = (String) recData.get("bankCode");
+
+        // 3. 계좌 코드와 매핑된 계좌 이름 가져오기
+        Optional<AccountCode> optionalAccountCode = accountCodeRepository.findByAccountCode(bankCode);
+
+        if (!optionalAccountCode.isPresent()) {
+            throw new RuntimeException("해당 계좌 코드를 찾을 수 없습니다.");
+        }
+
+        String accountName = optionalAccountCode.get().getAccountName();
+        String accountColor = optionalAccount.get().getAccountColor();
 
         return AccountResponse.builder()
-                .accountTitle((String) responseMap.get("accountTitle"))
-                .accountNumber((String) responseMap.get("accountNumber"))
-                .accountColor((String) responseMap.get("accountColor"))
+                .accountTitle(accountName)
+                .accountNumber(accountNumber)
+                .accountColor(accountColor)
                 .build();
     }
 
