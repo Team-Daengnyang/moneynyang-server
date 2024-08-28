@@ -7,7 +7,9 @@ import com.fav.daengnyang.domain.account.entity.Account;
 import com.fav.daengnyang.domain.account.entity.AccountCode;
 import com.fav.daengnyang.domain.account.repository.AccountCodeRepository;
 import com.fav.daengnyang.domain.account.repository.AccountRepository;
+import com.fav.daengnyang.domain.account.service.dto.request.AccountCreateColorRequest;
 import com.fav.daengnyang.domain.account.service.dto.request.AccountCreateRequest;
+import com.fav.daengnyang.domain.account.service.dto.response.AccountCreateColorResponse;
 import com.fav.daengnyang.domain.account.service.dto.response.AccountCreateResponse;
 import com.fav.daengnyang.domain.account.service.dto.response.AccountInfoResponse;
 import com.fav.daengnyang.domain.account.service.dto.response.AccountResponse;
@@ -362,5 +364,25 @@ public class AccountService {
         } else {
             throw new RuntimeException("API 호출 오류: " + response.getBody());
         }
+    }
+
+    public AccountCreateColorResponse createColorAccount(AccountCreateColorRequest request, Long memberId) {
+        // 1. 회원과 연결된 계좌 찾기
+        Account account = accountRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
+
+        // 2. 계좌 색상 및 이미지 업데이트
+        account.setAccountColor(request.getAccountColor());
+        account.setAccountImage(request.getAccountImage());
+
+        // 3. 계좌 저장 (업데이트)
+        Account createdAccount = accountRepository.save(account);
+
+        // 4. 응답 데이터 생성
+        return AccountCreateColorResponse.builder()
+                .accountId(createdAccount.getAccountNumber())
+                .accountColor(createdAccount.getAccountColor())
+                .accountImage(createdAccount.getAccountImage())
+                .build();
     }
 }

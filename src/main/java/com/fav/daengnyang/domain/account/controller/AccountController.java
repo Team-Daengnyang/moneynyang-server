@@ -2,8 +2,10 @@ package com.fav.daengnyang.domain.account.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fav.daengnyang.domain.account.service.AccountService;
+import com.fav.daengnyang.domain.account.service.dto.request.AccountCreateColorRequest;
 import com.fav.daengnyang.domain.account.service.dto.request.AccountCreateRequest;
 import com.fav.daengnyang.domain.account.service.dto.request.ColorUpdateRequest;
+import com.fav.daengnyang.domain.account.service.dto.response.AccountCreateColorResponse;
 import com.fav.daengnyang.domain.account.service.dto.response.AccountCreateResponse;
 import com.fav.daengnyang.domain.account.service.dto.response.AccountInfoResponse;
 import com.fav.daengnyang.domain.account.service.dto.response.AccountResponse;
@@ -58,6 +60,13 @@ public class AccountController {
     public ResponseEntity<SuccessResponse<AccountInfoResponse>> getAccountInfo(
             @AuthenticationPrincipal MemberPrincipal memberPrincipal) throws JsonProcessingException {
         AccountInfoResponse response = accountService.getAccountInfo(memberPrincipal.getMemberId(), memberPrincipal.getUserKey());
+        return ResponseEntity.ok(SuccessResponse.ok(response));
+    }
+    @PatchMapping("/create-color")
+    public ResponseEntity<SuccessResponse<AccountCreateColorResponse>> updateAccountColor(
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal,
+            @RequestBody AccountCreateColorRequest request) {
+        AccountCreateColorResponse response = accountService.createColorAccount(request, memberPrincipal.getMemberId());
         return ResponseEntity.ok(SuccessResponse.ok(response));
     }
 }

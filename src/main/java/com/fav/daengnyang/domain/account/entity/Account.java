@@ -25,6 +25,10 @@ public class Account {
     @Column(name = "account_color")
     private String accountColor;
 
+    @Setter
+    @Column(name = "account_image")
+    private String accountImage;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
@@ -36,5 +40,4 @@ public class Account {
         this.accountColor = accountColor;
         this.member = member;
     }
-
 }
