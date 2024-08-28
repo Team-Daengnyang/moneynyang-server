@@ -6,7 +6,8 @@ import lombok.Data;
 @Data
 @Builder
 public class AccountInfoResponse {
+    private String accountTitle;
     private String accountNumber;
-    private String balance;
+    private int accountBalance;
     private String bankName;
 }

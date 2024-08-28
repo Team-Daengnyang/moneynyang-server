@@ -291,13 +291,13 @@ public class AccountService {
         if (!optionalAccount.isPresent()) {
             throw new RuntimeException("해당 회원의 계좌를 찾을 수 없습니다.");
         }
-
+        String accountTitle = optionalAccount.get().getAccountTitle();
         String accountNumber = optionalAccount.get().getAccountNumber();
 
         // 2. 외부 API를 통해 계좌 잔액 조회
         Map<String, Object> responseMap = callInquireAccountBalanceApi(accountNumber, userKey);
 
-        String balance = (String) responseMap.get("accountBalance");
+        int accountBalance = Integer.parseInt((String) responseMap.get("accountBalance"));
         String accountCode = (String) responseMap.get("accountCode");
 
         // 3. 계좌 코드와 매핑된 계좌 이름 가져오기
@@ -311,8 +311,9 @@ public class AccountService {
 
         // 4. 응답 데이터 생성
         return AccountInfoResponse.builder()
+                .accountTitle(accountTitle)
                 .accountNumber(accountNumber)
-                .balance(balance)
+                .accountBalance(accountBalance)
                 .bankName(accountName)
                 .build();
     }
