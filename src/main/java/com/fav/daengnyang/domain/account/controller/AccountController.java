@@ -2,9 +2,11 @@ package com.fav.daengnyang.domain.account.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fav.daengnyang.domain.account.service.AccountService;
+import com.fav.daengnyang.domain.account.service.dto.request.AccountCreateColorRequest;
 import com.fav.daengnyang.domain.account.service.dto.request.AccountCreateRequest;
 import com.fav.daengnyang.domain.account.service.dto.request.ColorUpdateRequest;
 import com.fav.daengnyang.domain.account.service.dto.request.TransferRequest;
+import com.fav.daengnyang.domain.account.service.dto.response.AccountCreateColorResponse;
 import com.fav.daengnyang.domain.account.service.dto.response.AccountCreateResponse;
 import com.fav.daengnyang.domain.account.service.dto.response.AccountInfoResponse;
 import com.fav.daengnyang.domain.account.service.dto.response.AccountResponse;
@@ -64,8 +66,16 @@ public class AccountController {
     }
 
     @PostMapping("/transfer")
-    public SuccessResponse<?> getAccountTransfer(@AuthenticationPrincipal MemberPrincipal memberPrincipal, @Valid @RequestBody TransferRequest transferRequest){
+    public SuccessResponse<?> getAccountTransfer(@AuthenticationPrincipal MemberPrincipal memberPrincipal, @Valid @RequestBody TransferRequest transferRequest) {
         accountService.transferMoney(memberPrincipal, transferRequest);
         return SuccessResponse.ok();
+    }
+
+    @PatchMapping("/create-color")
+    public ResponseEntity<SuccessResponse<AccountCreateColorResponse>> updateAccountColor(
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal,
+            @RequestBody AccountCreateColorRequest request) {
+        AccountCreateColorResponse response = accountService.createColorAccount(request, memberPrincipal.getMemberId());
+        return ResponseEntity.ok(SuccessResponse.ok(response));
     }
 }

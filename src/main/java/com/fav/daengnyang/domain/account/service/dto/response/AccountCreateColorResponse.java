@@ -7,7 +7,8 @@ import lombok.Getter;
 @Data
 @Getter
 @Builder
-public class AccountCreateResponse {
-    private String accountNumber;
-    private String accountTitle;
+public class AccountCreateColorResponse {
+    private String accountId;
+    private String accountColor;
+    private String accountImage;
 }
