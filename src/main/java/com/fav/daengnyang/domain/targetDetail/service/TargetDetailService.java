@@ -43,24 +43,15 @@ public class TargetDetailService {
 
     // 금융 API 호출 및 거래 내역 리스트 추출
     private void extractTransactionDetails(String accountNo, String userKey, TransactionDetailRequest request, List<TransactionDetailResponse> transactionDetails) throws JsonProcessingException {
-        // Header 생성
-        Map<String, String> header = createHeader(userKey);
-
-        // Body 생성
-        Map<String, Object> body = new HashMap<>();
-        body.put("Header", header);
-        body.put("accountNo", accountNo);
-        body.put("startDate", request.getStartDate());
-        body.put("endDate", request.getEndDate());
-        body.put("transactionType", "A");
-        body.put("orderByType", "ASC");
+        // Header 및 Body 생성
+        Map<String, Object> requestBody = createRequestBody(accountNo, userKey, request);
 
         // HttpHeaders 설정
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         // HttpEntity 생성
-        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
 
         // 외부 API 호출
         String url = "/edu/demandDeposit/inquireTransactionHistory";
@@ -89,8 +80,8 @@ public class TargetDetailService {
         }
     }
 
-    // 공통 Header 생성
-    private Map<String, String> createHeader(String userKey) {
+    // 공통 Header 및 Body 생성
+    private Map<String, Object> createRequestBody(String accountNo, String userKey, TransactionDetailRequest request) {
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HHmmss");
@@ -106,6 +97,15 @@ public class TargetDetailService {
         header.put("apiKey", apiKey);
         header.put("userKey", userKey);
 
-        return header;
+        // Body 생성
+        Map<String, Object> body = new HashMap<>();
+        body.put("Header", header);
+        body.put("accountNo", accountNo);
+        body.put("startDate", request.getStartDate());
+        body.put("endDate", request.getEndDate());
+        body.put("transactionType", "A");
+        body.put("orderByType", "ASC");
+
+        return body;
     }
 }
