@@ -28,23 +28,22 @@ public class AccountController {
     public ResponseEntity<SuccessResponse<AccountCreateResponse>> createAccount(
             @AuthenticationPrincipal MemberPrincipal memberPrincipal,
             @RequestBody AccountRequest request) throws JsonProcessingException {
-        AccountCreateResponse response = accountService.createAccount(request, memberPrincipal.getUserKey());
+        AccountCreateResponse response = accountService.createAccount(request, memberPrincipal.getUserKey(), memberPrincipal.getMemberId());
         return ResponseEntity.ok(SuccessResponse.ok(response));
     }
 
     @GetMapping("/inquire")
     public ResponseEntity<SuccessResponse<AccountResponse>> inquireAccount(
             @AuthenticationPrincipal MemberPrincipal memberPrincipal) throws JsonProcessingException {
-
         AccountResponse response = accountService.inquireAccount(memberPrincipal.getMemberId(), memberPrincipal.getUserKey());
         return ResponseEntity.ok(SuccessResponse.ok(response));
     }
 
     @PatchMapping("/update-color")
     public ResponseEntity<SuccessResponse<AccountResponse>> updateCustomColor(
-            @RequestParam String accountNumber,
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal,
             @RequestBody ColorUpdateRequest request) {
-        AccountResponse response = accountService.updateAccountColor(accountNumber, request.getNewColor());
+        AccountResponse response = accountService.updateAccountColor(memberPrincipal.getMemberId(), request.getNewColor());
         return ResponseEntity.ok(SuccessResponse.ok(response));
     }
 

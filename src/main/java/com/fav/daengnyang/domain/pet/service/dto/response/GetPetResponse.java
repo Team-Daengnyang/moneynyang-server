@@ -26,7 +26,7 @@ public class GetPetResponse {
        this.petImage = petImage;
    }
 
-   public static GetPetResponse createGetPetResponse(Pet pet, String petImage) {
+   public static GetPetResponse createGetPetResponse(Pet pet) {
        return builder()
                .petId(pet.getPetId())
                .petName(pet.getPetName())
@@ -34,7 +34,7 @@ public class GetPetResponse {
                .petType(pet.getPetType())
                .petGender(pet.getPetGender())
                .specie(pet.getSpecie())
-               .petImage(petImage)
+               .petImage(pet.getPetImage())
                .build();
    }
 }

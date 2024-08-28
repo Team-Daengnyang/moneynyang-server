@@ -1,5 +1,6 @@
 package com.fav.daengnyang.domain.member.service.dto.request;
 
+import com.fav.daengnyang.global.web.dto.response.TransactionUtil;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -50,16 +51,11 @@ public class AccountCreationHeaderRequest {
                 .institutionCode("00100")
                 .fintechAppNo("001")
                 .apiServiceCode("createDemandDepositAccount")
-                .institutionTransactionUniqueNo(generateUniqueTransactionNo(now))
+                .institutionTransactionUniqueNo(TransactionUtil.generateUniqueTransactionNo())
                 .apiKey(apiKey)
                 .userKey(userKey)
                 .build();
     }
 
-    private static String generateUniqueTransactionNo(LocalDateTime dateTime) {
-        String dateTimePrefix = dateTime.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-        String randomSuffix = String.format("%06d", new Random().nextInt(1000000)); // 6자리 난수 생성
-        return dateTimePrefix + randomSuffix;
-    }
 }
 

@@ -28,11 +28,11 @@ public class Pet {
     @Column(name = "pet_birth")
     private String petBirth;
 
-    @Column(name = "specie")
-    private String specie;
-
     @Column(name = "pet_image")
     private String petImage;
+
+    @Column(name = "specie")
+    private String specie;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
