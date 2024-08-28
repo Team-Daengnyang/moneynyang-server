@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TransactionDetailResponse {
-    private String transactionUniqueNo;
+    private Long transactionUniqueNo;
     private String transactionDate;
     private String transactionTime;
     private Long transactionBalance;
