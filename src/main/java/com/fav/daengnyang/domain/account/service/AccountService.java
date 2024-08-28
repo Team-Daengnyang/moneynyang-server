@@ -47,7 +47,6 @@ public class AccountService {
     @Value("${api.key}")
     private String apiKey;
 
-    // 계좌 생성 메서드
     public AccountCreateResponse createAccount(AccountCreateRequest request, String userKey, Long memberId) throws JsonProcessingException {
         // 외부 API를 통해 계좌를 생성
         String accountNo = callCreateAccountApi(request, userKey);
@@ -59,7 +58,6 @@ public class AccountService {
         Account account = Account.builder()
                 .accountTitle(request.getAccountTitle())
                 .accountNumber(accountNo)
-                .accountColor(request.getAccountColor())
                 .member(member)
                 .build();
 
@@ -69,7 +67,6 @@ public class AccountService {
         return AccountCreateResponse.builder()
                 .accountNumber(savedAccount.getAccountNumber())
                 .accountTitle(savedAccount.getAccountTitle())
-                .accountColor(savedAccount.getAccountColor())
                 .build();
     }
 
@@ -133,8 +130,6 @@ public class AccountService {
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HHmmss");
 
-        String accountTypeUniqueNo = "001-1-82fe5fa7eca441";
-
         // Header 생성
         Map<String, String> header = new HashMap<>();
         header.put("apiName", "createDemandDepositAccount");
@@ -151,9 +146,7 @@ public class AccountService {
         Map<String, Object> body = new HashMap<>();
         body.put("Header", header);
         body.put("accountTitle", request.getAccountTitle());
-        body.put("accountImage", request.getAccountImage());
-        body.put("accountColor", request.getAccountColor());
-        body.put("accountTypeUniqueNo", accountTypeUniqueNo);
+        body.put("accountTypeUniqueNo", request.getAccountTypeUniqueNo());
 
         // HttpHeaders 설정
         HttpHeaders headers = new HttpHeaders();

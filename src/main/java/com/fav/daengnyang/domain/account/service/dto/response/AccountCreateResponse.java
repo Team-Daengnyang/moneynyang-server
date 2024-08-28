@@ -10,6 +10,4 @@ import lombok.Getter;
 public class AccountCreateResponse {
     private String accountNumber;
     private String accountTitle;
-    private String accountImage;
-    private String accountColor;
 }

@@ -9,8 +9,5 @@ import lombok.Setter;
 @NoArgsConstructor
 public class AccountCreateRequest {
     private String accountTitle;
-    private String accountImage;
-    private String accountColor;
-    private String accountNumber;
     private String accountTypeUniqueNo;
 }
