@@ -7,6 +7,7 @@ import lombok.Getter;
 @Builder
 public class MemberInfoResponse {
     private Long memberId;
+    private String memberName;
     private int memberLevel;
     private long memberDate;
     private int memberTarget;

@@ -7,7 +7,7 @@ import com.fav.daengnyang.domain.account.entity.Account;
 import com.fav.daengnyang.domain.account.entity.AccountCode;
 import com.fav.daengnyang.domain.account.repository.AccountCodeRepository;
 import com.fav.daengnyang.domain.account.repository.AccountRepository;
-import com.fav.daengnyang.domain.account.service.dto.request.AccountRequest;
+import com.fav.daengnyang.domain.account.service.dto.request.AccountCreateRequest;
 import com.fav.daengnyang.domain.account.service.dto.response.AccountCreateResponse;
 import com.fav.daengnyang.domain.account.service.dto.response.AccountInfoResponse;
 import com.fav.daengnyang.domain.account.service.dto.response.AccountResponse;
@@ -48,7 +48,7 @@ public class AccountService {
     private String apiKey;
 
     // 계좌 생성 메서드
-    public AccountCreateResponse createAccount(AccountRequest request, String userKey, Long memberId) throws JsonProcessingException {
+    public AccountCreateResponse createAccount(AccountCreateRequest request, String userKey, Long memberId) throws JsonProcessingException {
         // 외부 API를 통해 계좌를 생성
         String accountNo = callCreateAccountApi(request, userKey);
 
@@ -115,7 +115,7 @@ public class AccountService {
     }
 
     // 외부 금융 API 호출 (계좌 생성)
-    private String callCreateAccountApi(AccountRequest request, String userKey) throws JsonProcessingException {
+    private String callCreateAccountApi(AccountCreateRequest request, String userKey) throws JsonProcessingException {
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HHmmss");
@@ -286,13 +286,12 @@ public class AccountService {
     // 계좌 정보 조회 메서드
     public AccountInfoResponse getAccountInfo(Long memberId, String userKey) throws JsonProcessingException {
         // 1. 계좌번호 가져오기
-        Optional<Account> optionalAccount = accountRepository.findByMemberId(memberId);
+        Optional<Member> optionalMember = memberRepository.findByMemberId(memberId);
 
-        if (!optionalAccount.isPresent()) {
+        if (!optionalMember.isPresent()) {
             throw new RuntimeException("해당 회원의 계좌를 찾을 수 없습니다.");
         }
-        String accountTitle = optionalAccount.get().getAccountTitle();
-        String accountNumber = optionalAccount.get().getAccountNumber();
+        String accountNumber = optionalMember.get().getDepositAccount();
 
         // 2. 외부 API를 통해 계좌 잔액 조회
         Map<String, Object> responseMap = callInquireAccountBalanceApi(accountNumber, userKey);
@@ -311,7 +310,6 @@ public class AccountService {
 
         // 4. 응답 데이터 생성
         return AccountInfoResponse.builder()
-                .accountTitle(accountTitle)
                 .accountNumber(accountNumber)
                 .accountBalance(accountBalance)
                 .bankName(accountName)

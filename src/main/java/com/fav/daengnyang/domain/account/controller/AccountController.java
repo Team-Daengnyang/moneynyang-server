@@ -2,7 +2,7 @@ package com.fav.daengnyang.domain.account.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fav.daengnyang.domain.account.service.AccountService;
-import com.fav.daengnyang.domain.account.service.dto.request.AccountRequest;
+import com.fav.daengnyang.domain.account.service.dto.request.AccountCreateRequest;
 import com.fav.daengnyang.domain.account.service.dto.request.ColorUpdateRequest;
 import com.fav.daengnyang.domain.account.service.dto.response.AccountCreateResponse;
 import com.fav.daengnyang.domain.account.service.dto.response.AccountInfoResponse;
@@ -27,7 +27,7 @@ public class AccountController {
     @PostMapping("/create")
     public ResponseEntity<SuccessResponse<AccountCreateResponse>> createAccount(
             @AuthenticationPrincipal MemberPrincipal memberPrincipal,
-            @RequestBody AccountRequest request) throws JsonProcessingException {
+            @RequestBody AccountCreateRequest request) throws JsonProcessingException {
         AccountCreateResponse response = accountService.createAccount(request, memberPrincipal.getUserKey(), memberPrincipal.getMemberId());
         return ResponseEntity.ok(SuccessResponse.ok(response));
     }
