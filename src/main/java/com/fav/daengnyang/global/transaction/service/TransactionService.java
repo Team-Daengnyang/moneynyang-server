@@ -48,6 +48,6 @@ public class TransactionService {
         String url = "/edu/demandDeposit/updateDemandDepositAccountDeposit";
         ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
 
-        log.info("송금하기 API 결과: " + response.getBody());
+        log.info("입금하기 API 결과: " + response.getBody());
     }
 }
