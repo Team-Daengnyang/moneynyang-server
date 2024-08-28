@@ -295,12 +295,13 @@ public class AccountService {
 
         // 2. 외부 API를 통해 계좌 잔액 조회
         Map<String, Object> responseMap = callInquireAccountBalanceApi(accountNumber, userKey);
+        Map<String, Object> recData = (Map<String, Object>) responseMap.get("REC");
 
-        int accountBalance = Integer.parseInt((String) responseMap.get("accountBalance"));
-        String accountCode = (String) responseMap.get("accountCode");
+        String accountBalance = recData.get("accountBalance").toString();
+        String bankCode = (String) recData.get("bankCode");
 
         // 3. 계좌 코드와 매핑된 계좌 이름 가져오기
-        Optional<AccountCode> optionalAccountCode = accountCodeRepository.findByAccountCode(accountCode);
+        Optional<AccountCode> optionalAccountCode = accountCodeRepository.findByAccountCode(bankCode);
 
         if (!optionalAccountCode.isPresent()) {
             throw new RuntimeException("해당 계좌 코드를 찾을 수 없습니다.");
