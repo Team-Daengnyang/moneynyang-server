@@ -4,6 +4,7 @@ import com.fav.daengnyang.domain.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -22,10 +23,7 @@ public class Cashwalk {
     private Member member;
 
     @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    private LocalDate createdAt;
 
     @Column(name = "content")
     private String content;
@@ -34,10 +32,9 @@ public class Cashwalk {
     private Integer step;
 
     @Builder
-    public Cashwalk(Member member, LocalDateTime createdAt, LocalDateTime updatedAt, String content, Integer step) {
+    public Cashwalk(Member member, LocalDate createdAt, String content, Integer step) {
         this.member = member;
         this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
         this.content = content;
         this.step = step;
     }
