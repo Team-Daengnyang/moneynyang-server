@@ -133,17 +133,21 @@ public class AccountService {
     // 출금하기
     public void transferMoney(MemberPrincipal memberPrincipal, TransferRequest transferRequest) {
         // 1. 금융 API 호출
-        callTransferMoney(memberPrincipal.getUserKey(), transferRequest);
+        callTransferMoney(memberPrincipal.getMemberId(), memberPrincipal.getUserKey(), transferRequest);
     }
 
-    private void callTransferMoney(String userKey, TransferRequest transferRequest) {
+    private void callTransferMoney(Long memberId, String userKey, TransferRequest transferRequest) {
+        //0. 계좌 번호
+        Member member = memberRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
         //1. body 객체 생성
         TransferHeaderRequest header = TransferHeaderRequest
                 .createTransferHeaderRequest(apiKey, userKey);
         HashMap<String, Object> body = new HashMap<>();
         body.put("Header", header);
-        body.put("accountNo", transferRequest.getAccount());
-        body.put("transferBalance", transferRequest.getAmount());
+        body.put("accountNo", member.getDepositAccount());
+        body.put("transactionBalance", transferRequest.getAmount());
         body.put("transferSummary", "출금");
 
         // 2. HttpHeaders 설정
@@ -154,7 +158,7 @@ public class AccountService {
         HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
         // 4. 외부 API 호출
-        String url = "/edu/demandDeposit/updateDemandDepositAccountWithDrawal";
+        String url = "/edu/demandDeposit/updateDemandDepositAccountWithdrawal";
         ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
     }
 
