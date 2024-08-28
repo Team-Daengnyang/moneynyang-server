@@ -5,6 +5,7 @@ import com.fav.daengnyang.domain.account.service.AccountService;
 import com.fav.daengnyang.domain.account.service.dto.request.AccountCreateColorRequest;
 import com.fav.daengnyang.domain.account.service.dto.request.AccountCreateRequest;
 import com.fav.daengnyang.domain.account.service.dto.request.ColorUpdateRequest;
+import com.fav.daengnyang.domain.account.service.dto.request.TransferRequest;
 import com.fav.daengnyang.domain.account.service.dto.response.AccountCreateColorResponse;
 import com.fav.daengnyang.domain.account.service.dto.response.AccountCreateResponse;
 import com.fav.daengnyang.domain.account.service.dto.response.AccountInfoResponse;
@@ -12,6 +13,7 @@ import com.fav.daengnyang.domain.account.service.dto.response.AccountResponse;
 import com.fav.daengnyang.domain.targetDetail.service.dto.response.AccountHistoryResponse;
 import com.fav.daengnyang.global.auth.dto.MemberPrincipal;
 import com.fav.daengnyang.global.web.dto.response.SuccessResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -62,6 +64,13 @@ public class AccountController {
         AccountInfoResponse response = accountService.getAccountInfo(memberPrincipal.getMemberId(), memberPrincipal.getUserKey());
         return ResponseEntity.ok(SuccessResponse.ok(response));
     }
+
+    @PostMapping("/transfer")
+    public SuccessResponse<?> getAccountTransfer(@AuthenticationPrincipal MemberPrincipal memberPrincipal, @Valid @RequestBody TransferRequest transferRequest) {
+        accountService.transferMoney(memberPrincipal, transferRequest);
+        return SuccessResponse.ok();
+    }
+
     @PatchMapping("/create-color")
     public ResponseEntity<SuccessResponse<AccountCreateColorResponse>> updateAccountColor(
             @AuthenticationPrincipal MemberPrincipal memberPrincipal,

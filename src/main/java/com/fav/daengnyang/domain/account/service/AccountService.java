@@ -9,6 +9,8 @@ import com.fav.daengnyang.domain.account.repository.AccountCodeRepository;
 import com.fav.daengnyang.domain.account.repository.AccountRepository;
 import com.fav.daengnyang.domain.account.service.dto.request.AccountCreateColorRequest;
 import com.fav.daengnyang.domain.account.service.dto.request.AccountCreateRequest;
+import com.fav.daengnyang.domain.account.service.dto.request.TransferHeaderRequest;
+import com.fav.daengnyang.domain.account.service.dto.request.TransferRequest;
 import com.fav.daengnyang.domain.account.service.dto.response.AccountCreateColorResponse;
 import com.fav.daengnyang.domain.account.service.dto.response.AccountCreateResponse;
 import com.fav.daengnyang.domain.account.service.dto.response.AccountInfoResponse;
@@ -16,6 +18,7 @@ import com.fav.daengnyang.domain.account.service.dto.response.AccountResponse;
 import com.fav.daengnyang.domain.member.entity.Member;
 import com.fav.daengnyang.domain.member.repository.MemberRepository;
 import com.fav.daengnyang.domain.targetDetail.service.dto.response.AccountHistoryResponse;
+import com.fav.daengnyang.global.auth.dto.MemberPrincipal;
 import com.fav.daengnyang.global.exception.CustomException;
 import com.fav.daengnyang.global.exception.ErrorCode;
 import com.fav.daengnyang.global.web.dto.response.TransactionUtil;
@@ -124,6 +127,38 @@ public class AccountService {
                 .accountNumber(account.getAccountNumber())
                 .accountColor(account.getAccountColor())
                 .build();
+    }
+
+    // 출금하기
+    public void transferMoney(MemberPrincipal memberPrincipal, TransferRequest transferRequest) {
+        // 1. 금융 API 호출
+        callTransferMoney(memberPrincipal.getMemberId(), memberPrincipal.getUserKey(), transferRequest);
+    }
+
+    private void callTransferMoney(Long memberId, String userKey, TransferRequest transferRequest) {
+        //0. 계좌 번호
+        Member member = memberRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        //1. body 객체 생성
+        TransferHeaderRequest header = TransferHeaderRequest
+                .createTransferHeaderRequest(apiKey, userKey);
+        HashMap<String, Object> body = new HashMap<>();
+        body.put("Header", header);
+        body.put("accountNo", member.getDepositAccount());
+        body.put("transactionBalance", transferRequest.getAmount());
+        body.put("transferSummary", "출금");
+
+        // 2. HttpHeaders 설정
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        // 3. HttpEntity 객체 생성
+        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+
+        // 4. 외부 API 호출
+        String url = "/edu/demandDeposit/updateDemandDepositAccountWithdrawal";
+        ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
     }
 
     // 외부 금융 API 호출 (계좌 생성)
