@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class AccountRequest {
+public class AccountCreateRequest {
     private String accountTitle;
     private String accountImage;
     private String accountColor;

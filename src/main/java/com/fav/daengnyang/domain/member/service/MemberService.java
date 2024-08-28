@@ -181,13 +181,15 @@ public class MemberService implements UserDetailsService {
         Member member = findByMemberId(memberId);
         // 3. 서비스 이용 시작일과 현재일의 차이 계산
         Long daysUsingService = Duration.between(member.getCreated(), LocalDateTime.now()).toDays();
+        daysUsingService = daysUsingService+1;
         // 4. 현재 설정된 타겟의 총 개수 구하기
         int totalTargets = targetRepository.findAllByMemberId(memberId).size();
         // 5. 5일당 레벨 1씩 계산
-        int level = (int) (daysUsingService / 5);
+        int level = (int) (daysUsingService / 5) + 1;
         // 6. MemberInfoResponse 생성 및 반환
         return MemberInfoResponse.builder()
                 .memberId(member.getMemberId())
+                .memberName(member.getName())
                 .memberLevel(level)
                 .memberDate(daysUsingService)
                 .memberTarget(totalTargets)
