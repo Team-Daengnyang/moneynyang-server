@@ -39,25 +39,35 @@ public class Pet {
     private Member member;
 
     @Builder
-    private Pet(String petName, String petGender, String petType, String petBirth, String specie, String petImage, Member member) {
+    private Pet(String petName, String petGender, String petType, String petBirth, String specie, Member member, String petImage) {
         this.petName = petName;
         this.petGender = petGender;
         this.petType = petType;
         this.petBirth = petBirth;
         this.specie = specie;
-        this.petImage = petImage;
         this.member = member;
+        this.petImage = petImage;
     }
 
-    public static Pet createPet(CreatedPetRequest createdPetRequest, Member member) {
+    public static Pet createPet(CreatedPetRequest createdPetRequest, Member member, String petImage) {
         return Pet.builder()
                 .petName(createdPetRequest.getPetName())
                 .petGender(createdPetRequest.getPetGender())
                 .petType(createdPetRequest.getPetType())
                 .petBirth(createdPetRequest.getPetBirth())
                 .specie(createdPetRequest.getSpecie())
-                .petImage(createdPetRequest.getPetImage())
+                .petImage(petImage)
                 .member(member)
                 .build();
     }
+
+    public void updatePet(CreatedPetRequest createdPetRequest, String petImage) {
+        this.petName = createdPetRequest.getPetName();
+        this.petGender = createdPetRequest.getPetGender();
+        this.petType = createdPetRequest.getPetType();
+        this.petBirth = createdPetRequest.getPetBirth();
+        this.specie = createdPetRequest.getSpecie();
+        this.petImage = petImage;
+    }
 }
+

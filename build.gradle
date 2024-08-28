@@ -58,7 +58,12 @@ dependencies {
 	testAnnotationProcessor 'org.projectlombok:lombok'
 
 	// Jackson module (for using 'LocalDateTime')
-	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+	implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.3'
+
+	// S3
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+
 }
 
 tasks.named('test') {
