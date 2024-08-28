@@ -74,8 +74,6 @@ public class AwsService {
         }
     }
 
-
-
     private File convertMultiPartFileToFile(MultipartFile file) throws IOException {
         File convFile = new File(file.getOriginalFilename());
         FileOutputStream fos = new FileOutputStream(convFile);

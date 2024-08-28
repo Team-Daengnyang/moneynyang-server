@@ -9,8 +9,6 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 
-
-
 @Configuration
 public class S3Config {
     @Value("${aws.s3.access-key}")
