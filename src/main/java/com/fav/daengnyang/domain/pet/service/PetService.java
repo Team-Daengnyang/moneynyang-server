@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -35,8 +37,19 @@ public class PetService {
 
         //url을 통해 S3에서 이미지 가져오기
         String url = awsService.getImageUrl(petImage);
+        log.info("url : " + url);
 
-        Pet pet = Pet.createPet(createdPetRequest, member, url);
+        // 펫 정보 조회
+        Optional<Pet> existingPetOptional = petRepository.findByMemberMemberId(memberId);
+        Pet pet;
+        if (existingPetOptional.isPresent()) {
+            pet = existingPetOptional.get();
+            pet.updatePet(createdPetRequest, url);
+        } else {
+            // 해당 url을 가진 Pet 객체가 없으면 새로 생성
+            pet = Pet.createPet(createdPetRequest, member, url);
+        }
+
         pet = petRepository.save(pet);
         return pet.getPetId();
     }

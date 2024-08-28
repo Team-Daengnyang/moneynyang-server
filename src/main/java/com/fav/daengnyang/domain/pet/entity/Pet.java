@@ -31,7 +31,7 @@ public class Pet {
     @Column(name = "specie")
     private String specie;
 
-    @Column(name = "petImage")
+    @Column(name = "pet_image")
     private String petImage;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -56,7 +56,18 @@ public class Pet {
                 .petType(createdPetRequest.getPetType())
                 .petBirth(createdPetRequest.getPetBirth())
                 .specie(createdPetRequest.getSpecie())
+                .petImage(petImage)
                 .member(member)
                 .build();
     }
+
+    public void updatePet(CreatedPetRequest createdPetRequest, String petImage) {
+        this.petName = createdPetRequest.getPetName();
+        this.petGender = createdPetRequest.getPetGender();
+        this.petType = createdPetRequest.getPetType();
+        this.petBirth = createdPetRequest.getPetBirth();
+        this.specie = createdPetRequest.getSpecie();
+        this.petImage = petImage;
+    }
 }
+

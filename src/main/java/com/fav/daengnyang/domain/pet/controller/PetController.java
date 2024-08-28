@@ -8,6 +8,7 @@ import com.fav.daengnyang.global.web.dto.response.SuccessResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -22,8 +23,9 @@ public class PetController {
     private final PetService petService;
 
     // 반려동물 정보 저장
-    @PostMapping
-    public SuccessResponse<?> createPet(@AuthenticationPrincipal MemberPrincipal memberPrincipal, @RequestBody @Valid CreatedPetRequest createdPetRequest) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public SuccessResponse<?> createPet(@AuthenticationPrincipal MemberPrincipal memberPrincipal, @Valid CreatedPetRequest createdPetRequest) {
+        log.info("created" + createdPetRequest);
         Long petId = petService.createPet(createdPetRequest, memberPrincipal.getMemberId());
         return SuccessResponse.created(petId);
     }
