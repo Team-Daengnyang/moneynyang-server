@@ -55,6 +55,4 @@ public class TransferHeaderRequest {
                 .userKey(userKey)
                 .build();
     }
-
 }
-
