@@ -54,7 +54,7 @@ public class TargetDetailService {
         HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
 
         // 외부 API 호출
-        String url = "/edu/demandDeposit/inquireTransactionHistory";
+        String url = "/edu/demandDeposit/inquireTransactionHistoryList";
         ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
 
         // 응답 처리
