@@ -39,6 +39,4 @@ public class ChatbotController {
         chatbotService.createSession(memberPrincipal.getMemberId());
         return SuccessResponse.created("세션 생성에 성공했습니다.");
     }
-
-
 }
