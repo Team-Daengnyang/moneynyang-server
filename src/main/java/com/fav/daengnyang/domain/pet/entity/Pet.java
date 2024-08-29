@@ -69,5 +69,9 @@ public class Pet {
         this.specie = createdPetRequest.getSpecie();
         this.petImage = petImage;
     }
+
+    public void updatePetImage(String petImage){
+        this.petImage = petImage;
+    }
 }
 
