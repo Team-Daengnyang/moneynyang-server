@@ -2,6 +2,7 @@ package com.fav.daengnyang.domain.pet.entity;
 
 import com.fav.daengnyang.domain.member.entity.Member;
 import com.fav.daengnyang.domain.pet.service.dto.request.CreatedPetRequest;
+import com.fav.daengnyang.domain.pet.service.dto.request.UpdatedPetRequest;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -62,17 +63,13 @@ public class Pet {
                 .build();
     }
 
-    public void updatePet(CreatedPetRequest createdPetRequest, String petImage) {
-        this.petName = createdPetRequest.getPetName();
-        this.petGender = createdPetRequest.getPetGender();
-        this.petType = createdPetRequest.getPetType();
-        this.petBirth = createdPetRequest.getPetBirth();
-        this.specie = createdPetRequest.getSpecie();
-        this.petImage = petImage;
+    public void updatePet(UpdatedPetRequest updatedPetRequest) {
+        this.petName = updatedPetRequest.getPetName();
+        this.petGender = updatedPetRequest.getPetGender();
+        this.petType = updatedPetRequest.getPetType();
+        this.petBirth = updatedPetRequest.getPetBirth();
+        this.specie = updatedPetRequest.getSpecie();
     }
 
-    public void updatePetImage(String petImage){
-        this.petImage = petImage;
-    }
 }
 

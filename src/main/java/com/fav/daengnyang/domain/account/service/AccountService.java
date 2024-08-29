@@ -151,7 +151,7 @@ public class AccountService {
         //url을 통해 S3에서 이미지 가져오기
         String url = awsService.getImageUrl(petImage);
 
-        pet.updatePetImage(url);
+        pet.setPetImage(url);
         petRepository.save(pet);
 
         return url;
