@@ -1,10 +1,7 @@
 package com.fav.daengnyang.domain.target.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fav.daengnyang.domain.account.entity.Account;
 import com.fav.daengnyang.domain.account.repository.AccountRepository;
-import com.fav.daengnyang.domain.member.entity.Member;
-import com.fav.daengnyang.domain.member.repository.MemberRepository;
 import com.fav.daengnyang.domain.target.entity.Target;
 import com.fav.daengnyang.domain.target.repository.TargetRepository;
 import com.fav.daengnyang.domain.target.service.dto.request.CreateTargetRequest;
