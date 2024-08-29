@@ -53,7 +53,6 @@ public class AccountService {
     private final AccountCodeRepository accountCodeRepository;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
-    private final PetRepository petRepository;
     private final AwsService awsService;
 
     @Value("${api.key}")
