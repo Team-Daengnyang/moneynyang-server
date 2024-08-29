@@ -28,6 +28,7 @@ public class Pet {
     @Column(name = "pet_birth")
     private String petBirth;
 
+    @Setter
     @Column(name = "pet_image")
     private String petImage;
 
