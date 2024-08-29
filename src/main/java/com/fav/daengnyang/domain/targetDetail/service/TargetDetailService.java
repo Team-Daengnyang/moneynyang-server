@@ -72,6 +72,7 @@ public class TargetDetailService {
                         .transactionBalance(Long.valueOf(transaction.get("transactionBalance").toString()))
                         .transactionAfterBalance(Long.valueOf(transaction.get("transactionAfterBalance").toString()))
                         .transactionSummary((String) transaction.get("transactionSummary"))
+                        .transactionMemo((String) transaction.get("transactionMemo"))
                         .build();
                 transactionDetails.add(detail);
             }
@@ -104,7 +105,7 @@ public class TargetDetailService {
         body.put("startDate", request.getStartDate());
         body.put("endDate", request.getEndDate());
         body.put("transactionType", "A");
-        body.put("orderByType", "ASC");
+        body.put("orderByType", "DESC");
 
         return body;
     }

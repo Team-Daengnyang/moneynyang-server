@@ -72,7 +72,7 @@ public class AccountController {
     }
 
     @PatchMapping("/create-color")
-    public ResponseEntity<SuccessResponse<AccountCreateColorResponse>> updateAccountColor(
+    public ResponseEntity<SuccessResponse<AccountCreateColorResponse>> creatAccountColor(
             @AuthenticationPrincipal MemberPrincipal memberPrincipal,
             @RequestBody AccountCreateColorRequest request) {
         AccountCreateColorResponse response = accountService.createColorAccount(request, memberPrincipal.getMemberId());

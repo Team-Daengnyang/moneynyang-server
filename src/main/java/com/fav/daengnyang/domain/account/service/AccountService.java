@@ -17,6 +17,8 @@ import com.fav.daengnyang.domain.account.service.dto.response.AccountInfoRespons
 import com.fav.daengnyang.domain.account.service.dto.response.AccountResponse;
 import com.fav.daengnyang.domain.member.entity.Member;
 import com.fav.daengnyang.domain.member.repository.MemberRepository;
+import com.fav.daengnyang.domain.pet.entity.Pet;
+import com.fav.daengnyang.domain.pet.repository.PetRepository;
 import com.fav.daengnyang.domain.targetDetail.service.dto.response.AccountHistoryResponse;
 import com.fav.daengnyang.global.auth.dto.MemberPrincipal;
 import com.fav.daengnyang.global.exception.CustomException;
@@ -45,6 +47,7 @@ public class AccountService {
 
     private final AccountRepository accountRepository;
     private final MemberRepository memberRepository;
+    private final PetRepository petRepository;
     private final AccountCodeRepository accountCodeRepository;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
@@ -406,18 +409,23 @@ public class AccountService {
         Account account = accountRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
 
-        // 2. 계좌 색상 및 이미지 업데이트
-        account.setAccountColor(request.getAccountColor());
-        account.setAccountImage(request.getAccountImage());
+        // 2. 회원과 연결된 펫 찾기
+        Pet pet = petRepository.findByMemberMemberId(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.PET_NOT_FOUND));
 
-        // 3. 계좌 저장 (업데이트)
+        // 3. 펫 이미지 업데이트
+        pet.setPetImage(request.getAccountImage());
+
+        // 4. 펫 및 계좌 저장 (업데이트)
+        petRepository.save(pet);
         Account createdAccount = accountRepository.save(account);
+        pet.setPetImage(request.getAccountImage());
 
-        // 4. 응답 데이터 생성
+        // 6. 응답 데이터 생성
         return AccountCreateColorResponse.builder()
                 .accountId(createdAccount.getAccountNumber())
                 .accountColor(createdAccount.getAccountColor())
-                .accountImage(createdAccount.getAccountImage())
+                .accountImage(pet.getPetImage())
                 .build();
     }
 }
