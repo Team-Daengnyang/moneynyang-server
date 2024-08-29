@@ -8,6 +8,7 @@ import com.fav.daengnyang.domain.member.repository.MemberRepository;
 import com.fav.daengnyang.domain.target.entity.Target;
 import com.fav.daengnyang.domain.target.repository.TargetRepository;
 import com.fav.daengnyang.domain.target.service.dto.request.TargetTransferRequest;
+import com.fav.daengnyang.domain.target.service.dto.request.TransferHeaderRequest;
 import com.fav.daengnyang.domain.targetDetail.entity.TargetDetail;
 import com.fav.daengnyang.domain.targetDetail.repository.TargetDetailRepository;
 import lombok.RequiredArgsConstructor;
@@ -75,21 +76,12 @@ public class TargetTransferService {
 
     // 계좌이체 금융 API
     void callTransferApi(String depositAccountNo, String withdrawalAccountNo, int amount, String userKey) throws JsonProcessingException {
-        LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HHmmss");
-
         // Header 생성
-        Map<String, String> header = new HashMap<>();
-        header.put("apiName", "updateDemandDepositAccountTransfer");
-        header.put("transmissionDate", now.format(dateFormatter));
-        header.put("transmissionTime", now.format(timeFormatter));
-        header.put("institutionCode", "00100");
-        header.put("fintechAppNo", "001");
-        header.put("apiServiceCode", "updateDemandDepositAccountTransfer");
-        header.put("institutionTransactionUniqueNo", now.format(dateFormatter) + now.format(timeFormatter) + withdrawalAccountNo);
-        header.put("apiKey", apiKey);
-        header.put("userKey", userKey); // userKey 전달
+        TransferHeaderRequest header = TransferHeaderRequest.createTransferHeaderRequest(
+                "updateDemandDepositAccountTransfer", // apiName
+                "updateDemandDepositAccountTransfer", // apiServiceCode
+                apiKey,
+                userKey);
 
         // Body 생성
         Map<String, Object> body = new HashMap<>();
