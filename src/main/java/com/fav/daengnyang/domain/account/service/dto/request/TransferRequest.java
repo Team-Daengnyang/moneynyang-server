@@ -16,4 +16,6 @@ public class TransferRequest {
     private String account;
     @NotNull
     private Long amount;
+    @NotBlank
+    private String name;
 }

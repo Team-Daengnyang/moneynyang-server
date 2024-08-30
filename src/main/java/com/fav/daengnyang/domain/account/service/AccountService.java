@@ -83,9 +83,10 @@ public class AccountService {
 
     private List<String> initializeCategories() {
         List<String> categoryList = new ArrayList<>();
-        for (int i = 0; i < 4; i++) categoryList.add("식비");
+        for (int i = 0; i < 3; i++) categoryList.add("식비");
         for (int i = 0; i < 2; i++) categoryList.add("교통");
-        for (int i = 0; i < 3; i++) categoryList.add("쇼핑");
+        for (int i = 0; i < 2; i++) categoryList.add("쇼핑");
+        for (int i = 0; i < 1; i++) categoryList.add("반려");
         categoryList.add("기타"); 
         return categoryList;
     }
@@ -199,7 +200,8 @@ public class AccountService {
         String transferNo = callTransferMoney(member.getDepositAccount(), memberPrincipal.getUserKey(), transferRequest);
         // 2. 메모하기
         log.info("transferNo: {}", transferNo);
-        transactionService.makeMemo(member.getDepositAccount(), transferNo, setMemoCategory(), memberPrincipal.getUserKey());
+        String memo = transferRequest.getName() + "," + setMemoCategory();
+        transactionService.makeMemo(member.getDepositAccount(), transferNo, memo, memberPrincipal.getUserKey());
     }
 
     private String setMemoCategory(){
