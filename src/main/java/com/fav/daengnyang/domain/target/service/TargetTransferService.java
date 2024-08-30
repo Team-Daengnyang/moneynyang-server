@@ -103,6 +103,12 @@ public class TargetTransferService {
         if (totalAmount > 0) {
             callTransferApi(depositAccountNo, withdrawalAccountNo, totalAmount, userKey); // 재사용
         }
+
+        // 출금 처리
+        target.setIsWithdrawed(true);
+
+        // 타겟의 현재 금액 0으로 설정
+        target.setCurrentAmount(0);
     }
 
     // 목표 삭제 메소드

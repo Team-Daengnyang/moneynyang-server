@@ -33,6 +33,9 @@ public class Target {
     @Column(name = "is_done")
     private Boolean isDone;
 
+    @Column(name = "is_withdrawed")
+    private Boolean isWithdrawed;
+
     @Column(name = "start_date")
     private LocalDate startDate;
 
@@ -44,12 +47,13 @@ public class Target {
     private Account account;
 
     @Builder
-    public Target(String description, Integer targetAmount, String targetTitle, Integer currentAmount, Boolean isDone, LocalDate startDate, LocalDate endDate, Account account) {
+    public Target(String description, Integer targetAmount, String targetTitle, Integer currentAmount, Boolean isDone, Boolean isWithdrawed, LocalDate startDate, LocalDate endDate, Account account) {
         this.description = description;
         this.targetAmount = targetAmount;
         this.targetTitle = targetTitle;
         this.currentAmount = currentAmount;
         this.isDone = isDone;
+        this.isWithdrawed = isWithdrawed;
         this.startDate = startDate;
         this.endDate = endDate;
         this.account = account;
@@ -57,5 +61,9 @@ public class Target {
 
     public Boolean isDone() {
         return isDone;
+    }
+
+    public Boolean isWithdrawed() {
+        return isWithdrawed;
     }
 }

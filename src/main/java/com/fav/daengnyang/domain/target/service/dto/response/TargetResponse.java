@@ -18,6 +18,7 @@ public class TargetResponse {
     private String targetTitle;
     private int currentAmount;
     private Boolean isDone;
+    private Boolean isWithdraw;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate startDate;
@@ -27,13 +28,14 @@ public class TargetResponse {
     private Long accountId;
 
     @Builder
-    public TargetResponse (Long targetId, String description, int targetAmount, String targetTitle, int currentAmount, Boolean isDone, LocalDate startDate, LocalDate endDate, Long accountId) {
+    public TargetResponse (Long targetId, String description, int targetAmount, String targetTitle, int currentAmount, Boolean isDone, Boolean isWithdraw, LocalDate startDate, LocalDate endDate, Long accountId) {
         this.targetId = targetId;
         this.description = description;
         this.targetAmount = targetAmount;
         this.targetTitle = targetTitle;
         this.currentAmount = currentAmount;
         this.isDone = isDone;
+        this.isWithdraw = isWithdraw;
         this.startDate = startDate;
         this.endDate = endDate;
         this.accountId = accountId;
