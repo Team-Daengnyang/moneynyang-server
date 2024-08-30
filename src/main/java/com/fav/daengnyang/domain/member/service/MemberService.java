@@ -86,7 +86,6 @@ public class MemberService implements UserDetailsService {
 
     // 이메일 중복 체크
     public CheckResponse checkDuplicateEmail(String email) throws JsonProcessingException {
-        //금융 API 회원가입
         return checkMemberBank(email);
     }
 
