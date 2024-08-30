@@ -38,7 +38,7 @@ public class JwtFilter extends GenericFilterBean{
         // 로그인, 회원가입은 필터를 적용하지 않음
         String requestURI = request.getRequestURI();
         logger.info("requestURI : " + requestURI);
-        if (requestURI.equals("/api/v1/members") || requestURI.equals("/api/v1/members/login")) {
+        if (requestURI.equals("/api/v1/members") || requestURI.equals("/api/v1/members/login") || requestURI.equals("/api/v1/members/check")) {
             filterChain.doFilter(request, servletResponse);
             return;
         }
@@ -48,12 +48,11 @@ public class JwtFilter extends GenericFilterBean{
         if (StringUtils.hasText(jwt) && jwtProvider.validateToken(jwt)) {
             Long memberId = jwtProvider.getMemberId(jwt);
             String userKey = jwtProvider.getUserKey(jwt);
-            log.info("0");
+
             Member member = memberService.findByMemberId(memberId);
 
-            log.info("1");
             UserDetails userDetails = MemberPrincipal.createMemberAuthority(member, userKey);
-            log.info("3");
+
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }

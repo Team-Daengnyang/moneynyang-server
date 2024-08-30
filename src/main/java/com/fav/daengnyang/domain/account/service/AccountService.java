@@ -443,6 +443,7 @@ public class AccountService {
 
         // 4. 펫 및 계좌 저장 (업데이트)
         petRepository.save(pet);
+        account.updateAccountColor(request.getAccountColor());
         Account createdAccount = accountRepository.save(account);
         pet.setPetImage(request.getAccountImage());
 
