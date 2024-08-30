@@ -36,4 +36,8 @@ public class Account {
         this.accountColor = accountColor;
         this.member = member;
     }
+
+    public void updateAccountColor(String accountColor) {
+        this.accountColor = accountColor;
+    }
 }
