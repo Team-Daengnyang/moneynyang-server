@@ -2,10 +2,12 @@ package com.fav.daengnyang.domain.member.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fav.daengnyang.domain.member.service.MemberService;
+import com.fav.daengnyang.domain.member.service.dto.request.CheckRequest;
 import com.fav.daengnyang.domain.member.service.dto.request.CreatedRequest;
 import com.fav.daengnyang.domain.member.service.dto.request.LoginRequest;
 import com.fav.daengnyang.domain.member.service.dto.response.LoginResponse;
 import com.fav.daengnyang.domain.member.service.dto.response.MemberInfoResponse;
+import com.fav.daengnyang.domain.pet.service.dto.response.CheckResponse;
 import com.fav.daengnyang.global.auth.AuthService;
 import com.fav.daengnyang.global.auth.dto.MemberPrincipal;
 import com.fav.daengnyang.global.auth.utils.JWTProvider;
@@ -15,6 +17,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/members")
@@ -49,8 +53,9 @@ public class MemberController {
 
     // 이메일 중복 체크
     @PostMapping("/check")
-    public SuccessResponse<?> checkDuplicateEmail(@RequestBody String email) throws JsonProcessingException {
+    public SuccessResponse<?> checkDuplicateEmail(@RequestBody CheckRequest checkRequest) throws JsonProcessingException {
 
+       CheckResponse response = memberService.checkDuplicateEmail(checkRequest.getEmail());
        return SuccessResponse.ok(response);
     }
     
