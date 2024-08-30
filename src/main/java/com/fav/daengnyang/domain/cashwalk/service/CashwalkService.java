@@ -2,10 +2,11 @@ package com.fav.daengnyang.domain.cashwalk.service;
 
 import com.fav.daengnyang.domain.cashwalk.entity.Cashwalk;
 import com.fav.daengnyang.domain.cashwalk.repository.CashwalkRepository;
-import com.fav.daengnyang.domain.cashwalk.service.dto.request.CashwalkRequest;
+import com.fav.daengnyang.domain.cashwalk.service.dto.request.CreateCashwalkRequest;
 import com.fav.daengnyang.domain.cashwalk.service.dto.response.CashwalkResponse;
 import com.fav.daengnyang.domain.member.entity.Member;
 import com.fav.daengnyang.domain.member.repository.MemberRepository;
+import com.fav.daengnyang.global.aws.service.AwsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,19 +25,28 @@ public class CashwalkService {
 
     private final MemberRepository memberRepository;
     private final CashwalkRepository cashwalkRepository;
+    private final AwsService awsService;
 
     // 캐시워크 일지 등록하기
     @Transactional
-    public Long createCashwalk(Long memberId, CashwalkRequest cashwalkRequest) {
+    public Long createCashwalk(Long memberId, CreateCashwalkRequest createCashwalkRequest) {
 
         Member member = memberRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID를 가진 유저가 없습니다."));
 
+        // S3에 이미지 업로드
+        // 이미지가 있을 경우에만 S3에 업로드하고 URL을 설정
+        String imageUrl = null;
+        if (createCashwalkRequest.getImage() != null && !createCashwalkRequest.getImage().isEmpty()) {
+            imageUrl = awsService.uploadFile(createCashwalkRequest.getImage(), memberId);
+        }
+
         // cashwalk 엔티티 생성
         Cashwalk cashwalk = Cashwalk.builder()
                 .member(member)
-                .createdAt(cashwalkRequest.getCreatedAt())
-                .content(cashwalkRequest.getContent())
+                .createdAt(createCashwalkRequest.getCreatedAt())
+                .content(createCashwalkRequest.getContent())
+                .imageUrl(imageUrl)
                 .step(0)
                 .build();
 
