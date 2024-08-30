@@ -33,11 +33,13 @@ public class AnalyzeMonthlyResponse {
     private int total;
     private int petPayCount;
 
+    private boolean isBeforeExist;
+
     @Builder
     private AnalyzeMonthlyResponse(String mostUsed, int compareDiff, int pet, double petRate,
                                    int food, double foodRate, int shopping, double shoppingRate,
                                    int transportation, double transportationRate, int others,
-                                   double othersRate, int total, int petPayCount) {
+                                   double othersRate, int total, int petPayCount, boolean isBeforeExist) {
         this.mostUsed = mostUsed;
         this.compareDiff = compareDiff;
         this.pet = pet;
@@ -52,6 +54,7 @@ public class AnalyzeMonthlyResponse {
         this.othersRate = othersRate;
         this.total = total;
         this.petPayCount = petPayCount;
+        this.isBeforeExist = isBeforeExist;
     }
 
     public static AnalyzeMonthlyResponse createAnalyzeMonthlyResponse(MemberDetail memberDetail) {
@@ -103,16 +106,18 @@ public class AnalyzeMonthlyResponse {
                 .others(others)
                 .othersRate(othersRate.doubleValue())
                 .total(total)
-                .petPayCount(memberDetail.getPetPayCount()) // Assuming this method exists in MemberDetail
+                .petPayCount(memberDetail.getPetPayCount())
                 .build();
     }
 
 
-    public static AnalyzeMonthlyResponse createNoResponse(){
-        return AnalyzeMonthlyResponse.builder().build();
+    public static AnalyzeMonthlyResponse createNoResponse(boolean isBeforeExist){
+        return AnalyzeMonthlyResponse.builder()
+                .isBeforeExist(isBeforeExist).build();
     }
 
-    public void updateAnlayze(int compareDiff){
+    public void updateAnlayze(int compareDiff, boolean isBeforeExist){
         this.compareDiff = compareDiff;
+        this.isBeforeExist = isBeforeExist;
     }
 }

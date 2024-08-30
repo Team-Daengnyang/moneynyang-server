@@ -1,5 +1,6 @@
 package com.fav.daengnyang.domain.memberDetail.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fav.daengnyang.domain.memberDetail.service.dto.MemberDetailService;
 import com.fav.daengnyang.domain.memberDetail.service.dto.request.AnalyzeMonthlyRequest;
 import com.fav.daengnyang.domain.memberDetail.service.dto.response.AnalyzeMonthlyResponse;
@@ -19,7 +20,7 @@ public class MemberDetailController {
 
     // 개인 소비 데이터 분석(이전 월과 비교)
     @PostMapping
-    public SuccessResponse<?> analyzeSpendingMonthly(@AuthenticationPrincipal MemberPrincipal memberPrincipal, @RequestBody AnalyzeMonthlyRequest request){
+    public SuccessResponse<?> analyzeSpendingMonthly(@AuthenticationPrincipal MemberPrincipal memberPrincipal, @RequestBody AnalyzeMonthlyRequest request) throws JsonProcessingException {
 
         AnalyzeMonthlyResponse response = memberDetailService.analyzeMonthly(memberPrincipal, request);
         return SuccessResponse.ok(response);

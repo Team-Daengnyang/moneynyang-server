@@ -13,6 +13,11 @@ import java.util.List;
 public class InquireTransactionResponse {
     @JsonProperty("REC")
     private RecResponse rec;
+
+    public List<TransResponse> getTransactionList() {
+        return this.rec.getList();
+    }
+
 }
 
 @Getter
@@ -21,16 +26,6 @@ public class InquireTransactionResponse {
 class RecResponse{
     @JsonProperty("totalCount")
     private String totalCount;
-    private List<TransactionResponse> list;
+    private List<TransResponse> list;
 }
 
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@JsonIgnoreProperties(ignoreUnknown = true)
-class TransactionResponse{
-    private String transactionType;
-    private String transactionBalance;
-    private String transactionSummary;
-    private String transactionMemo;
-    private String transactionDate;
-}

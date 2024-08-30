@@ -62,7 +62,7 @@ public class MemberDetail {
         this.petPayCount = petPayCount;
     }
 
-    public static MemberDetail createMemberDetail(int petPayCount, int pet, int food, int shopping, int transportation, int others, LocalDate date, Member member) {
+    public static MemberDetail createMemberDetail(int pet, int food, int shopping, int transportation, int others, int total, int petPayCount, LocalDate date, Member member) {
         return MemberDetail.builder()
                 .pet(pet)
                 .food(food)
@@ -70,6 +70,7 @@ public class MemberDetail {
                 .transportation(transportation)
                 .others(others)
                 .date(date)
+                .total(total)
                 .member(member)
                 .petPayCount(petPayCount)
                 .build();
