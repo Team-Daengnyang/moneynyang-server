@@ -35,7 +35,11 @@ public class CashwalkService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID를 가진 유저가 없습니다."));
 
         // S3에 이미지 업로드
-        String imageUrl = awsService.uploadFile(createCashwalkRequest.getImage(), memberId);
+        // 이미지가 있을 경우에만 S3에 업로드하고 URL을 설정
+        String imageUrl = null;
+        if (createCashwalkRequest.getImage() != null && !createCashwalkRequest.getImage().isEmpty()) {
+            imageUrl = awsService.uploadFile(createCashwalkRequest.getImage(), memberId);
+        }
 
         // cashwalk 엔티티 생성
         Cashwalk cashwalk = Cashwalk.builder()
