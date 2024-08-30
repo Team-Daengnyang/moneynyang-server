@@ -2,6 +2,7 @@ package com.fav.daengnyang.domain.pet.controller;
 
 import com.fav.daengnyang.domain.pet.service.PetService;
 import com.fav.daengnyang.domain.pet.service.dto.request.CreatedPetRequest;
+import com.fav.daengnyang.domain.pet.service.dto.request.UpdatedPetRequest;
 import com.fav.daengnyang.domain.pet.service.dto.response.GetPetResponse;
 import com.fav.daengnyang.global.auth.dto.MemberPrincipal;
 import com.fav.daengnyang.global.web.dto.response.SuccessResponse;
@@ -36,6 +37,13 @@ public class PetController {
         GetPetResponse response = petService.getPet(memberPrincipal.getMemberId());
         log.info("response: {}", response);
         return ResponseEntity.ok(SuccessResponse.ok(response));
+    }
+
+    // 반려동물 정보 수정
+    @PatchMapping
+    public SuccessResponse<?> updatePet(@AuthenticationPrincipal MemberPrincipal memberPrincipal, @Valid UpdatedPetRequest updatedPetRequest){
+        petService.updatePet(updatedPetRequest, memberPrincipal.getMemberId());
+        return SuccessResponse.update();
     }
 
 }

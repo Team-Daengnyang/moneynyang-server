@@ -2,10 +2,7 @@ package com.fav.daengnyang.domain.account.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fav.daengnyang.domain.account.service.AccountService;
-import com.fav.daengnyang.domain.account.service.dto.request.AccountCreateColorRequest;
-import com.fav.daengnyang.domain.account.service.dto.request.AccountCreateRequest;
-import com.fav.daengnyang.domain.account.service.dto.request.ColorUpdateRequest;
-import com.fav.daengnyang.domain.account.service.dto.request.TransferRequest;
+import com.fav.daengnyang.domain.account.service.dto.request.*;
 import com.fav.daengnyang.domain.account.service.dto.response.AccountCreateColorResponse;
 import com.fav.daengnyang.domain.account.service.dto.response.AccountCreateResponse;
 import com.fav.daengnyang.domain.account.service.dto.response.AccountInfoResponse;
@@ -15,6 +12,7 @@ import com.fav.daengnyang.global.auth.dto.MemberPrincipal;
 import com.fav.daengnyang.global.web.dto.response.SuccessResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -43,11 +41,19 @@ public class AccountController {
         return ResponseEntity.ok(SuccessResponse.ok(response));
     }
 
-    @PatchMapping("/update-color")
+    @PatchMapping(value = "/update-color")
     public ResponseEntity<SuccessResponse<AccountResponse>> updateCustomColor(
             @AuthenticationPrincipal MemberPrincipal memberPrincipal,
             @RequestBody ColorUpdateRequest request) {
         AccountResponse response = accountService.updateAccountColor(memberPrincipal.getMemberId(), request.getNewColor());
+        return ResponseEntity.ok(SuccessResponse.ok(response));
+    }
+
+    @PatchMapping(value = "/update-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<SuccessResponse<?>> updateCustomImage(
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal,
+           ImageUpdateRequest request) {
+        String response = accountService.updateAccountImage(memberPrincipal.getMemberId(), request.getAccoutImage());
         return ResponseEntity.ok(SuccessResponse.ok(response));
     }
 
@@ -72,7 +78,7 @@ public class AccountController {
     }
 
     @PatchMapping("/create-color")
-    public ResponseEntity<SuccessResponse<AccountCreateColorResponse>> updateAccountColor(
+    public ResponseEntity<SuccessResponse<AccountCreateColorResponse>> creatAccountColor(
             @AuthenticationPrincipal MemberPrincipal memberPrincipal,
             @RequestBody AccountCreateColorRequest request) {
         AccountCreateColorResponse response = accountService.createColorAccount(request, memberPrincipal.getMemberId());

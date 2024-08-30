@@ -82,6 +82,18 @@ public class TargetController {
 
     }
 
+    // 완료한 목표에서 출금하기
+    @PatchMapping("/{targetId}")
+    public SuccessResponse<String> updateTarget(
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal,
+            @PathVariable Long targetId) throws JsonProcessingException {
+
+        // Service 호출
+        targetTransferService.updateTarget(memberPrincipal.getMemberId(), memberPrincipal. getUserKey(), targetId);
+
+        return SuccessResponse.ok("목표에서 성공적으로 출금이 완료됐습니다.");
+    }
+
     // 목표 삭제하기
     @DeleteMapping("/{targetId}")
     public SuccessResponse<String> deleteTarget(
@@ -89,10 +101,8 @@ public class TargetController {
             @PathVariable Long targetId) throws JsonProcessingException {
 
         // Service 호출
-        targetService.deleteTarget(memberPrincipal.getMemberId(), targetId, memberPrincipal.getUserKey());
+        targetTransferService.deleteTarget(memberPrincipal.getMemberId(), targetId, memberPrincipal.getUserKey());
 
         return SuccessResponse.ok("목표가 성공적으로 삭제되었습니다.");
     }
-      
-
 }

@@ -43,11 +43,7 @@ public class TargetSummaryService {
                 AchievedTargetInfoResponse achievedTargetInfoResponse = AchievedTargetInfoResponse.builder()
                         .targetTitle(target.getTargetTitle())
                         .targetAmount(target.getTargetAmount())
-                        .completedDate(targetDetails.stream()
-                                .filter(detail -> detail.getTarget().equals(target))
-                                .map(TargetDetail::getCreatedDate)
-                                .max(LocalDate::compareTo) // 가장 최근의 날짜를 선택
-                                .orElse(null))
+                        .completedDate(target.getEndDate())
                         .build();
                 achievedTargets.add(achievedTargetInfoResponse);
             }

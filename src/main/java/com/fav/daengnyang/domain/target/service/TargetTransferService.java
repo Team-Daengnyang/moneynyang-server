@@ -8,6 +8,7 @@ import com.fav.daengnyang.domain.member.repository.MemberRepository;
 import com.fav.daengnyang.domain.target.entity.Target;
 import com.fav.daengnyang.domain.target.repository.TargetRepository;
 import com.fav.daengnyang.domain.target.service.dto.request.TargetTransferRequest;
+import com.fav.daengnyang.domain.target.service.dto.request.TransferHeaderRequest;
 import com.fav.daengnyang.domain.targetDetail.entity.TargetDetail;
 import com.fav.daengnyang.domain.targetDetail.repository.TargetDetailRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -61,6 +63,7 @@ public class TargetTransferService {
         target.setCurrentAmount(updatedAmount);
         if (updatedAmount >= target.getTargetAmount()) {
             target.setIsDone(true);
+            target.setEndDate(LocalDate.now());
         }
         targetRepository.save(target);
 
@@ -73,23 +76,75 @@ public class TargetTransferService {
         targetDetailRepository.save(detail);
     }
 
+    // 완료된 목표에서 출금하기 메소드
+    @Transactional
+    public void updateTarget(Long memberId, String userKey, Long targetId) throws JsonProcessingException {
+
+        // Target 조회
+        Target target = targetRepository.findById(targetId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 목표를 찾을 수 없습니다."));
+
+        // TargetDetail 리스트 조회 및 amount 합산
+        List<TargetDetail> targetDetails = targetDetailRepository.findByTarget(target);
+        int totalAmount = targetDetails.stream().mapToInt(TargetDetail::getAmount).sum();
+
+        // TargetDetail 삭제
+        targetDetailRepository.deleteAll(targetDetails);
+
+        // Member 조회
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 멤버를 찾을 수 없습니다."));
+
+        // 출금 계좌 (Target의 Bankbook)와 입금 계좌 (Member의 depositAccount) 정보 추출
+        String withdrawalAccountNo = target.getAccount().getAccountNumber();
+        String depositAccountNo = member.getDepositAccount();
+
+        // 총 합계금액을 Member의 depositAccount로 이체
+        if (totalAmount > 0) {
+            callTransferApi(depositAccountNo, withdrawalAccountNo, totalAmount, userKey); // 재사용
+        }
+    }
+
+    // 목표 삭제 메소드
+    @Transactional
+    public void deleteTarget(Long memberId, Long targetId, String userKey) throws JsonProcessingException {
+
+        // Target 조회
+        Target target = targetRepository.findById(targetId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 목표를 찾을 수 없습니다."));
+
+        // TargetDetail 리스트 조회 및 amount 합산
+        List<TargetDetail> targetDetails = targetDetailRepository.findByTarget(target);
+        int totalAmount = targetDetails.stream().mapToInt(TargetDetail::getAmount).sum();
+
+        // TargetDetail 삭제
+        targetDetailRepository.deleteAll(targetDetails);
+
+        // Member 조회
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 멤버를 찾을 수 없습니다."));
+
+        // 출금 계좌 (Target의 Bankbook)와 입금 계좌 (Member의 depositAccount) 정보 추출
+        String withdrawalAccountNo = target.getAccount().getAccountNumber();
+        String depositAccountNo = member.getDepositAccount();
+
+        // 총 합계금액을 Member의 depositAccount로 이체
+        if (totalAmount > 0) {
+            callTransferApi(depositAccountNo, withdrawalAccountNo, totalAmount, userKey); // 재사용
+        }
+
+        // Target 삭제
+        targetRepository.delete(target);
+    }
+
     // 계좌이체 금융 API
     void callTransferApi(String depositAccountNo, String withdrawalAccountNo, int amount, String userKey) throws JsonProcessingException {
-        LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HHmmss");
-
         // Header 생성
-        Map<String, String> header = new HashMap<>();
-        header.put("apiName", "updateDemandDepositAccountTransfer");
-        header.put("transmissionDate", now.format(dateFormatter));
-        header.put("transmissionTime", now.format(timeFormatter));
-        header.put("institutionCode", "00100");
-        header.put("fintechAppNo", "001");
-        header.put("apiServiceCode", "updateDemandDepositAccountTransfer");
-        header.put("institutionTransactionUniqueNo", now.format(dateFormatter) + now.format(timeFormatter) + withdrawalAccountNo);
-        header.put("apiKey", apiKey);
-        header.put("userKey", userKey); // userKey 전달
+        TransferHeaderRequest header = TransferHeaderRequest.createTransferHeaderRequest(
+                "updateDemandDepositAccountTransfer", // apiName
+                "updateDemandDepositAccountTransfer", // apiServiceCode
+                apiKey,
+                userKey);
 
         // Body 생성
         Map<String, Object> body = new HashMap<>();

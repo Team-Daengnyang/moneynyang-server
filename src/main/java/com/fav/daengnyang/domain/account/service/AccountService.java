@@ -17,8 +17,11 @@ import com.fav.daengnyang.domain.account.service.dto.response.AccountInfoRespons
 import com.fav.daengnyang.domain.account.service.dto.response.AccountResponse;
 import com.fav.daengnyang.domain.member.entity.Member;
 import com.fav.daengnyang.domain.member.repository.MemberRepository;
+import com.fav.daengnyang.domain.pet.entity.Pet;
+import com.fav.daengnyang.domain.pet.repository.PetRepository;
 import com.fav.daengnyang.domain.targetDetail.service.dto.response.AccountHistoryResponse;
 import com.fav.daengnyang.global.auth.dto.MemberPrincipal;
+import com.fav.daengnyang.global.aws.service.AwsService;
 import com.fav.daengnyang.global.exception.CustomException;
 import com.fav.daengnyang.global.exception.ErrorCode;
 import com.fav.daengnyang.global.web.dto.response.TransactionUtil;
@@ -30,6 +33,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -45,9 +49,11 @@ public class AccountService {
 
     private final AccountRepository accountRepository;
     private final MemberRepository memberRepository;
+    private final PetRepository petRepository;
     private final AccountCodeRepository accountCodeRepository;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
+    private final AwsService awsService;
 
     @Value("${api.key}")
     private String apiKey;
@@ -127,6 +133,28 @@ public class AccountService {
                 .accountNumber(account.getAccountNumber())
                 .accountColor(account.getAccountColor())
                 .build();
+    }
+
+    public String updateAccountImage(Long memberId, MultipartFile newImage) {
+
+        Optional<Account> optionalAccount = accountRepository.findByMemberId(memberId);
+
+        if (!optionalAccount.isPresent()) {
+            throw new RuntimeException("해당 계좌 번호를 가진 계좌를 찾을 수 없습니다.");
+        }
+        
+        Pet pet = petRepository.findByMemberMemberId(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.PET_NOT_FOUND));
+
+        String petImage = awsService.uploadFile(newImage, memberId);
+
+        //url을 통해 S3에서 이미지 가져오기
+        String url = awsService.getImageUrl(petImage);
+
+        pet.setPetImage(url);
+        petRepository.save(pet);
+
+        return url;
     }
 
     // 출금하기
@@ -406,18 +434,23 @@ public class AccountService {
         Account account = accountRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
 
-        // 2. 계좌 색상 및 이미지 업데이트
-        account.setAccountColor(request.getAccountColor());
-        account.setAccountImage(request.getAccountImage());
+        // 2. 회원과 연결된 펫 찾기
+        Pet pet = petRepository.findByMemberMemberId(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.PET_NOT_FOUND));
 
-        // 3. 계좌 저장 (업데이트)
+        // 3. 펫 이미지 업데이트
+        pet.setPetImage(request.getAccountImage());
+
+        // 4. 펫 및 계좌 저장 (업데이트)
+        petRepository.save(pet);
         Account createdAccount = accountRepository.save(account);
+        pet.setPetImage(request.getAccountImage());
 
-        // 4. 응답 데이터 생성
+        // 6. 응답 데이터 생성
         return AccountCreateColorResponse.builder()
                 .accountId(createdAccount.getAccountNumber())
                 .accountColor(createdAccount.getAccountColor())
-                .accountImage(createdAccount.getAccountImage())
+                .accountImage(pet.getPetImage())
                 .build();
     }
 }
