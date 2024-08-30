@@ -36,9 +36,14 @@ public class CashwalkService {
 
         // S3에 이미지 업로드
         // 이미지가 있을 경우에만 S3에 업로드하고 URL을 설정
-        String imageUrl = null;
+        String image = null;
         if (createCashwalkRequest.getImage() != null && !createCashwalkRequest.getImage().isEmpty()) {
-            imageUrl = awsService.uploadFile(createCashwalkRequest.getImage(), memberId);
+            image = awsService.uploadFile(createCashwalkRequest.getImage(), memberId);
+        }
+
+        String imageUrl = null;
+        if (image != null && !image.isEmpty()) {
+            imageUrl = awsService.getImageUrl(image);
         }
 
         // cashwalk 엔티티 생성
@@ -78,10 +83,12 @@ public class CashwalkService {
             Optional<Cashwalk> cashwalkOpt = cashwalkRepository.findByMemberAndCreatedAt(member, currentDate);
 
             if(cashwalkOpt.isPresent()) {
+                Cashwalk cashwalk = cashwalkOpt.get();
                 CashwalkResponse response = CashwalkResponse.builder()
-                        .cashwalkId(cashwalkOpt.map(Cashwalk::getCashwalkId).orElse(null))
-                        .date(cashwalkOpt.map(Cashwalk::getCreatedAt).orElse(null))
-                        .diaryContent(cashwalkOpt.map(Cashwalk::getContent).orElse(null))
+                        .cashwalkId(cashwalk.getCashwalkId())
+                        .date(cashwalk.getCreatedAt())
+                        .diaryContent(cashwalk.getContent())
+                        .imageUrl(cashwalk.getImageUrl())
                         .build();
                 responses.add(response);
             }
