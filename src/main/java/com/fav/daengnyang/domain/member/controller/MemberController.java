@@ -46,5 +46,12 @@ public class MemberController {
         MemberInfoResponse memberInfoResponse = memberService.getMemberInfo(memberPrincipal.getMemberId());
         return SuccessResponse.ok(memberInfoResponse);
     }
+
+    // 이메일 중복 체크
+    @PostMapping("/check")
+    public SuccessResponse<?> checkDuplicateEmail(@RequestBody String email) throws JsonProcessingException {
+
+       return SuccessResponse.ok(response);
+    }
     
 }
