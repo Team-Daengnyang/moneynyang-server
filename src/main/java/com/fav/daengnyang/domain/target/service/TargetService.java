@@ -58,8 +58,13 @@ public class TargetService {
         // memberId로 Target 리스트 조회
         List<Target> targets = targetRepository.findAllByMemberId(memberId);
 
+        // Target 리스트들 중에서 isWithdrawed가 false인 목표들만 필터링
+        List<Target> activeTargets = targets.stream()
+                .filter(target -> !target.isWithdrawed())
+                .collect(Collectors.toList());
+
         // Target 리스트를 TargetResponse 리스트로 변환하여 반환
-        return targets.stream()
+        return activeTargets.stream()
                 .map(target -> TargetResponse.builder()
                         .targetId(target.getTargetId())
                         .description(target.getDescription())
@@ -67,6 +72,7 @@ public class TargetService {
                         .targetTitle(target.getTargetTitle())
                         .currentAmount(target.getCurrentAmount())
                         .isDone(target.isDone())
+                        .isWithdraw(target.getIsWithdrawed())
                         .startDate(target.getStartDate())
                         .endDate(target.getEndDate())
                         .accountId(target.getAccount().getAccountId()) // Account ID 반환
