@@ -63,6 +63,7 @@ public class TargetTransferService {
         target.setCurrentAmount(updatedAmount);
         if (updatedAmount >= target.getTargetAmount()) {
             target.setIsDone(true);
+            target.setEndDate(LocalDate.now());
         }
         targetRepository.save(target);
 
@@ -73,6 +74,35 @@ public class TargetTransferService {
                 .target(target)
                 .build();
         targetDetailRepository.save(detail);
+    }
+
+    // 완료된 목표에서 출금하기 메소드
+    @Transactional
+    public void updateTarget(Long memberId, String userKey, Long targetId) throws JsonProcessingException {
+
+        // Target 조회
+        Target target = targetRepository.findById(targetId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 목표를 찾을 수 없습니다."));
+
+        // TargetDetail 리스트 조회 및 amount 합산
+        List<TargetDetail> targetDetails = targetDetailRepository.findByTarget(target);
+        int totalAmount = targetDetails.stream().mapToInt(TargetDetail::getAmount).sum();
+
+        // TargetDetail 삭제
+        targetDetailRepository.deleteAll(targetDetails);
+
+        // Member 조회
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 멤버를 찾을 수 없습니다."));
+
+        // 출금 계좌 (Target의 Bankbook)와 입금 계좌 (Member의 depositAccount) 정보 추출
+        String withdrawalAccountNo = target.getAccount().getAccountNumber();
+        String depositAccountNo = member.getDepositAccount();
+
+        // 총 합계금액을 Member의 depositAccount로 이체
+        if (totalAmount > 0) {
+            callTransferApi(depositAccountNo, withdrawalAccountNo, totalAmount, userKey); // 재사용
+        }
     }
 
     // 목표 삭제 메소드
