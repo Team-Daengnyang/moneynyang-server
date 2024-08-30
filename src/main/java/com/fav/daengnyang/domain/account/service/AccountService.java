@@ -37,10 +37,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -57,6 +54,26 @@ public class AccountService {
 
     @Value("${api.key}")
     private String apiKey;
+
+    private final List<String> names = Arrays.asList(
+            "김민준", "이서준", "박지훈", "최성민", "정우진",
+            "강현우", "조준호", "임태현", "오진우", "윤경민",
+            "허시우", "송유진", "문재현", "장도현", "이기찬",
+            "김남준", "김주원", "박원빈", "김한결", "오병호",
+            "이승현", "김서연", "이지민", "박수빈", "최유진",
+            "정예린", "강은지", "조수아", "임하늘", "오지아",
+            "윤나연", "허민지", "송경희", "문진아", "장현정",
+            "이소희", "김가연", "김유나", "박소연", "최세진",
+            "김하은", "유서하"
+    );
+    private final Random random = new Random();
+
+    public HashMap<String, String> getRandomName(){
+        int index = random.nextInt(names.size());
+        HashMap<String, String> data = new HashMap<>();
+        data.put("name", names.get(index));
+        return data;
+    }
 
     public AccountCreateResponse createAccount(AccountCreateRequest request, String userKey, Long memberId) throws JsonProcessingException {
         // 외부 API를 통해 계좌를 생성

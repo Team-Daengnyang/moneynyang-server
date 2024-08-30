@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -83,5 +84,12 @@ public class AccountController {
             @RequestBody AccountCreateColorRequest request) {
         AccountCreateColorResponse response = accountService.createColorAccount(request, memberPrincipal.getMemberId());
         return ResponseEntity.ok(SuccessResponse.ok(response));
+    }
+
+    @GetMapping("/name")
+    public SuccessResponse<?> getRandomName(){
+        HashMap<String, String> name = accountService.getRandomName();
+
+        return SuccessResponse.ok(name);
     }
 }
