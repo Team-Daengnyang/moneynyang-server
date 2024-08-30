@@ -39,6 +39,7 @@ public class TargetService {
                 .targetAmount(request.getTargetAmount())
                 .currentAmount(0)
                 .isDone(false)
+                .isWithdrawed(false)
                 .startDate(request.getStartDate())
                 .endDate(request.getEndDate())
                 .account(account)
