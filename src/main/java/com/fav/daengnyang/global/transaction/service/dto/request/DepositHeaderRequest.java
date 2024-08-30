@@ -36,7 +36,7 @@ public class DepositHeaderRequest {
         this.userKey = userKey;
     }
 
-    public static DepositHeaderRequest createDepositHeader(String apiKey, String userKey){
+    public static DepositHeaderRequest createDepositHeader(String apiName, String apiKey, String userKey){
         LocalDateTime today = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         String transmissionDate = today.format(formatter);
@@ -45,12 +45,12 @@ public class DepositHeaderRequest {
         String transmissionTime = today.format(timeFormatter);
 
         return DepositHeaderRequest.builder()
-                .apiName("updateDemandDepositAccountDeposit")
+                .apiName(apiName)
                 .transmissionDate(transmissionDate)
                 .transmissionTime(transmissionTime)
                 .institutionCode("00100")
                 .fintechAppNo("001")
-                .apiServiceCode("updateDemandDepositAccountDeposit")
+                .apiServiceCode(apiName)
                 .institutionTransactionUniqueNo(TransactionUtil.generateUniqueTransactionNo())
                 .apiKey(apiKey)
                 .userKey(userKey)

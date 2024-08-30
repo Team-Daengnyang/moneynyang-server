@@ -24,8 +24,10 @@ import com.fav.daengnyang.global.auth.dto.MemberPrincipal;
 import com.fav.daengnyang.global.aws.service.AwsService;
 import com.fav.daengnyang.global.exception.CustomException;
 import com.fav.daengnyang.global.exception.ErrorCode;
+import com.fav.daengnyang.global.transaction.service.TransactionService;
 import com.fav.daengnyang.global.web.dto.response.TransactionUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -42,6 +44,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AccountService {
 
     private final AccountRepository accountRepository;
@@ -51,6 +54,7 @@ public class AccountService {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
     private final AwsService awsService;
+    private final TransactionService transactionService;
 
     @Value("${api.key}")
     private String apiKey;
@@ -67,12 +71,23 @@ public class AccountService {
             "김하은", "유서하"
     );
     private final Random random = new Random();
+    private final List<String> categories = initializeCategories();
 
-    public HashMap<String, String> getRandomName(){
+    public HashMap<String, String> getRandomName() {
         int index = random.nextInt(names.size());
         HashMap<String, String> data = new HashMap<>();
         data.put("name", names.get(index));
         return data;
+    }
+
+
+    private List<String> initializeCategories() {
+        List<String> categoryList = new ArrayList<>();
+        for (int i = 0; i < 4; i++) categoryList.add("식비");
+        for (int i = 0; i < 2; i++) categoryList.add("교통");
+        for (int i = 0; i < 3; i++) categoryList.add("쇼핑");
+        categoryList.add("기타"); 
+        return categoryList;
     }
 
     public AccountCreateResponse createAccount(AccountCreateRequest request, String userKey, Long memberId) throws JsonProcessingException {
@@ -175,22 +190,30 @@ public class AccountService {
     }
 
     // 출금하기
-    public void transferMoney(MemberPrincipal memberPrincipal, TransferRequest transferRequest) {
-        // 1. 금융 API 호출
-        callTransferMoney(memberPrincipal.getMemberId(), memberPrincipal.getUserKey(), transferRequest);
-    }
-
-    private void callTransferMoney(Long memberId, String userKey, TransferRequest transferRequest) {
+    public void transferMoney(MemberPrincipal memberPrincipal, TransferRequest transferRequest) throws JsonProcessingException {
         //0. 계좌 번호
-        Member member = memberRepository.findByMemberId(memberId)
+        Member member = memberRepository.findByMemberId(memberPrincipal.getMemberId())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        //1. body 객체 생성
+        // 1. 금융 API 호출
+        String transferNo = callTransferMoney(member.getDepositAccount(), memberPrincipal.getUserKey(), transferRequest);
+        // 2. 메모하기
+        log.info("transferNo: {}", transferNo);
+        transactionService.makeMemo(member.getDepositAccount(), transferNo, setMemoCategory(), memberPrincipal.getUserKey());
+    }
+
+    private String setMemoCategory(){
+        int index = random.nextInt(categories.size());
+        return categories.get(index);
+    }
+
+    private String callTransferMoney(String accountNo, String userKey, TransferRequest transferRequest) throws JsonProcessingException {
+          //1. body 객체 생성
         TransferHeaderRequest header = TransferHeaderRequest
                 .createTransferHeaderRequest(apiKey, userKey);
         HashMap<String, Object> body = new HashMap<>();
         body.put("Header", header);
-        body.put("accountNo", member.getDepositAccount());
+        body.put("accountNo", accountNo);
         body.put("transactionBalance", transferRequest.getAmount());
         body.put("transferSummary", "출금");
 
@@ -204,6 +227,11 @@ public class AccountService {
         // 4. 외부 API 호출
         String url = "/edu/demandDeposit/updateDemandDepositAccountWithdrawal";
         ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
+
+        // 5. 거래 번호 추출
+        JsonNode rootNode = objectMapper.readTree((response.getBody()));
+        JsonNode recNode = rootNode.path("REC");
+        return recNode.path("transactionUniqueNo").asText();
     }
 
     // 외부 금융 API 호출 (계좌 생성)

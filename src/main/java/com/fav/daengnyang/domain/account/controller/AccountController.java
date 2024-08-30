@@ -73,7 +73,7 @@ public class AccountController {
     }
 
     @PostMapping("/transfer")
-    public SuccessResponse<?> getAccountTransfer(@AuthenticationPrincipal MemberPrincipal memberPrincipal, @Valid @RequestBody TransferRequest transferRequest) {
+    public SuccessResponse<?> getAccountTransfer(@AuthenticationPrincipal MemberPrincipal memberPrincipal, @Valid @RequestBody TransferRequest transferRequest) throws JsonProcessingException {
         accountService.transferMoney(memberPrincipal, transferRequest);
         return SuccessResponse.ok();
     }
