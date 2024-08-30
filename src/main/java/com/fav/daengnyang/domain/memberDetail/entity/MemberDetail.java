@@ -38,6 +38,9 @@ public class MemberDetail {
     @Column(name = "total")
     private int total;
 
+    @Column(name = "pet_pay_count")
+    private int petPayCount;
+
     @Column(name = "date")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate date;
@@ -47,7 +50,7 @@ public class MemberDetail {
     private Member member;
 
     @Builder
-    private MemberDetail(int pet, int food, int shopping, int transportation, int others, int total, LocalDate date, Member member) {
+    private MemberDetail(int petPayCount, int pet, int food, int shopping, int transportation, int others, int total, LocalDate date, Member member) {
         this.pet = pet;
         this.food = food;
         this.shopping = shopping;
@@ -56,9 +59,10 @@ public class MemberDetail {
         this.total = total;
         this.date = date;
         this.member = member;
+        this.petPayCount = petPayCount;
     }
 
-    public static MemberDetail createMemberDetail(int pet, int food, int shopping, int transportation, int others, LocalDate date, Member member) {
+    public static MemberDetail createMemberDetail(int petPayCount, int pet, int food, int shopping, int transportation, int others, LocalDate date, Member member) {
         return MemberDetail.builder()
                 .pet(pet)
                 .food(food)
@@ -67,6 +71,7 @@ public class MemberDetail {
                 .others(others)
                 .date(date)
                 .member(member)
+                .petPayCount(petPayCount)
                 .build();
     }
 }

@@ -12,7 +12,8 @@ public enum ErrorCode {
     NOT_EXIST_INSURANCE("존재하지 않는 보험 ID입니다", HttpStatus.NOT_FOUND),
     PET_NOT_FOUND("존재하지 않는 반려동물입니다.", HttpStatus.NOT_FOUND),
     ACCOUNT_NOT_FOUND("존재하지 않는 투자 계좌입니다.", HttpStatus.NOT_FOUND),
-    FAILED_CONVERT_FILE("파일변환에 실패하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR),;
+    FAILED_CONVERT_FILE("파일변환에 실패하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
+    DATE_NOT_FOUND("해당 날짜에 데이터가 존재하지 않습니다.", HttpStatus.NOT_FOUND),;
 
 
     private final String message;

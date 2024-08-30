@@ -24,5 +24,4 @@ public class AccountCreationResponse {
 class RecResponse{
     @JsonProperty("accountNo")
     private String accountNo;
-
 }
