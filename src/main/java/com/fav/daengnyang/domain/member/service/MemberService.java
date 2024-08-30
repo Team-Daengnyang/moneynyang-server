@@ -9,6 +9,7 @@ import com.fav.daengnyang.domain.member.service.dto.response.AccountCreationResp
 import com.fav.daengnyang.domain.member.service.dto.response.LoginResponse;
 import com.fav.daengnyang.domain.member.service.dto.response.MemberBankResponse;
 import com.fav.daengnyang.domain.member.service.dto.response.MemberInfoResponse;
+import com.fav.daengnyang.domain.pet.service.dto.response.CheckResponse;
 import com.fav.daengnyang.domain.target.repository.TargetRepository;
 import com.fav.daengnyang.global.auth.dto.MemberPrincipal;
 import com.fav.daengnyang.global.auth.utils.JWTProvider;
@@ -27,6 +28,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -55,6 +57,7 @@ public class MemberService implements UserDetailsService {
     public LoginResponse createMember(CreatedRequest createdRequest) throws JsonProcessingException {
         // 1. 금융 API 회원가입
         MemberBankResponse memberBankResponse = createMemberBank(createdRequest);
+        System.out.println("memberBankResponse: " + memberBankResponse);
         // 2. 예금 계좌 개설
         String depositAccount = createMemberAccount(memberBankResponse);
         // 3. 비밀번호 인코딩
@@ -79,6 +82,11 @@ public class MemberService implements UserDetailsService {
     public Member findByMemberId(Long id) {
         return memberRepository.findByMemberId(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    // 이메일 중복 체크
+    public CheckResponse checkDuplicateEmail(String email) throws JsonProcessingException {
+        return checkMemberBank(email);
     }
 
     @Override
@@ -120,7 +128,6 @@ public class MemberService implements UserDetailsService {
 
         log.info("회원 가입 API 결과: " + response.getBody());
         return objectMapper.readValue(response.getBody(), MemberBankResponse.class);
-
     }
 
     // 계좌 생성 API
@@ -194,5 +201,36 @@ public class MemberService implements UserDetailsService {
                 .memberDate(daysUsingService)
                 .memberTarget(totalTargets)
                 .build();
+    }
+
+    private CheckResponse checkMemberBank(String email) throws JsonProcessingException {
+        // 1. body 객체 생성
+        HashMap<String, String> body = new HashMap<>();
+        body.put("apiKey", apiKey);
+        body.put("userId", email);
+
+        // 2. HttpHeaders 설정
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        // 3. HttpEntity 객체 생성
+        HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(body, headers);
+
+        // 4. 외부 API 호출
+        String url = "/member/search";
+        try{
+            ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
+            log.info("아이디 중복체크" + response.getBody());
+
+            return CheckResponse.createCheckResponse("이미 존재하는 이메일입니다.");
+
+        } catch (HttpClientErrorException e) {
+            log.info("아이디 중복체크" + e.getResponseBodyAsString());
+           CheckResponse checkResponse = objectMapper.readValue(e.getResponseBodyAsString(), CheckResponse.class);
+           if(checkResponse.getResponseCode().equals("E4003")){
+               checkResponse.updateCheckResponse("사용가능한 이메일입니다.");
+           }
+           return checkResponse;
+        }
     }
 }
