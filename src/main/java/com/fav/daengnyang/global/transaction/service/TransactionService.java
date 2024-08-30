@@ -31,7 +31,7 @@ public class TransactionService {
         // 1. body 객체 생성
         HashMap<String, Object> body = new HashMap<>();
 
-        DepositHeaderRequest header = DepositHeaderRequest.createDepositHeader(apiKey, userKey);
+        DepositHeaderRequest header = DepositHeaderRequest.createDepositHeader("updateDemandDepositAccountDeposit", apiKey, userKey);
         body.put("Header", header);
         body.put("accountNo", accountNo);
         body.put("transactionBalance", "1000000"); // 금액
@@ -49,5 +49,30 @@ public class TransactionService {
         ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
 
         log.info("입금하기 API 결과: " + response.getBody());
+    }
+
+    // 거래내역 메모하기
+    public void makeMemo(String accountNo, String transactionNo, String memo, String userKey){
+        // 1. body 객체 생성
+        HashMap<String, Object> body = new HashMap<>();
+
+        DepositHeaderRequest header = DepositHeaderRequest.createDepositHeader("transactionMemo", apiKey, userKey);
+        body.put("Header", header);
+        body.put("accountNo", accountNo);
+        body.put("transactionUniqueNo", transactionNo); // 금액
+        body.put("transactionMemo", memo);
+
+        // 2. HttpHeaders 설정
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        // 3. HttpEntity 객체 생성
+        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+
+        // 4. 외부 API 호출
+        String url = "/edu/transactionMemo";
+        ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
+
+        log.info("메모하기 API 결과: " + response.getBody());
     }
 }
