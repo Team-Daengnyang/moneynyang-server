@@ -66,8 +66,8 @@ public class AccountService {
         for (int i = 0; i < 4; i++) categoryList.add("식비");
         for (int i = 0; i < 2; i++) categoryList.add("교통");
         for (int i = 0; i < 3; i++) categoryList.add("쇼핑");
-        categoryList.add("기타"); // 기타는 1개만 추가
-        return categoryList; // 리스트를 불변으로 만듭니다
+        categoryList.add("기타"); 
+        return categoryList;
     }
 
     public AccountCreateResponse createAccount(AccountCreateRequest request, String userKey, Long memberId) throws JsonProcessingException {
