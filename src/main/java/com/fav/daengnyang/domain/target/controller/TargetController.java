@@ -89,10 +89,8 @@ public class TargetController {
             @PathVariable Long targetId) throws JsonProcessingException {
 
         // Service 호출
-        targetService.deleteTarget(memberPrincipal.getMemberId(), targetId, memberPrincipal.getUserKey());
+        targetTransferService.deleteTarget(memberPrincipal.getMemberId(), targetId, memberPrincipal.getUserKey());
 
         return SuccessResponse.ok("목표가 성공적으로 삭제되었습니다.");
     }
-      
-
 }
