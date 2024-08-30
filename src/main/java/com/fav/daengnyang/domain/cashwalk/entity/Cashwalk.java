@@ -27,14 +27,18 @@ public class Cashwalk {
     @Column(name = "content")
     private String content;
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
     @Column(name = "step")
     private Integer step;
 
     @Builder
-    public Cashwalk(Member member, LocalDate createdAt, String content, Integer step) {
+    public Cashwalk(Member member, LocalDate createdAt, String content, String imageUrl, Integer step) {
         this.member = member;
         this.createdAt = createdAt;
         this.content = content;
+        this.imageUrl = imageUrl;
         this.step = step;
     }
 }
