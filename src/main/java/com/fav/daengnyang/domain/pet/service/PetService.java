@@ -33,12 +33,16 @@ public class PetService {
         Member member = memberRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        // S3에 이미지 업로드
-        String petImage = awsService.uploadFile(createdPetRequest.getPetImage(), memberId);
+        String url = null;
+        log.info(String.valueOf(createdPetRequest.getPetImage()));
+        if(createdPetRequest.getPetImage() != null && !createdPetRequest.getPetImage().isEmpty()){
+            // S3에 이미지 업로드
+            String petImage = awsService.uploadFile(createdPetRequest.getPetImage(), memberId);
 
-        //url을 통해 S3에서 이미지 가져오기
-        String url = awsService.getImageUrl(petImage);
-        log.info("url : " + url);
+            //url을 통해 S3에서 이미지 가져오기
+            url = awsService.getImageUrl(petImage);
+            log.info("url : " + url);
+        }
 
         Pet pet = Pet.createPet(createdPetRequest, member, url);
         pet = petRepository.save(pet);
