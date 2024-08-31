@@ -217,7 +217,7 @@ public class AccountService {
         body.put("Header", header);
         body.put("accountNo", accountNo);
         body.put("transactionBalance", transferRequest.getAmount());
-        body.put("transferSummary", "출금");
+        body.put("transactionSummary", "출금");
 
         // 2. HttpHeaders 설정
         HttpHeaders headers = new HttpHeaders();
