@@ -142,7 +142,7 @@ public class TargetTransferService {
 
         // 총 합계금액을 Member의 depositAccount로 이체
         if (totalAmount > 0) {
-            callTransferApi(depositAccountNo, withdrawalAccountNo, totalAmount, userKey); // 재사용
+            callTransferApi(withdrawalAccountNo, depositAccountNo, totalAmount, userKey); // 재사용
         }
 
         // Target 삭제
