@@ -25,19 +25,26 @@ public class Account {
     @Column(name = "account_color")
     private String accountColor;
 
+    @Column(name = "account_image")
+    @Setter
+    private String accountImage;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
     @Builder
-    public Account(String accountTitle, String accountNumber, String accountColor, Member member) {
+    public Account(String accountTitle, String accountNumber, String accountColor, String accountImage, Member member) {
         this.accountTitle = accountTitle;
         this.accountNumber = accountNumber;
         this.accountColor = accountColor;
+        this.accountImage = accountImage;
         this.member = member;
     }
 
-    public void updateAccountColor(String accountColor) {
+    public void updateAccount(String accountColor, String accountImage) {
+
         this.accountColor = accountColor;
+        this.accountImage =accountImage;
     }
 }
