@@ -176,16 +176,15 @@ public class AccountService {
             throw new RuntimeException("해당 계좌 번호를 가진 계좌를 찾을 수 없습니다.");
         }
         
-        Pet pet = petRepository.findByMemberMemberId(memberId)
-                .orElseThrow(() -> new CustomException(ErrorCode.PET_NOT_FOUND));
+        Account account = optionalAccount.get();
 
-        String petImage = awsService.uploadFile(newImage, memberId);
+        String accountImage = awsService.uploadFile(newImage, memberId);
 
         //url을 통해 S3에서 이미지 가져오기
-        String url = awsService.getImageUrl(petImage);
+        String url = awsService.getImageUrl(accountImage);
 
-        pet.setPetImage(url);
-        petRepository.save(pet);
+        account.setAccountColor(url);
+        accountRepository.save(account);
 
         return url;
     }

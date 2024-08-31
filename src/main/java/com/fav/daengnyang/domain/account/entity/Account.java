@@ -26,6 +26,7 @@ public class Account {
     private String accountColor;
 
     @Column(name = "account_image")
+    @Setter
     private String accountImage;
 
     @OneToOne(fetch = FetchType.LAZY)
