@@ -141,8 +141,11 @@ src
 3. 실행 명령어 입력
    
    ```
-   $java -jar 프로젝트명-0.0.1-SNAPSHOT.jar
+   $java -jar build/libs/[프로젝트명]-0.0.1-SNAPSHOT.jar
    ```
+4. 애플리케이션 실행 확인
+
+    애플리케이션이 정상적으로 실행되었는지 확인하려면, 브라우저에서 `http://localhost:8080`을 열어봅니다.
 
 ### ✉️ Commit Messge Rules
 
