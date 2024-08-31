@@ -13,6 +13,7 @@ import com.fav.daengnyang.domain.targetDetail.entity.TargetDetail;
 import com.fav.daengnyang.domain.targetDetail.repository.TargetDetailRepository;
 import com.fav.daengnyang.global.exception.CustomException;
 import com.fav.daengnyang.global.exception.ErrorCode;
+import com.fav.daengnyang.global.transaction.service.TransactionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,7 @@ public class TargetService {
     private final TargetDetailRepository targetDetailRepository;
     private final AccountRepository accountRepository;
     private final PetRepository petRepository;
+    private final TransactionService transactionService;
     private final Random random = new Random();
 
     // 타겟 추천 메소드
