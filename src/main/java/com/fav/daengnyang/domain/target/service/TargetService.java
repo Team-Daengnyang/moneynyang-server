@@ -2,6 +2,8 @@ package com.fav.daengnyang.domain.target.service;
 
 import com.fav.daengnyang.domain.account.entity.Account;
 import com.fav.daengnyang.domain.account.repository.AccountRepository;
+import com.fav.daengnyang.domain.pet.entity.Pet;
+import com.fav.daengnyang.domain.pet.repository.PetRepository;
 import com.fav.daengnyang.domain.target.entity.Target;
 import com.fav.daengnyang.domain.target.repository.TargetRepository;
 import com.fav.daengnyang.domain.target.service.dto.request.CreateTargetRequest;
@@ -9,21 +11,69 @@ import com.fav.daengnyang.domain.target.service.dto.response.TargetDetailRespons
 import com.fav.daengnyang.domain.target.service.dto.response.TargetResponse;
 import com.fav.daengnyang.domain.targetDetail.entity.TargetDetail;
 import com.fav.daengnyang.domain.targetDetail.repository.TargetDetailRepository;
+import com.fav.daengnyang.global.exception.CustomException;
+import com.fav.daengnyang.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class TargetService {
 
     private final TargetRepository targetRepository;
     private final TargetDetailRepository targetDetailRepository;
     private final AccountRepository accountRepository;
+    private final PetRepository petRepository;
+    private final Random random = new Random();
+
+    // 타겟 추천 메소드
+    public HashMap<String, String> recommendTarget(Long memberId){
+        // 1. 반려동물 정보 찾기
+        Pet pet = petRepository.findByMemberMemberId(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.PET_NOT_FOUND));
+
+        // 2. 다른 목표 반려동물 찾기
+        List<Target> targetList = targetRepository.findAllTargetsExceptMine(memberId, pet.getPetType());
+
+        // 3. 생일 관련
+        if(pet.getPetBirth() != null){
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyMMdd");
+            LocalDate today = LocalDate.now();
+            LocalDate birthday = LocalDate.parse(pet.getPetBirth(), formatter).withYear(today.getYear());
+
+            LocalDate oneWeekAgo = today.minusWeeks(1);
+            if(today.isBefore(birthday) && today.isAfter(oneWeekAgo)){
+                Period period = Period.between(today, birthday);
+                long daysBetween = period.getDays();
+                for(int i = 0; i < targetList.size() / 5; i++){
+                    Target t = Target.createTargetTitle("생일 " + daysBetween + "일");
+                    targetList.add(t);
+                }
+            }
+        }
+
+        // 4. 목표 추천
+        int index = random.nextInt(targetList.size());
+        Target target = targetList.get(index);
+
+        // 5. response
+        HashMap<String, String> response = new HashMap<>();
+        response.put("recommend", target.getTargetTitle());
+        return response;
+    }
+
 
     // 목표 생성 메소드
     @Transactional

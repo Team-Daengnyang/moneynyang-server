@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -104,5 +105,12 @@ public class TargetController {
         targetTransferService.deleteTarget(memberPrincipal.getMemberId(), targetId, memberPrincipal.getUserKey());
 
         return SuccessResponse.ok("목표가 성공적으로 삭제되었습니다.");
+    }
+
+    // 목표 추천하기
+    @GetMapping("/recommend")
+    public SuccessResponse<?> recommendTarget(@AuthenticationPrincipal MemberPrincipal memberPrincipal){
+        HashMap<String, String> response = targetService.recommendTarget(memberPrincipal.getMemberId());
+        return SuccessResponse.ok(response);
     }
 }
