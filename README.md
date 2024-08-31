@@ -121,6 +121,29 @@ src
     └─resources
 ```
 
+### 🧱 How to build
+
+1. 프로젝트 폴더로 이동
+   
+   ```
+   cd 프로젝트_폴더명
+   ```
+2. Build 명령어 입력
+    - 맥/리눅스의 경우
+        ```
+        $./gradlew build
+        ```
+    
+    - 윈도우의 경우
+        ```
+        $gradlew build
+        ```
+3. 실행 명령어 입력
+   
+   ```
+   $java -jar 프로젝트명-0.0.1-SNAPSHOT.jar
+   ```
+
 ### ✉️ Commit Messge Rules
 
 **댕냥이** 들의 **Git Commit Message Rules**
