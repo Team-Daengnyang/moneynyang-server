@@ -3,6 +3,7 @@ package com.fav.daengnyang.domain.cashwalk.controller;
 import com.fav.daengnyang.domain.cashwalk.service.CashwalkService;
 import com.fav.daengnyang.domain.cashwalk.service.dto.request.CreateCashwalkRequest;
 import com.fav.daengnyang.domain.cashwalk.service.dto.response.CashwalkResponse;
+import com.fav.daengnyang.domain.cashwalk.service.dto.response.CashwalkStatsResponse;
 import com.fav.daengnyang.global.auth.dto.MemberPrincipal;
 import com.fav.daengnyang.global.web.dto.response.SuccessResponse;
 import jakarta.validation.Valid;
@@ -41,5 +42,15 @@ public class CashwalkController {
         // Service 호출
         List<CashwalkResponse> responses = cashwalkService.getCashwalksForMonth(memberPrincipal.getMemberId(), date);
         return SuccessResponse.ok(responses);
+    }
+
+    // 유저가 작성한 일지 수와 한 달간의 달성도 보내기.
+    @GetMapping("/stats")
+    public SuccessResponse<CashwalkStatsResponse> getCashwalkStats(
+            @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
+
+        // Service 호출
+        CashwalkStatsResponse response = cashwalkService.getCashwalkStats(memberPrincipal.getMemberId());
+        return SuccessResponse.ok(response);
     }
 }

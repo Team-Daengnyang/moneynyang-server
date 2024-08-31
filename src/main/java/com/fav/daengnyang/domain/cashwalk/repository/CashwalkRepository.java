@@ -11,4 +11,8 @@ import java.util.Optional;
 @Repository
 public interface CashwalkRepository extends JpaRepository<Cashwalk, Long> {
     Optional<Cashwalk> findByMemberAndCreatedAt(Member member, LocalDate date);
+
+    int countByMember(Member member);
+
+    int countByMemberAndCreatedAtBetween(Member member, LocalDate oneMonthAgo, LocalDate today);
 }

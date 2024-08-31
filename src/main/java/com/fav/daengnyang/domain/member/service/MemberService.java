@@ -1,6 +1,7 @@
 package com.fav.daengnyang.domain.member.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fav.daengnyang.domain.cashwalk.repository.CashwalkRepository;
 import com.fav.daengnyang.domain.member.entity.Member;
 import com.fav.daengnyang.domain.member.repository.MemberRepository;
 import com.fav.daengnyang.domain.member.service.dto.request.AccountCreationHeaderRequest;
@@ -44,6 +45,7 @@ public class MemberService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
     private final TargetRepository targetRepository;
+    private final CashwalkRepository cashwalkRepository;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
     private final PasswordEncoder passwordEncoder;
@@ -193,13 +195,17 @@ public class MemberService implements UserDetailsService {
         int totalTargets = targetRepository.findAllByMemberId(memberId).size();
         // 5. 5일당 레벨 1씩 계산
         int level = (int) (daysUsingService / 5) + 1;
-        // 6. MemberInfoResponse 생성 및 반환
+        // 6. member의 포인트 수 계산하여 반환
+        int memberDiaries = cashwalkRepository.countByMember(member);
+        int points = memberDiaries * 10;
+        // 7. MemberInfoResponse 생성 및 반환
         return MemberInfoResponse.builder()
                 .memberId(member.getMemberId())
                 .memberName(member.getName())
                 .memberLevel(level)
                 .memberDate(daysUsingService)
                 .memberTarget(totalTargets)
+                .memberPoint(points)
                 .build();
     }
 
