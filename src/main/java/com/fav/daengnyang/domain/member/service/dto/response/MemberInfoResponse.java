@@ -11,4 +11,5 @@ public class MemberInfoResponse {
     private int memberLevel;
     private long memberDate;
     private int memberTarget;
+    private int memberPoint;
 }
