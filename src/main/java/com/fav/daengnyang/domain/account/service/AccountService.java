@@ -481,24 +481,15 @@ public class AccountService {
         Account account = accountRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
 
-        // 2. 회원과 연결된 펫 찾기
-        Pet pet = petRepository.findByMemberMemberId(memberId)
-                .orElseThrow(() -> new CustomException(ErrorCode.PET_NOT_FOUND));
-
-        // 3. 펫 이미지 업데이트
-        pet.setPetImage(request.getAccountImage());
-
-        // 4. 펫 및 계좌 저장 (업데이트)
-        petRepository.save(pet);
-        account.updateAccountColor(request.getAccountColor());
+        // 2. account 커스텀
+        account.updateAccount(request.getAccountColor(), request.getAccountImage());
         Account createdAccount = accountRepository.save(account);
-        pet.setPetImage(request.getAccountImage());
 
-        // 6. 응답 데이터 생성
+        // 3. 응답 데이터 생성
         return AccountCreateColorResponse.builder()
                 .accountId(createdAccount.getAccountNumber())
                 .accountColor(createdAccount.getAccountColor())
-                .accountImage(pet.getPetImage())
+                .accountImage(createdAccount.getAccountImage())
                 .build();
     }
 }
