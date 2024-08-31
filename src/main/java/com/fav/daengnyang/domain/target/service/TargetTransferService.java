@@ -11,7 +11,9 @@ import com.fav.daengnyang.domain.target.service.dto.request.TargetTransferReques
 import com.fav.daengnyang.domain.target.service.dto.request.TransferHeaderRequest;
 import com.fav.daengnyang.domain.targetDetail.entity.TargetDetail;
 import com.fav.daengnyang.domain.targetDetail.repository.TargetDetailRepository;
+import com.fav.daengnyang.global.transaction.service.TransactionService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -24,6 +26,7 @@ import org.springframework.web.client.RestTemplate;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +34,7 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class TargetTransferService {
 
     private final TargetRepository targetRepository;
@@ -38,6 +42,7 @@ public class TargetTransferService {
     private final MemberRepository memberRepository;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
+    private final TransactionService transactionService;
 
     @Value("${api.key}")
     private String apiKey;
@@ -57,6 +62,7 @@ public class TargetTransferService {
 
         // 금융 API 호출하여 이체 수행
         callTransferApi(depositAccountNo, withdrawalAccountNo, amount, userKey);
+
 
         // 타겟의 current_amount 업데이트 및 목표 달성 여부 확인
         int updatedAmount = target.getCurrentAmount() + amount;
@@ -101,7 +107,7 @@ public class TargetTransferService {
 
         // 총 합계금액을 Member의 depositAccount로 이체
         if (totalAmount > 0) {
-            callTransferApi(depositAccountNo, withdrawalAccountNo, totalAmount, userKey); // 재사용
+           callTransferApi(depositAccountNo, withdrawalAccountNo, totalAmount, userKey);
         }
 
         // 출금 처리
@@ -158,8 +164,8 @@ public class TargetTransferService {
         body.put("depositAccountNo", depositAccountNo);
         body.put("withdrawalAccountNo", withdrawalAccountNo);
         body.put("transactionBalance", amount);
-        body.put("depositTransactionSummary", "(수시입출금) : 입금(이체)");
-        body.put("withdrawalTransactionSummary", "(수시입출금) : 출금(이체)");
+        body.put("depositTransactionSummary", "입금");
+        body.put("withdrawalTransactionSummary", "출금");
 
         // HttpHeaders 설정
         HttpHeaders headers = new HttpHeaders();
@@ -172,15 +178,15 @@ public class TargetTransferService {
         String url = "https://finopenapi.ssafy.io/ssafy/api/v1/edu/demandDeposit/updateDemandDepositAccountTransfer";
         ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
 
-        if (response.getStatusCode().is2xxSuccessful()) {
-            // 성공적으로 이체된 경우 처리
-            JsonNode responseBody = objectMapper.readTree(response.getBody());
-            String responseCode = responseBody.path("Header").path("responseCode").asText();
-            if (!"H0000".equals(responseCode)) {
-                throw new RuntimeException("이체 오류: " + responseBody.path("Header").path("responseMessage").asText());
-            }
-        } else {
-            throw new RuntimeException("API 호출 오류: " + response.getBody());
-        }
+        // 5. 거래 번호 추출
+        List<String> transactionUniqueNos = new ArrayList<>();
+
+        JsonNode rootNode = objectMapper.readTree((response.getBody()));
+        JsonNode recNode = rootNode.path("REC");
+
+        String memo = "투자계좌";
+        transactionService.makeMemo(withdrawalAccountNo, recNode.get(0).path("transactionUniqueNo").asText(), memo, userKey);
+        transactionService.makeMemo(depositAccountNo, recNode.get(1).path("transactionUniqueNo").asText(), memo, userKey);
+
     }
 }

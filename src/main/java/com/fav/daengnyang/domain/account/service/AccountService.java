@@ -49,7 +49,6 @@ public class AccountService {
 
     private final AccountRepository accountRepository;
     private final MemberRepository memberRepository;
-    private final PetRepository petRepository;
     private final AccountCodeRepository accountCodeRepository;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
