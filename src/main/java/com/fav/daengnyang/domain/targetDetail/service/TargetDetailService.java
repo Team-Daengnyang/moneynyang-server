@@ -65,6 +65,8 @@ public class TargetDetailService {
 
             // 각 거래 항목의 세부 정보를 리스트에 추가
             for (Map<String, Object> transaction : transactionList) {
+                String name = ((String) transaction.get("transactionMemo")).split(",")[0];
+
                 TransactionDetailResponse detail = TransactionDetailResponse.builder()
                         .transactionUniqueNo(Long.valueOf((String) transaction.get("transactionUniqueNo")))
                         .transactionDate((String) transaction.get("transactionDate"))
@@ -72,7 +74,7 @@ public class TargetDetailService {
                         .transactionBalance(Long.valueOf(transaction.get("transactionBalance").toString()))
                         .transactionAfterBalance(Long.valueOf(transaction.get("transactionAfterBalance").toString()))
                         .transactionSummary((String) transaction.get("transactionSummary"))
-                        .transactionMemo((String) transaction.get("transactionMemo"))
+                        .transactionMemo(name)
                         .build();
                 transactionDetails.add(detail);
             }

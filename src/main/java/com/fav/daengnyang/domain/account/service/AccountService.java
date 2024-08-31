@@ -59,13 +59,34 @@ public class AccountService {
     @Value("${api.key}")
     private String apiKey;
 
+    private final List<String> names = Arrays.asList(
+            "김민준", "이서준", "박지훈", "최성민", "정우진",
+            "강현우", "조준호", "임태현", "오진우", "윤경민",
+            "허시우", "송유진", "문재현", "장도현", "이기찬",
+            "김남준", "김주원", "박원빈", "김한결", "오병호",
+            "이승현", "김서연", "이지민", "박수빈", "최유진",
+            "정예린", "강은지", "조수아", "임하늘", "오지아",
+            "윤나연", "허민지", "송경희", "문진아", "장현정",
+            "이소희", "김가연", "김유나", "박소연", "최세진",
+            "김하은", "유서하"
+    );
+    private final Random random = new Random();
     private final List<String> categories = initializeCategories();
+
+    public HashMap<String, String> getRandomName() {
+        int index = random.nextInt(names.size());
+        HashMap<String, String> data = new HashMap<>();
+        data.put("name", names.get(index));
+        return data;
+    }
+
 
     private List<String> initializeCategories() {
         List<String> categoryList = new ArrayList<>();
-        for (int i = 0; i < 4; i++) categoryList.add("식비");
+        for (int i = 0; i < 3; i++) categoryList.add("식비");
         for (int i = 0; i < 2; i++) categoryList.add("교통");
-        for (int i = 0; i < 3; i++) categoryList.add("쇼핑");
+        for (int i = 0; i < 2; i++) categoryList.add("쇼핑");
+        for (int i = 0; i < 1; i++) categoryList.add("반려");
         categoryList.add("기타"); 
         return categoryList;
     }
@@ -179,11 +200,11 @@ public class AccountService {
         String transferNo = callTransferMoney(member.getDepositAccount(), memberPrincipal.getUserKey(), transferRequest);
         // 2. 메모하기
         log.info("transferNo: {}", transferNo);
-        transactionService.makeMemo(member.getDepositAccount(), transferNo, setMemoCategory(), memberPrincipal.getUserKey());
+        String memo = transferRequest.getName() + "," + setMemoCategory();
+        transactionService.makeMemo(member.getDepositAccount(), transferNo, memo, memberPrincipal.getUserKey());
     }
 
     private String setMemoCategory(){
-        Random random = new Random();
         int index = random.nextInt(categories.size());
         return categories.get(index);
     }
@@ -196,7 +217,7 @@ public class AccountService {
         body.put("Header", header);
         body.put("accountNo", accountNo);
         body.put("transactionBalance", transferRequest.getAmount());
-        body.put("transferSummary", "출금");
+        body.put("transactionSummary", "출금");
 
         // 2. HttpHeaders 설정
         HttpHeaders headers = new HttpHeaders();
