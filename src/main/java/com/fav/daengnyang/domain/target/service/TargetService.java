@@ -18,6 +18,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -43,13 +46,29 @@ public class TargetService {
 
         // 2. 다른 목표 반려동물 찾기
         List<Target> targetList = targetRepository.findAllTargetsExceptMine(memberId, pet.getPetType());
-        log.info("targetList" + targetList);
 
-        // 3. 목표 추천
+        // 3. 생일 관련
+        if(pet.getPetBirth() != null){
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyMMdd");
+            LocalDate today = LocalDate.now();
+            LocalDate birthday = LocalDate.parse(pet.getPetBirth(), formatter).withYear(today.getYear());
+
+            LocalDate oneWeekAgo = today.minusWeeks(1);
+            if(today.isBefore(birthday) && today.isAfter(oneWeekAgo)){
+                Period period = Period.between(today, birthday);
+                long daysBetween = period.getDays();
+                for(int i = 0; i < targetList.size() / 5; i++){
+                    Target t = Target.createTargetTitle("생일 " + daysBetween + "일");
+                    targetList.add(t);
+                }
+            }
+        }
+
+        // 4. 목표 추천
         int index = random.nextInt(targetList.size());
         Target target = targetList.get(index);
 
-        // 4. response
+        // 5. response
         HashMap<String, String> response = new HashMap<>();
         response.put("recommend", target.getTargetTitle());
         return response;

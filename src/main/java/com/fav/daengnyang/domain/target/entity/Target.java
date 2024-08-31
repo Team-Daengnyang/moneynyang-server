@@ -11,6 +11,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString
 public class Target {
 
     @Id
@@ -65,5 +66,11 @@ public class Target {
 
     public Boolean isWithdrawed() {
         return isWithdrawed;
+    }
+
+    public static Target createTargetTitle(String targetTitle) {
+        return Target.builder()
+                .targetTitle(targetTitle)
+                .build();
     }
 }
