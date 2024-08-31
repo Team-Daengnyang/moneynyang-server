@@ -11,7 +11,15 @@ import java.util.List;
 @Repository
 public interface TargetRepository extends JpaRepository<Target, Long> {
 
-    // 특정 memberId를 가진 Bankbook의 모든 Target을 조회하는 JPQL 쿼리
+    // 특정 memberId를 가진 Target의 모든 Target을 조회하는 JPQL 쿼리
     @Query("SELECT t FROM Target t JOIN t.account a WHERE a.member.memberId = :memberId")
     List<Target> findAllByMemberId(@Param("memberId") Long memberId);
+
+    @Query("SELECT t FROM Target t "
+            + "JOIN t.account a "
+            + "JOIN a.member m "
+            + "JOIN Pet p ON p.member.memberId = m.memberId "
+            + "WHERE p.petType = :petType "
+            + "AND m.memberId != :memberId")
+    List<Target> findAllTargetsExceptMine(@Param("memberId") Long memberId, @Param("petType") String petType);
 }
